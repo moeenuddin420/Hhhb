@@ -70,15 +70,44 @@
         }
         @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
         .notif-text { color: #fff; margin-bottom: 10px; font-size: 0.9rem; font-weight: bold; }
+
+        /* ✅ DOWNLOAD SITE STYLES */
+        #install-view { 
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            background: #0f172a; z-index: 10000; 
+            display: flex; flex-direction: column; justify-content: center; align-items: center; 
+            padding: 20px; text-align: center;
+            background-image: radial-gradient(circle at 50% 50%, rgba(6, 182, 212, 0.15) 0%, transparent 60%);
+        }
+        .install-logo { width: 100px; height: 100px; border-radius: 20px; margin-bottom: 20px; box-shadow: 0 10px 30px rgba(6, 182, 212, 0.3); }
+        .install-title { font-family: var(--font-gaming); font-size: 2.5rem; font-weight: 800; color: #fff; margin-bottom: 10px; }
+        .install-desc { color: var(--text-muted); font-size: 1rem; margin-bottom: 30px; max-width: 300px; line-height: 1.5; }
+        .btn-install { 
+            background: var(--primary); color: #000; font-weight: 800; 
+            padding: 15px 40px; border-radius: 50px; font-size: 1.1rem; 
+            box-shadow: 0 0 20px var(--primary-glow);
+            animation: pulseBtn 2s infinite; border: none; cursor: pointer;
+        }
+        @keyframes pulseBtn { 0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(6, 182, 212, 0.7); } 70% { transform: scale(1.05); box-shadow: 0 0 0 15px rgba(6, 182, 212, 0); } 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(6, 182, 212, 0); } }
+        .install-footer { position: absolute; bottom: 30px; color: var(--text-muted); font-size: 0.8rem; }
     </style>
 </head>
 <body>
     
+    <!-- ✅ DOWNLOAD APP / LANDING PAGE VIEW (TRANSLATED) -->
+    <div id="install-view" class="hidden">
+        <img src="https://cdn-icons-png.flaticon.com/512/3233/3233483.png" class="install-logo">
+        <div class="install-title">G-ZONE</div>
+        <p class="install-desc">G-ZONE ইস্পোর্টস এ আপনাকে স্বাগতম! ফ্রি ফায়ার টুর্নামেন্ট খেলে টাকা ইনকাম করতে আমাদের অ্যাপটি ইন্সটল করুন।</p>
+        <button id="btn-install-app" class="btn-install"><i class="fas fa-download"></i> অ্যাপ ইন্সটল করুন</button>
+        <div class="install-footer">সুরক্ষিত এবং ভেরিফাইড • Version 2.0</div>
+    </div>
+
     <!-- SYSTEM LOADERS -->
     <div id="loading-overlay"><div class="loader-box"></div><p style="margin-top:15px;color:var(--text-muted);font-size:0.8rem;letter-spacing:1px;">SYSTEM LOADING...</p></div>
     <div id="toast-box"><i class="fas fa-info-circle" style="color:var(--primary)"></i> <span id="toast-msg"></span></div>
 
-    <!-- ✅ NOTIFICATION PERMISSION BANNER -->
+    <!-- NOTIFICATION PERMISSION BANNER -->
     <div id="notification-banner">
         <div class="notif-text">🔔 আপডেট পেতে নোটিফিকেশন চালু করুন!</div>
         <button class="btn btn-primary" onclick="enableNotifications()">Enable Notifications</button>
@@ -502,90 +531,7 @@
         let lastBackPress = 0;
         let minW = 50; let maxW = 10000;
         let currentHomeTab = 'BR';
-
-        // ==========================================
-        // 🟢 PWA & SYSTEM NOTIFICATION LOGIC (NEW)
-        // ==========================================
-
-        // 1. Register Service Worker for PWA + FCM
-        // IMPORTANT: Save registration to variable so getToken can use it
-        let swRegistration = null;
-
-        if ('serviceWorker' in navigator) {
-            // Updated Path: Ensure this path is correct relative to your HTML
-            navigator.serviceWorker.register('service-worker.js')
-                .then((reg) => {
-                    console.log('✅ Service Worker Registered:', reg);
-                    swRegistration = reg;
-                })
-                .catch((err) => {
-                    console.log('❌ Service Worker Failed', err);
-                });
-        }
-
-        // 2. CHECK & SHOW BANNER
-        function checkNotificationPermission(uid) {
-            if ("Notification" in window) {
-                if (Notification.permission === "granted") {
-                    // Already granted, hide banner
-                    document.getElementById('notification-banner').style.display = 'none';
-                    // Generate token silently if we don't have it (optional refresh)
-                    generateToken(uid);
-                } else if (Notification.permission === "default") {
-                    // Not granted or denied yet, show banner
-                    document.getElementById('notification-banner').style.display = 'block';
-                } else {
-                    // Denied, can't ask again via code. Hide banner or show "How to enable" message.
-                    document.getElementById('notification-banner').style.display = 'none';
-                }
-            }
-        }
-
-        // 3. ENABLE BUTTON CLICK HANDLER
-        window.enableNotifications = async () => {
-            const permission = await Notification.requestPermission();
-            if (permission === 'granted') {
-                document.getElementById('notification-banner').style.display = 'none';
-                showToast("Notifications Enabled!");
-                if (auth.currentUser) {
-                    generateToken(auth.currentUser.uid);
-                }
-            } else {
-                showToast("Permission Denied.");
-            }
-        };
-
-        // 4. GENERATE & SAVE TOKEN (AUTO COPY TO CLIPBOARD + ALERT)
-        async function generateToken(uid) {
-            try {
-                // IMPORTANT: Pass swRegistration to getToken
-                const currentToken = await getToken(messaging, { 
-                    vapidKey: 'BKVqRDof4xyE2oZWEvMO3CSEsCQ9QPkbiT59bnJHQLWJ0ngm5I1pirwwTsNQ94AVR3fuWNeV6WPwhi5f5hsUFyQ',
-                    serviceWorkerRegistration: swRegistration
-                });
-
-                if (currentToken) {
-                    console.log('✅ FCM Token:', currentToken);
-                    // 1. Save to DB
-                    await setDoc(doc(db, "users", uid), { fcmToken: currentToken }, { merge: true });
-                    
-                    // 2. COPY TO CLIPBOARD (The requested feature)
-                    await navigator.clipboard.writeText(currentToken);
-                    
-                    // 3. Notify User
-                    alert("FCM Token Copied to Clipboard!\n\nUse this to test in Firebase Console.");
-                }
-            } catch (err) {
-                console.log('Token generation failed: ', err);
-                // Simple retry logic if SW wasn't ready
-                if(err.message && err.message.includes('registration')) {
-                   setTimeout(() => generateToken(uid), 2000);
-                }
-            }
-        }
-
-
-        // --- MAIN APP LOGIC START ---
+        let deferredPrompt; // For PWA Install Prompt
 
         window.showToast = (msg) => { const t = document.getElementById('toast-box'); if(t) { t.innerHTML = `<i class="fas fa-info-circle"></i> ${msg}`; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 3000); } else { alert(msg); } };
         
@@ -593,6 +539,7 @@
         window.nav = (pid) => { 
             if(sliderInterval && pid !== 'page-home') { clearInterval(sliderInterval); sliderInterval = null; }
             if(pid === 'page-home' && !sliderInterval) loadHomeData(); 
+
             document.querySelectorAll('.page-section').forEach(e => e.classList.remove('active')); 
             const target = document.getElementById(pid); 
             if(target) target.classList.add('active'); 
@@ -611,14 +558,133 @@
         window.copyReferCode = () => { if(currentUserData && currentUserData.referralCode) { window.copyToClipboard(currentUserData.referralCode); } }
         window.closeTeamCodeModal = () => { document.getElementById('team-code-modal').classList.add('hidden'); nav('page-matches'); }
 
-        window.addEventListener('load', () => { history.pushState({page: 'home'}, '', ''); });
+        window.addEventListener('load', () => { 
+            // Initial Check: Are we in a browser or PWA?
+            if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true) {
+                // We are in PWA/App Mode -> Do nothing, let auth listener handle login/dashboard
+            } else {
+                // We are in Browser Mode -> Show Install Page
+                document.getElementById('install-view').classList.remove('hidden');
+                document.getElementById('auth-container').classList.add('hidden');
+                document.getElementById('app-container').classList.add('hidden');
+                
+                // Hide loader in browser mode (landing page handles UI)
+                document.getElementById('loading-overlay').style.display = 'none';
+            }
+            history.pushState({page: 'home'}, '', ''); 
+        });
+
         window.addEventListener('popstate', (event) => { const activeSection = document.querySelector('.page-section.active'); if (activeSection && activeSection.id !== 'page-home') { nav('page-home'); } else { const now = new Date().getTime(); if (now - lastBackPress < 2000) { if(confirm("আপনি কি অ্যাপটি বন্ধ করতে চান?")) { history.back(); } else { history.pushState({page: 'home'}, '', '#home'); } } else { lastBackPress = now; showToast("বাহির হতে আবার ব্যাক চাপুন"); history.pushState({page: 'home'}, '', '#home'); } } });
 
+        // --- PWA INSTALL LOGIC ---
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            // Ensure install view is visible if not standalone
+            if (!window.matchMedia('(display-mode: standalone)').matches) {
+                document.getElementById('install-view').classList.remove('hidden');
+                document.getElementById('auth-container').classList.add('hidden');
+            }
+        });
+
+        const installBtn = document.getElementById('btn-install-app');
+        if(installBtn) {
+            installBtn.addEventListener('click', async () => {
+                if (deferredPrompt) {
+                    deferredPrompt.prompt();
+                    const { outcome } = await deferredPrompt.userChoice;
+                    if (outcome === 'accepted') {
+                        console.log('User accepted the install prompt');
+                    }
+                    deferredPrompt = null;
+                } else {
+                    // Fallback for when prompt isn't available (e.g., iOS or already installed)
+                    alert("To install: Tap the Share button (Safari) or Menu (Chrome) and select 'Add to Home Screen'.");
+                }
+            });
+        }
+
+
+        // ==========================================
+        // 🟢 PWA & SYSTEM NOTIFICATION LOGIC (NEW)
+        // ==========================================
+
+        // 1. Register Service Worker for PWA
+        let swRegistration = null;
+
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('firebase-messaging-sw.js')
+                .then((reg) => {
+                    console.log('✅ Service Worker Registered:', reg);
+                    swRegistration = reg;
+                })
+                .catch((err) => {
+                    console.log('❌ Service Worker Failed', err);
+                });
+        }
+
+        // 2. CHECK & SHOW BANNER (Modified: No Token Alert, Sticky Logic)
+        function checkNotificationPermission(uid) {
+            if ("Notification" in window) {
+                if (Notification.permission === "granted") {
+                    // Already granted, hide banner
+                    document.getElementById('notification-banner').style.display = 'none';
+                    // Generate token silently in background
+                    generateToken(uid);
+                } else {
+                    // Denied or Default -> SHOW BANNER ALWAYS inside Dashboard
+                    document.getElementById('notification-banner').style.display = 'block';
+                }
+            }
+        }
+
+        // 3. ENABLE BUTTON CLICK HANDLER
+        window.enableNotifications = async () => {
+            const permission = await Notification.requestPermission();
+            if (permission === 'granted') {
+                document.getElementById('notification-banner').style.display = 'none';
+                showToast("Notifications Enabled!");
+                if (auth.currentUser) {
+                    generateToken(auth.currentUser.uid);
+                }
+            } else {
+                // If denied, they need to change settings manually
+                alert("Permission Denied. Please enable notifications in your browser settings.");
+            }
+        };
+
+        // 4. GENERATE & SAVE TOKEN (SILENT)
+        async function generateToken(uid) {
+            try {
+                const currentToken = await getToken(messaging, { 
+                    vapidKey: 'BKVqRDof4xyE2oZWEvMO3CSEsCQ9QPkbiT59bnJHQLWJ0ngm5I1pirwwTsNQ94AVR3fuWNeV6WPwhi5f5hsUFyQ',
+                    serviceWorkerRegistration: swRegistration
+                });
+
+                if (currentToken) {
+                    console.log('✅ FCM Token Generated (Silent Save)');
+                    // Only save to DB, NO ALERT
+                    await setDoc(doc(db, "users", uid), { fcmToken: currentToken }, { merge: true });
+                }
+            } catch (err) {
+                console.log('Token generation failed: ', err);
+                if(err.message && err.message.includes('registration')) {
+                   setTimeout(() => generateToken(uid), 2000);
+                }
+            }
+        }
+
+
+        // --- MAIN APP LOGIC START ---
+
         onAuthStateChanged(auth, async (user) => {
+            // Only proceed if NOT in "Download Site" mode (i.e. we are in PWA or user bypassed)
+            if(document.getElementById('install-view').classList.contains('hidden') === false) return;
+
             if(user) {
                 if (window.AppInventor) { window.AppInventor.setWebViewString(user.uid); }
                 
-                // ✅ Trigger the Check
+                // ✅ CHECK PERMISSION ON DASHBOARD LOAD
                 checkNotificationPermission(user.uid);
 
                 onSnapshot(doc(db,"users",user.uid), async d => {
@@ -626,10 +692,9 @@
                         currentUserData = d.data();
                         if(currentUserData.isBlocked) { alert("Blocked by Admin"); signOut(auth); return; }
                         
-                        // --- RANDOM AVATAR ASSIGNMENT FOR EXISTING USERS WITHOUT PHOTO ---
+                        // --- RANDOM AVATAR ---
                         if(!currentUserData.photoURL) {
                             const rand = defaultAvatars[Math.floor(Math.random() * defaultAvatars.length)];
-                            // Update DB safely without overwriting other fields
                             await setDoc(doc(db, "users", user.uid), { photoURL: rand }, { merge: true });
                             currentUserData.photoURL = rand; 
                         }
@@ -649,7 +714,7 @@
                         const nameEl = document.getElementById('p-name'); if(nameEl) nameEl.innerText = currentUserData.fullName || currentUserData.username || "Gamer";
                         const idEl = document.getElementById('p-custom-id'); if(idEl) idEl.innerText = currentUserData.customId;
                         
-                        // -- DRAWER HEADER UPDATES (NEW) --
+                        // -- DRAWER HEADER UPDATES --
                         const dName = document.getElementById('d-name'); if(dName) dName.innerText = currentUserData.fullName || "Gamer";
                         const dUid = document.getElementById('d-uid'); if(dUid) dUid.innerText = "ID: " + currentUserData.customId;
                         const dPic = document.getElementById('d-pic'); if(dPic) dPic.src = currentUserData.photoURL || "https://via.placeholder.com/100";
@@ -952,7 +1017,50 @@
             await b.commit(); showToast("Requested"); nav('page-home');
         }
         function loadWithdrawHistory(uid){ onSnapshot(query(collection(db,"withdrawals"),where("userId","==",uid)),s=>{ const l = s.docs.sort((a,b)=>(b.data().time?.seconds||0)-(a.data().time?.seconds||0)); document.getElementById('withdraw-history').innerHTML = s.empty ? "<p style='text-align:center;color:#aaa'>No history</p>" : l.map(d=>{ const w=d.data(), c=w.status==='pending'?'var(--warning)':(w.status==='paid'?'var(--success)':'var(--danger)'); return `<div class="t-card" style="padding:15px;display:flex;justify-content:space-between;"><b>৳${w.amount} (${w.method})</b><span style="color:${c};font-weight:bold;">${w.status}</span></div>`; }).join(''); }); }
-        function loadNotifications(uid) { const q = query(collection(db, "notifications"), where("targetUid", "==", uid)); onSnapshot(q, (s) => { const list = s.docs.map(d=>({id:d.id, ...d.data()})).sort((a,b)=>(b.createdAt?.seconds||0)-(a.createdAt?.seconds||0)); const unread = list.filter(n=>!n.read).length; document.getElementById('header-badge').style.display = unread ? 'block' : 'none'; document.getElementById('n-list').innerHTML = list.length ? list.map(n => { const bg = n.read ? 'var(--glass-bg)' : 'rgba(6, 182, 212, 0.1)'; return `<div class="t-card" style="padding:15px;background:${bg};border-color:${n.read?'var(--glass-border)':'var(--primary)'}"><b style="color:var(--primary)">${n.title}</b><p style="font-size:0.9rem;color:#ddd;margin-top:5px;">${n.body}</p></div>`; }).join('') : "<p style='text-align:center;color:#aaa'>Empty</p>"; }); }
+        
+        // --- 🟢 NEW NOTIFICATION TRIGGER LOGIC ---
+        function loadNotifications(uid) {
+            const q = query(collection(db, "notifications"), where("targetUid", "==", uid));
+            
+            onSnapshot(q, (s) => {
+                // --- EXISTING UI LOGIC (DO NOT TOUCH) ---
+                const list = s.docs.map(d=>({id:d.id, ...d.data()})).sort((a,b)=>(b.createdAt?.seconds||0)-(a.createdAt?.seconds||0));
+                const unread = list.filter(n=>!n.read).length;
+                
+                const badge = document.getElementById('header-badge');
+                if(badge) badge.style.display = unread ? 'block' : 'none';
+                
+                const nList = document.getElementById('n-list');
+                if(nList) {
+                    nList.innerHTML = list.length ? list.map(n => {
+                        const bg = n.read ? 'var(--glass-bg)' : 'rgba(6, 182, 212, 0.1)';
+                        return `<div class="t-card" style="padding:15px;background:${bg};border-color:${n.read?'var(--glass-border)':'var(--primary)'}"><b style="color:var(--primary)">${n.title}</b><p style="font-size:0.9rem;color:#ddd;margin-top:5px;">${n.body}</p></div>`;
+                    }).join('') : "<p style='text-align:center;color:#aaa'>Empty</p>";
+                }
+                // ----------------------------------------
+
+                // --- 🟢 NEW NOTIFICATION TRIGGER LOGIC ---
+                // This loop checks specifically for NEWLY ADDED documents in this snapshot event
+                s.docChanges().forEach(change => {
+                    if (change.type === "added") {
+                        const data = change.doc.data();
+                        
+                        // Convert Firestore timestamp to milliseconds
+                        const createdTime = data.createdAt ? (data.createdAt.seconds * 1000) : 0;
+
+                        // TRIGGER RULE: 
+                        // 1. Must be unread
+                        // 2. Must be created AFTER the user opened the app (sessionStartTime)
+                        // This prevents spamming 50 notifications when you refresh the page.
+                        if (!data.read && createdTime > sessionStartTime) {
+                            sendSystemNotification(data.title, data.body);
+                        }
+                    }
+                });
+                // ----------------------------------------
+            });
+        }
+
         window.openNotifications = async () => { nav('page-notifications'); const q = query(collection(db, "notifications"), where("targetUid", "==", auth.currentUser.uid), where("read", "==", false)); const snap = await getDocs(q); const batch = writeBatch(db); snap.forEach(d => batch.update(doc(db, "notifications", d.id), { read: true })); await batch.commit(); };
         window.loadPublicCoupons = function(){ onSnapshot(query(collection(db,"coupons"),where("type","==","public")),s=>{ document.getElementById('public-coupons').innerHTML = s.empty?"<p style='text-align:center;color:#aaa'>None</p>":s.docs.map(d=>{ const c=d.data(), p=Math.min((c.used/c.max)*100,100); return `<div class="t-card" style="padding:15px; border-left:3px solid var(--success);"><div style="display:flex;justify-content:space-between;margin-bottom:10px;"><b style="font-family:monospace;font-size:1.3rem;letter-spacing:1px;">${c.code}</b><span style="color:var(--success);font-weight:bold;font-size:1.1rem;">+৳${c.bonus}</span></div><div style="height:6px;background:rgba(255,255,255,0.1);border-radius:3px;margin-bottom:5px;"><div style="height:100%;width:${p}%;background:var(--success);border-radius:3px;"></div></div><small style="color:var(--text-muted)">${c.used}/${c.max} used</small></div>`; }).join(''); }); }
         window.redeemCoupon = async () => { const code = document.getElementById('coupon-code').value.trim(); if(!code) return showToast("Enter Code"); try { const q = query(collection(db, "coupons"), where("code", "==", code)); const snap = await getDocs(q); if(snap.empty) throw "Invalid Code"; const docSnap = snap.docs[0]; const data = docSnap.data(); if(data.used >= data.max) throw "Limit Reached"; const redRef = doc(db, `coupons/${docSnap.id}/redemptions/${auth.currentUser.uid}`); const redSnap = await getDoc(redRef); if(redSnap.exists()) throw "Already Used"; const batch = writeBatch(db); batch.update(docSnap.ref, { used: increment(1) }); batch.set(redRef, { redeemedAt: serverTimestamp() }); batch.update(doc(db, "users", auth.currentUser.uid), { balance: increment(data.bonus) }); batch.set(doc(collection(db, "notifications")), { targetUid: auth.currentUser.uid, title: "Redeemed", body: `You got ${data.bonus} TK`, createdAt: serverTimestamp(), read: false }); await batch.commit(); showToast("Success!"); } catch(e) { showToast(e.message || e); } }
