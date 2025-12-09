@@ -71,22 +71,23 @@
         @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
         .notif-text { color: #fff; margin-bottom: 10px; font-size: 0.9rem; font-weight: bold; }
 
-        /* ✅ DOWNLOAD SITE STYLES */
+        /* ✅ DOWNLOAD SITE STYLES - FULL SCREEN OVERLAY */
         #install-view { 
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
-            background: #0f172a; z-index: 10000; 
+            background: #0f172a; z-index: 10001; 
             display: flex; flex-direction: column; justify-content: center; align-items: center; 
             padding: 20px; text-align: center;
             background-image: radial-gradient(circle at 50% 50%, rgba(6, 182, 212, 0.15) 0%, transparent 60%);
         }
         .install-logo { width: 100px; height: 100px; border-radius: 20px; margin-bottom: 20px; box-shadow: 0 10px 30px rgba(6, 182, 212, 0.3); }
         .install-title { font-family: var(--font-gaming); font-size: 2.5rem; font-weight: 800; color: #fff; margin-bottom: 10px; }
-        .install-desc { color: var(--text-muted); font-size: 1rem; margin-bottom: 30px; max-width: 300px; line-height: 1.5; }
+        .install-desc { color: var(--text-muted); font-size: 1rem; margin-bottom: 30px; max-width: 300px; line-height: 1.5; font-family: var(--font-bn); }
         .btn-install { 
             background: var(--primary); color: #000; font-weight: 800; 
             padding: 15px 40px; border-radius: 50px; font-size: 1.1rem; 
             box-shadow: 0 0 20px var(--primary-glow);
             animation: pulseBtn 2s infinite; border: none; cursor: pointer;
+            font-family: var(--font-bn);
         }
         @keyframes pulseBtn { 0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(6, 182, 212, 0.7); } 70% { transform: scale(1.05); box-shadow: 0 0 0 15px rgba(6, 182, 212, 0); } 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(6, 182, 212, 0); } }
         .install-footer { position: absolute; bottom: 30px; color: var(--text-muted); font-size: 0.8rem; }
@@ -494,15 +495,12 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
         import { getFirestore, doc, setDoc, getDoc, updateDoc, collection, query, where, orderBy, addDoc, increment, arrayUnion, serverTimestamp, writeBatch, onSnapshot, getDocs, limit } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        const firebaseConfig = { apiKey: "AIzaSyAafXkJwyZ5F7Xuax0VktZ9cpqWD4oCvxU", authDomain: "tournament-97743.firebaseapp.com", projectId: "tournament-97743", messagingSenderId: "584797187828", appId: "1:584797187828:web:4c643f83dfd9b700adb8a1" };
+        const app = initializeApp(firebaseConfig); const auth = getAuth(app); const db = getFirestore(app);
         
         // PWA Push Imports
         import { getMessaging, getToken, onMessage } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-messaging.js";
-
-        const firebaseConfig = { apiKey: "AIzaSyAafXkJwyZ5F7Xuax0VktZ9cpqWD4oCvxU", authDomain: "tournament-97743.firebaseapp.com", projectId: "tournament-97743", messagingSenderId: "584797187828", appId: "1:584797187828:web:4c643f83dfd9b700adb8a1" };
-        const app = initializeApp(firebaseConfig); 
-        const auth = getAuth(app); 
-        const db = getFirestore(app);
-        
         // Initialize Messaging
         const messaging = getMessaging(app);
 
@@ -531,14 +529,14 @@
         let lastBackPress = 0;
         let minW = 50; let maxW = 10000;
         let currentHomeTab = 'BR';
-        let deferredPrompt; // For PWA Install Prompt
+        let deferredPrompt; 
 
         window.showToast = (msg) => { const t = document.getElementById('toast-box'); if(t) { t.innerHTML = `<i class="fas fa-info-circle"></i> ${msg}`; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 3000); } else { alert(msg); } };
         
         // OPTIMIZED NAV: Clears Interval on page change to prevent lag
         window.nav = (pid) => { 
             if(sliderInterval && pid !== 'page-home') { clearInterval(sliderInterval); sliderInterval = null; }
-            if(pid === 'page-home' && !sliderInterval) loadHomeData(); 
+            if(pid === 'page-home' && !sliderInterval) loadHomeData(); // Re-init slider if going home
 
             document.querySelectorAll('.page-section').forEach(e => e.classList.remove('active')); 
             const target = document.getElementById(pid); 
@@ -567,8 +565,6 @@
                 document.getElementById('install-view').classList.remove('hidden');
                 document.getElementById('auth-container').classList.add('hidden');
                 document.getElementById('app-container').classList.add('hidden');
-                
-                // Hide loader in browser mode (landing page handles UI)
                 document.getElementById('loading-overlay').style.display = 'none';
             }
             history.pushState({page: 'home'}, '', ''); 
@@ -580,8 +576,8 @@
         window.addEventListener('beforeinstallprompt', (e) => {
             e.preventDefault();
             deferredPrompt = e;
-            // Ensure install view is visible if not standalone
-            if (!window.matchMedia('(display-mode: standalone)').matches) {
+            const isPwa = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+            if (!isPwa) {
                 document.getElementById('install-view').classList.remove('hidden');
                 document.getElementById('auth-container').classList.add('hidden');
             }
@@ -593,9 +589,7 @@
                 if (deferredPrompt) {
                     deferredPrompt.prompt();
                     const { outcome } = await deferredPrompt.userChoice;
-                    if (outcome === 'accepted') {
-                        console.log('User accepted the install prompt');
-                    }
+                    console.log(`User response to install prompt: ${outcome}`);
                     deferredPrompt = null;
                 } else {
                     // Fallback for when prompt isn't available (e.g., iOS or already installed)
@@ -629,7 +623,7 @@
                 if (Notification.permission === "granted") {
                     // Already granted, hide banner
                     document.getElementById('notification-banner').style.display = 'none';
-                    // Generate token silently in background
+                    // Generate token silently in background - WAIT for SW first
                     generateToken(uid);
                 } else {
                     // Denied or Default -> SHOW BANNER ALWAYS inside Dashboard
@@ -656,9 +650,12 @@
         // 4. GENERATE & SAVE TOKEN (SILENT)
         async function generateToken(uid) {
             try {
+                // ✅ KEY FIX: Wait for Service Worker to be ready
+                const registration = await navigator.serviceWorker.ready;
+
                 const currentToken = await getToken(messaging, { 
                     vapidKey: 'BKVqRDof4xyE2oZWEvMO3CSEsCQ9QPkbiT59bnJHQLWJ0ngm5I1pirwwTsNQ94AVR3fuWNeV6WPwhi5f5hsUFyQ',
-                    serviceWorkerRegistration: swRegistration
+                    serviceWorkerRegistration: registration
                 });
 
                 if (currentToken) {
@@ -668,24 +665,52 @@
                 }
             } catch (err) {
                 console.log('Token generation failed: ', err);
+                // Retry if registration failed initially
                 if(err.message && err.message.includes('registration')) {
                    setTimeout(() => generateToken(uid), 2000);
                 }
             }
         }
 
+        // 5. LOCAL SYSTEM NOTIFICATION (MIRROR EFFECT)
+        // This triggers a local notification if the app is open/backgrounded when DB updates
+        function sendSystemNotification(title, body) {
+            if (Notification.permission === "granted") {
+                navigator.serviceWorker.ready.then(registration => {
+                    registration.showNotification(title, {
+                        body: body,
+                        icon: 'https://cdn-icons-png.flaticon.com/512/3233/3233483.png',
+                        vibrate: [200, 100, 200],
+                        tag: 'gzone-notification'
+                    });
+                });
+            }
+        }
+        
+        const sessionStartTime = Date.now();
+
 
         // --- MAIN APP LOGIC START ---
 
         onAuthStateChanged(auth, async (user) => {
-            // Only proceed if NOT in "Download Site" mode (i.e. we are in PWA or user bypassed)
-            if(document.getElementById('install-view').classList.contains('hidden') === false) return;
+            // Check Mode: PWA vs Browser
+            const isPwa = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+
+            // If user is in browser, do NOT run auth logic (Landing page handles them)
+            // Exception: If they clicked "Install", the browser might reload.
+            // Strict check: Only run app logic if in PWA mode OR if user somehow bypassed landing page (safety)
+            // Actually, keep it simple: If landing page is visible, don't run app.
+            if (!document.getElementById('install-view').classList.contains('hidden')) return;
+
 
             if(user) {
                 if (window.AppInventor) { window.AppInventor.setWebViewString(user.uid); }
                 
                 // ✅ CHECK PERMISSION ON DASHBOARD LOAD
                 checkNotificationPermission(user.uid);
+                
+                // ✅ LISTEN FOR IN-APP NOTIFICATIONS & MIRROR TO SYSTEM
+                loadNotifications(user.uid);
 
                 onSnapshot(doc(db,"users",user.uid), async d => {
                     if(d.exists()){
@@ -726,7 +751,9 @@
                         document.getElementById('auth-container').classList.add('hidden'); document.getElementById('app-container').classList.remove('hidden'); document.getElementById('loading-overlay').classList.add('hidden');
                     } else { await signOut(auth); window.location.reload(); }
                 });
-                loadHomeData(); loadMyMatches(user.uid); loadNotifications(user.uid); window.loadPublicCoupons(); loadWithdrawHistory(user.uid); loadConfig(); loadBroadcasts(); loadBalanceLeaderboard(); loadReferralLeaderboard();
+                loadHomeData(); 
+                // loadNotifications called above
+                window.loadPublicCoupons(); loadWithdrawHistory(user.uid); loadConfig(); loadBroadcasts(); loadBalanceLeaderboard(); loadReferralLeaderboard();
             } else { document.getElementById('app-container').classList.add('hidden'); document.getElementById('auth-container').classList.remove('hidden'); document.getElementById('loading-overlay').classList.add('hidden'); joinedMatchIds.clear(); }
         });
         
