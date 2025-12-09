@@ -133,12 +133,8 @@
         <div id="page-home" class="page-section active">
             <!-- Quick Actions -->
             <div class="quick-actions">
-                <div class="q-btn q-add" onclick="nav('page-add-money')">
-                    <i class="fas fa-plus-circle"></i> এড মানি
-                </div>
-                <div class="q-btn q-wd" onclick="nav('page-withdraw')">
-                    <i class="fas fa-arrow-circle-down"></i> উইথড্র
-                </div>
+                <div class="q-btn q-add" onclick="nav('page-add-money')"><i class="fas fa-plus-circle"></i> এড মানি</div>
+                <div class="q-btn q-wd" onclick="nav('page-withdraw')"><i class="fas fa-arrow-circle-down"></i> উইথড্র</div>
             </div>
 
             <!-- Banner Slider -->
@@ -512,16 +508,18 @@
         // ==========================================
 
         // 1. Register Service Worker for PWA + FCM
+        // IMPORTANT: Save registration to variable so getToken can use it
         let swRegistration = null;
 
         if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('/Hhhb/firebase-messaging-sw.js')
+            // Updated Path: Ensure this path is correct relative to your HTML
+            navigator.serviceWorker.register('service-worker.js')
                 .then((reg) => {
-                    console.log("✅ Service Worker Registered:", reg);
+                    console.log('✅ Service Worker Registered:', reg);
                     swRegistration = reg;
                 })
                 .catch((err) => {
-                    console.log("❌ Service Worker Failed:", err);
+                    console.log('❌ Service Worker Failed', err);
                 });
         }
 
@@ -560,8 +558,8 @@
         // 4. GENERATE & SAVE TOKEN (AUTO COPY TO CLIPBOARD + ALERT)
         async function generateToken(uid) {
             try {
-                // 🔥 FIXED: Explicitly use the Service Worker Registration
-                const currentToken = await getToken(messaging, {
+                // IMPORTANT: Pass swRegistration to getToken
+                const currentToken = await getToken(messaging, { 
                     vapidKey: 'BKVqRDof4xyE2oZWEvMO3CSEsCQ9QPkbiT59bnJHQLWJ0ngm5I1pirwwTsNQ94AVR3fuWNeV6WPwhi5f5hsUFyQ',
                     serviceWorkerRegistration: swRegistration
                 });
@@ -579,9 +577,8 @@
                 }
             } catch (err) {
                 console.log('Token generation failed: ', err);
-                // Alert user if SW isn't ready yet
-                if(err.message.includes('registration')) {
-                   // Retry once after 2 seconds
+                // Simple retry logic if SW wasn't ready
+                if(err.message && err.message.includes('registration')) {
                    setTimeout(() => generateToken(uid), 2000);
                 }
             }
@@ -595,8 +592,7 @@
         // OPTIMIZED NAV: Clears Interval on page change to prevent lag
         window.nav = (pid) => { 
             if(sliderInterval && pid !== 'page-home') { clearInterval(sliderInterval); sliderInterval = null; }
-            if(pid === 'page-home' && !sliderInterval) loadHomeData(); // Re-init slider if going home
-
+            if(pid === 'page-home' && !sliderInterval) loadHomeData(); 
             document.querySelectorAll('.page-section').forEach(e => e.classList.remove('active')); 
             const target = document.getElementById(pid); 
             if(target) target.classList.add('active'); 
@@ -956,7 +952,7 @@
             await b.commit(); showToast("Requested"); nav('page-home');
         }
         function loadWithdrawHistory(uid){ onSnapshot(query(collection(db,"withdrawals"),where("userId","==",uid)),s=>{ const l = s.docs.sort((a,b)=>(b.data().time?.seconds||0)-(a.data().time?.seconds||0)); document.getElementById('withdraw-history').innerHTML = s.empty ? "<p style='text-align:center;color:#aaa'>No history</p>" : l.map(d=>{ const w=d.data(), c=w.status==='pending'?'var(--warning)':(w.status==='paid'?'var(--success)':'var(--danger)'); return `<div class="t-card" style="padding:15px;display:flex;justify-content:space-between;"><b>৳${w.amount} (${w.method})</b><span style="color:${c};font-weight:bold;">${w.status}</span></div>`; }).join(''); }); }
-        function loadNotifications(uid) { const q = query(collection(db, "notifications"), where("targetUid", "==", uid)); onSnapshot(q, (s) => { const list = s.docs.map(d=>({id:d.id, ...d.data()})).sort((a,b)=>(b.createdAt?.seconds||0)-(a.createdAt?.seconds||0)); const unread = list.filter(n=>!n.read).length; document.getElementById('header-badge').style.display = unread ? 'block' : 'none'; document.getElementById('n-list').innerHTML = list.length ? list.map(n => { const bg = n.read ? 'var(--glass-bg)' : 'rgba(0,242,255,0.1)'; return `<div class="t-card" style="padding:15px;background:${bg};border-color:${n.read?'var(--glass-border)':'var(--primary)'}"><b style="color:var(--primary)">${n.title}</b><p style="font-size:0.9rem;color:#ddd;margin-top:5px;">${n.body}</p></div>`; }).join('') : "<p style='text-align:center;color:#aaa'>Empty</p>"; }); }
+        function loadNotifications(uid) { const q = query(collection(db, "notifications"), where("targetUid", "==", uid)); onSnapshot(q, (s) => { const list = s.docs.map(d=>({id:d.id, ...d.data()})).sort((a,b)=>(b.createdAt?.seconds||0)-(a.createdAt?.seconds||0)); const unread = list.filter(n=>!n.read).length; document.getElementById('header-badge').style.display = unread ? 'block' : 'none'; document.getElementById('n-list').innerHTML = list.length ? list.map(n => { const bg = n.read ? 'var(--glass-bg)' : 'rgba(6, 182, 212, 0.1)'; return `<div class="t-card" style="padding:15px;background:${bg};border-color:${n.read?'var(--glass-border)':'var(--primary)'}"><b style="color:var(--primary)">${n.title}</b><p style="font-size:0.9rem;color:#ddd;margin-top:5px;">${n.body}</p></div>`; }).join('') : "<p style='text-align:center;color:#aaa'>Empty</p>"; }); }
         window.openNotifications = async () => { nav('page-notifications'); const q = query(collection(db, "notifications"), where("targetUid", "==", auth.currentUser.uid), where("read", "==", false)); const snap = await getDocs(q); const batch = writeBatch(db); snap.forEach(d => batch.update(doc(db, "notifications", d.id), { read: true })); await batch.commit(); };
         window.loadPublicCoupons = function(){ onSnapshot(query(collection(db,"coupons"),where("type","==","public")),s=>{ document.getElementById('public-coupons').innerHTML = s.empty?"<p style='text-align:center;color:#aaa'>None</p>":s.docs.map(d=>{ const c=d.data(), p=Math.min((c.used/c.max)*100,100); return `<div class="t-card" style="padding:15px; border-left:3px solid var(--success);"><div style="display:flex;justify-content:space-between;margin-bottom:10px;"><b style="font-family:monospace;font-size:1.3rem;letter-spacing:1px;">${c.code}</b><span style="color:var(--success);font-weight:bold;font-size:1.1rem;">+৳${c.bonus}</span></div><div style="height:6px;background:rgba(255,255,255,0.1);border-radius:3px;margin-bottom:5px;"><div style="height:100%;width:${p}%;background:var(--success);border-radius:3px;"></div></div><small style="color:var(--text-muted)">${c.used}/${c.max} used</small></div>`; }).join(''); }); }
         window.redeemCoupon = async () => { const code = document.getElementById('coupon-code').value.trim(); if(!code) return showToast("Enter Code"); try { const q = query(collection(db, "coupons"), where("code", "==", code)); const snap = await getDocs(q); if(snap.empty) throw "Invalid Code"; const docSnap = snap.docs[0]; const data = docSnap.data(); if(data.used >= data.max) throw "Limit Reached"; const redRef = doc(db, `coupons/${docSnap.id}/redemptions/${auth.currentUser.uid}`); const redSnap = await getDoc(redRef); if(redSnap.exists()) throw "Already Used"; const batch = writeBatch(db); batch.update(docSnap.ref, { used: increment(1) }); batch.set(redRef, { redeemedAt: serverTimestamp() }); batch.update(doc(db, "users", auth.currentUser.uid), { balance: increment(data.bonus) }); batch.set(doc(collection(db, "notifications")), { targetUid: auth.currentUser.uid, title: "Redeemed", body: `You got ${data.bonus} TK`, createdAt: serverTimestamp(), read: false }); await batch.commit(); showToast("Success!"); } catch(e) { showToast(e.message || e); } }
