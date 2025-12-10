@@ -54,21 +54,19 @@
         .wheel-container { position: relative; width: 280px; height: 280px; margin: 0 auto; max-width: 100%; }
         #auth-container { background: #0f172a; } .profile-img-container { width: 100px; height: 100px; margin: 0 auto 15px; position: relative; } .profile-pic { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; border: 2px solid var(--primary); padding: 2px; background: #1e293b; }
         
-        /* ✅ SIMPLE & CLEAN LOADING SCREEN (FIXED) */
+        /* ✅ PROFESSIONAL LOADING SCREEN (UPDATED) */
         #loading-overlay { 
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
             background: #0f172a; z-index: 9999; 
             display: flex; flex-direction: column; align-items: center; justify-content: center; 
             transition: opacity 0.5s ease-out;
         }
-        .loader-box { 
-            width: 40px; height: 40px; 
-            border: 3px solid rgba(6, 182, 212, 0.3); 
-            border-top-color: var(--primary); 
-            border-radius: 50%; 
-            animation: spin 0.8s linear infinite; 
-        }
-        @keyframes spin { to { transform: rotate(360deg); } }
+        .loader-logo-wrap { position: relative; width: 80px; height: 80px; margin-bottom: 20px; }
+        .loader-logo-img { width: 100%; height: 100%; object-fit: contain; animation: logoPulse 2s infinite ease-in-out; }
+        .loader-bar-bg { width: 160px; height: 4px; background: rgba(255,255,255,0.1); border-radius: 2px; overflow: hidden; }
+        .loader-bar-fill { height: 100%; background: var(--primary); width: 0%; animation: loadProgress 2s ease-in-out infinite; }
+        @keyframes logoPulse { 0% { transform: scale(1); filter: drop-shadow(0 0 5px rgba(6, 182, 212, 0.3)); } 50% { transform: scale(1.1); filter: drop-shadow(0 0 15px rgba(6, 182, 212, 0.6)); } 100% { transform: scale(1); filter: drop-shadow(0 0 5px rgba(6, 182, 212, 0.3)); } }
+        @keyframes loadProgress { 0% { width: 0%; transform: translateX(-100%); } 50% { width: 100%; transform: translateX(0); } 100% { width: 0%; transform: translateX(100%); } }
 
         /* ✅ PWA NOTIFICATION BANNER */
         #notification-banner {
@@ -114,10 +112,14 @@
         <div class="install-footer">Secure & Verified • Version 2.1</div>
     </div>
 
-    <!-- ✅ SIMPLE LOADING SCREEN -->
+    <!-- ✅ PROFESSIONAL LOADING SCREEN -->
     <div id="loading-overlay">
-        <div class="loader-box"></div>
-        <p style="margin-top:15px;color:var(--text-muted);font-size:0.8rem;letter-spacing:1px;">SYSTEM LOADING...</p>
+        <div class="loader-logo-wrap">
+            <img src="https://cdn-icons-png.flaticon.com/512/3233/3233483.png" class="loader-logo-img">
+        </div>
+        <div class="loader-bar-bg">
+            <div class="loader-bar-fill"></div>
+        </div>
     </div>
 
     <div id="toast-box"><i class="fas fa-info-circle" style="color:var(--primary)"></i> <span id="toast-msg"></span></div>
@@ -514,9 +516,7 @@
         import { getMessaging, getToken, onMessage } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-messaging.js";
 
         const firebaseConfig = { apiKey: "AIzaSyAafXkJwyZ5F7Xuax0VktZ9cpqWD4oCvxU", authDomain: "tournament-97743.firebaseapp.com", projectId: "tournament-97743", messagingSenderId: "584797187828", appId: "1:584797187828:web:4c643f83dfd9b700adb8a1" };
-        const app = initializeApp(firebaseConfig); 
-        const auth = getAuth(app); 
-        const db = getFirestore(app);
+        const app = initializeApp(firebaseConfig); const auth = getAuth(app); const db = getFirestore(app);
         
         // Initialize Messaging
         const messaging = getMessaging(app);
@@ -582,8 +582,6 @@
                 document.getElementById('install-view').classList.remove('hidden');
                 document.getElementById('auth-container').classList.add('hidden');
                 document.getElementById('app-container').classList.add('hidden');
-                
-                // ✅ FIX: Force hide loader in browser mode immediately
                 document.getElementById('loading-overlay').style.display = 'none';
             }
             history.pushState({page: 'home'}, '', ''); 
@@ -626,19 +624,14 @@
         let swRegistration = null;
 
         if ('serviceWorker' in navigator) {
-            // ✅ FIX: Use ./ to prevent path errors on GitHub Pages
-            try {
-                navigator.serviceWorker.register('./firebase-messaging-sw.js')
-                    .then((reg) => {
-                        console.log('✅ Service Worker Registered:', reg);
-                        swRegistration = reg;
-                    })
-                    .catch((err) => {
-                        console.log('❌ Service Worker Failed', err);
-                    });
-            } catch (e) {
-                console.log('SW Registration Exception:', e);
-            }
+            navigator.serviceWorker.register('firebase-messaging-sw.js')
+                .then((reg) => {
+                    console.log('✅ Service Worker Registered:', reg);
+                    swRegistration = reg;
+                })
+                .catch((err) => {
+                    console.log('❌ Service Worker Failed', err);
+                });
         }
 
         // 2. CHECK & SHOW BANNER (Modified: No Token Alert, Sticky Logic)
@@ -675,18 +668,17 @@
         async function generateToken(uid) {
             try {
                 // ✅ KEY FIX: Wait for Service Worker to be ready
-                if ('serviceWorker' in navigator) {
-                    const registration = await navigator.serviceWorker.ready;
-                    const currentToken = await getToken(messaging, { 
-                        vapidKey: 'BKVqRDof4xyE2oZWEvMO3CSEsCQ9QPkbiT59bnJHQLWJ0ngm5I1pirwwTsNQ94AVR3fuWNeV6WPwhi5f5hsUFyQ',
-                        serviceWorkerRegistration: registration
-                    });
+                const registration = await navigator.serviceWorker.ready;
 
-                    if (currentToken) {
-                        console.log('✅ FCM Token Generated (Silent Save)');
-                        // Only save to DB, NO ALERT
-                        await setDoc(doc(db, "users", uid), { fcmToken: currentToken }, { merge: true });
-                    }
+                const currentToken = await getToken(messaging, { 
+                    vapidKey: 'BKVqRDof4xyE2oZWEvMO3CSEsCQ9QPkbiT59bnJHQLWJ0ngm5I1pirwwTsNQ94AVR3fuWNeV6WPwhi5f5hsUFyQ',
+                    serviceWorkerRegistration: registration
+                });
+
+                if (currentToken) {
+                    console.log('✅ FCM Token Generated (Silent Save)');
+                    // Only save to DB, NO ALERT
+                    await setDoc(doc(db, "users", uid), { fcmToken: currentToken }, { merge: true });
                 }
             } catch (err) {
                 console.log('Token generation failed: ', err);
@@ -700,7 +692,7 @@
         // 5. LOCAL SYSTEM NOTIFICATION (MIRROR EFFECT)
         // This triggers a local notification if the app is open/backgrounded when DB updates
         function sendSystemNotification(title, body) {
-            if (Notification.permission === "granted" && 'serviceWorker' in navigator) {
+            if (Notification.permission === "granted") {
                 navigator.serviceWorker.ready.then(registration => {
                     registration.showNotification(title, {
                         body: body,
@@ -1010,7 +1002,7 @@
                                 const tm = tmSnap.data(); 
                                 const myMem = tm.members.find(mem => mem.uid === uid);
                                 if(myMem) myGameUid = myMem.gameUid;
-                                extra = `<div style="background:rgba(255,255,255,0.05);padding:10px;border-radius:8px;margin-top:10px;font-size:0.9rem;">${m.role==='leader'?`<div style="background:rgba(245, 158, 11, 0.1);color:#fbbf24;padding:5px;text-align:center;border:1px dashed #fbbf24;margin-bottom:5px;border-radius:6px;">CODE: ${tm.joinCode}</div>`:''}<div>${tm.members.map(x=>`<div>${x.name} ${x.role==='leader'?'(L)':''}</div>`).join('')}</div>${m.role!=='leader'?`<button class="btn btn-danger" style="margin-top:5px;padding:5px;font-size:0.8rem" onclick="leave('${m.tourneyId}','${m.teamId}')">Leave</button>`:''}</div>`; 
+                                extra = `<div style="background:rgba(255,255,255,0.05);padding:10px;border-radius:8px;margin-top:10px;font-size:0.9rem;">${m.role==='leader'?`<div style="background:rgba(255,204,0,0.1);color:#fbbf24;padding:5px;text-align:center;border:1px dashed #fbbf24;margin-bottom:5px;border-radius:6px;">CODE: ${tm.joinCode}</div>`:''}<div>${tm.members.map(x=>`<div>${x.name} ${x.role==='leader'?'(L)':''}</div>`).join('')}</div>${m.role!=='leader'?`<button class="btn btn-danger" style="margin-top:5px;padding:5px;font-size:0.8rem" onclick="leave('${m.tourneyId}','${m.teamId}')">Leave</button>`:''}</div>`; 
                             } 
                         } else {
                             const pSnap = await getDoc(doc(db, `tournaments/${m.tourneyId}/participants/${uid}`));
