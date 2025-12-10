@@ -15,11 +15,23 @@
     <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&family=Rajdhani:wght@500;600;700&family=Outfit:wght@300;400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-    <!-- 🟢 1. VIEW CONTROLLER (Runs Instantly to prevent White Screen) -->
+    <!-- 🟢 1. CRITICAL: INSTALL LOGIC (Must run first) -->
     <script>
+        // Global variable to store the install event
         window.deferredPrompt = null;
 
-        // 1. Register SW Immediately
+        // Capture the event immediately when browser fires it
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault(); // Prevent Chrome's mini-infobar
+            window.deferredPrompt = e; // Stash the event
+            console.log("✅ Install Prompt Captured (Global)");
+            
+            // Visual cue (optional)
+            const btn = document.getElementById('btn-install-app');
+            if(btn) btn.classList.add('ready');
+        });
+
+        // Register Service Worker (Required for Install Popup)
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('./service-worker.js')
@@ -27,44 +39,31 @@
                     .catch(err => console.log('❌ SW Fail', err));
             });
         }
-
-        // 2. Capture Install Prompt (Global)
-        window.addEventListener('beforeinstallprompt', (e) => {
-            e.preventDefault();
-            window.deferredPrompt = e;
-            console.log("✅ Install Prompt Captured");
-        });
-
-        // 3. Inject CSS based on Mode (Prevents Flash/Stuck Loading)
-        (function() {
-            const isPwa = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
-            if (isPwa) {
-                // APP MODE: Hide Install Page, Show Loader
-                document.write('<style>#install-view { display: none !important; } #loading-overlay { display: flex !important; }</style>');
-            } else {
-                // BROWSER MODE: Show Install Page, Hide Loader (Force Hide)
-                document.write('<style>#install-view { display: flex !important; } #loading-overlay { display: none !important; }</style>');
-            }
-        })();
     </script>
 
     <style>
-        /* --- PROFESSIONAL THEME VARIABLES --- */
+        /* --- THEME --- */
         :root { --bg-dark: #0f172a; --bg-card: #1e293b; --primary: #06b6d4; --primary-glow: rgba(6, 182, 212, 0.4); --secondary: #6366f1; --accent: #ec4899; --success: #10b981; --warning: #f59e0b; --danger: #ef4444; --glass-bg: rgba(30, 41, 59, 0.7); --glass-border: rgba(255, 255, 255, 0.08); --text-main: #f8fafc; --text-muted: #94a3b8; --font-main: 'Outfit', sans-serif; --font-bn: 'Hind Siliguri', sans-serif; --font-gaming: 'Rajdhani', sans-serif; }
         * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; outline: none; user-select: none; }
         body { background-color: var(--bg-dark); background-image: radial-gradient(circle at 10% 20%, rgba(6, 182, 212, 0.08) 0%, transparent 40%), radial-gradient(circle at 90% 80%, rgba(99, 102, 241, 0.08) 0%, transparent 40%); background-attachment: fixed; color: var(--text-main); font-family: var(--font-bn); min-height: 100vh; overflow-x: hidden; padding-bottom: 30px; }
         .hidden { display: none !important; }
         ::-webkit-scrollbar { width: 4px; } ::-webkit-scrollbar-track { background: transparent; } ::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 4px; }
-        .btn { width: 100%; padding: 14px; border: none; border-radius: 10px; cursor: pointer; font-weight: 600; font-size: 0.95rem; letter-spacing: 0.5px; display: flex; align-items: center; justify-content: center; gap: 8px; transition: transform 0.1s, opacity 0.2s; font-family: var(--font-bn); } .btn:active { transform: scale(0.98); }
+        
+        /* UI Elements */
+        .btn { width: 100%; padding: 14px; border: none; border-radius: 10px; cursor: pointer; font-weight: 600; font-size: 0.95rem; display: flex; align-items: center; justify-content: center; gap: 8px; font-family: var(--font-bn); transition: 0.2s; } .btn:active { transform: scale(0.98); }
         .btn-primary { background: linear-gradient(135deg, var(--primary), var(--secondary)); color: #fff; box-shadow: 0 4px 15px var(--primary-glow); }
-        .btn-secondary { background: rgba(255, 255, 255, 0.05); color: var(--text-main); border: 1px solid var(--glass-border); } .btn-secondary:hover { background: rgba(255, 255, 255, 0.1); }
-        .btn-success { background: var(--success); color: #fff; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3); } .btn-danger { background: var(--danger); color: #fff; box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3); }
+        .btn-secondary { background: rgba(255, 255, 255, 0.05); color: var(--text-main); border: 1px solid var(--glass-border); }
+        .btn-success { background: var(--success); color: #fff; } .btn-danger { background: var(--danger); color: #fff; }
         .input-group { position: relative; margin-bottom: 15px; } .input-group i { position: absolute; top: 50%; left: 16px; transform: translateY(-50%); color: var(--primary); font-size: 1.1rem; z-index: 2; } .input-group input { width: 100%; padding: 14px 14px 14px 45px; background: rgba(15, 23, 42, 0.6); border: 1px solid var(--glass-border); border-radius: 12px; color: #fff; font-size: 1rem; transition: border-color 0.3s; font-family: var(--font-bn); } .input-group input:focus { border-color: var(--primary); background: rgba(15, 23, 42, 0.9); }
-        header { background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); padding: 0 16px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; border-bottom: 1px solid var(--glass-border); height: 65px; box-shadow: 0 4px 20px rgba(0,0,0,0.2); }
+        
+        /* Layouts */
+        header { background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(15px); padding: 0 16px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; border-bottom: 1px solid var(--glass-border); height: 65px; box-shadow: 0 4px 20px rgba(0,0,0,0.2); }
         .header-left { display: flex; align-items: center; gap: 15px; } .logo { font-family: var(--font-gaming); font-size: 1.5rem; font-weight: 700; color: #fff; letter-spacing: 1px; } .logo span { color: var(--primary); }
         .header-right { display: flex; align-items: center; gap: 12px; }
         .nav-balance { background: rgba(6, 182, 212, 0.1); border: 1px solid rgba(6, 182, 212, 0.3); padding: 6px 14px; border-radius: 50px; display: flex; align-items: center; gap: 8px; cursor: pointer; } .nav-balance span { font-family: var(--font-gaming); font-weight: 700; color: var(--primary); font-size: 1.05rem; } .nav-balance i { color: var(--primary); font-size: 0.9rem; }
         .notif-icon-box { position: relative; width: 38px; height: 38px; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.05); border-radius: 10px; cursor: pointer; border: 1px solid var(--glass-border); } .notification-dot { position: absolute; top: 8px; right: 8px; width: 8px; height: 8px; background: var(--danger); border-radius: 50%; display: none; }
+        
+        /* Drawer */
         .drawer-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); backdrop-filter: blur(4px); z-index: 998; display: none; } .drawer { position: fixed; top: 0; left: 0; width: 280px; height: 100%; background: #0f172a; z-index: 999; transform: translateX(-100%); transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); border-right: 1px solid var(--glass-border); display: flex; flex-direction: column; box-shadow: 10px 0 40px rgba(0,0,0,0.5); } .drawer.open { transform: translateX(0); }
         .drawer-header { padding: 25px 20px; background: linear-gradient(to bottom, #1e293b, #0f172a); border-bottom: 1px solid var(--glass-border); display: flex; align-items: center; gap: 15px; flex-shrink: 0; } .d-user-img { width: 50px; height: 50px; border-radius: 50%; object-fit: cover; border: 2px solid var(--primary); background: #1e293b; } .d-user-info h3 { color: #fff; font-size: 1.1rem; margin: 0; font-family: var(--font-gaming); letter-spacing: 0.5px; } .d-user-info span { color: var(--text-muted); font-size: 0.8rem; font-family: monospace; background: rgba(255,255,255,0.05); padding: 2px 6px; border-radius: 4px; }
         .drawer-items { padding: 15px 15px 80px 15px; flex: 1; overflow-y: auto; background: linear-gradient(#0f172a 30%, rgba(15,23,42,0)), linear-gradient(rgba(15,23,42,0), #0f172a 70%) 0 100%, radial-gradient(farthest-side at 50% 0, rgba(0,0,0,.4), rgba(0,0,0,0)), radial-gradient(farthest-side at 50% 100%, rgba(0,0,0,.4), rgba(0,0,0,0)) 0 100%; background-repeat: no-repeat; background-size: 100% 40px, 100% 40px, 100% 14px, 100% 14px; background-attachment: local, local, scroll, scroll; }
@@ -87,24 +86,24 @@
         .wheel-container { position: relative; width: 280px; height: 280px; margin: 0 auto; max-width: 100%; }
         #auth-container { background: #0f172a; } .profile-img-container { width: 100px; height: 100px; margin: 0 auto 15px; position: relative; } .profile-pic { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; border: 2px solid var(--primary); padding: 2px; background: #1e293b; }
         
-        /* ✅ CYBERPUNK RADAR LOADER */
-        #loading-overlay { 
-            /* Visibility controlled by top script */
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
-            background: #0f172a; z-index: 9999; 
-            display: flex; flex-direction: column; align-items: center; justify-content: center; 
-        }
-        .loader-radar { width: 80px; height: 80px; border-radius: 50%; border: 2px solid rgba(6, 182, 212, 0.2); position: relative; box-shadow: 0 0 20px rgba(6, 182, 212, 0.2); }
-        .loader-radar::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; border-radius: 50%; border-top: 3px solid var(--primary); border-right: 3px solid transparent; animation: radar-spin 1.5s linear infinite; }
-        .loader-radar::after { content: ''; position: absolute; top: 20%; left: 20%; width: 60%; height: 60%; border-radius: 50%; background: var(--primary); opacity: 0.2; animation: radar-pulse 1.5s infinite ease-out; }
-        .loader-text { margin-top: 25px; font-family: var(--font-gaming); color: var(--primary); font-size: 1.3rem; letter-spacing: 2px; font-weight: 700; animation: text-flicker 2s infinite; }
-        @keyframes radar-spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        @keyframes radar-pulse { 0% { transform: scale(0.8); opacity: 0.5; } 100% { transform: scale(1.5); opacity: 0; } }
-        @keyframes text-flicker { 0%, 100% { opacity: 1; } 50% { opacity: 0.7; } }
+        /* ✅ OLD SIMPLE LOADING SCREEN (RESTORED) */
+        #loading-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #0f172a; z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: opacity 0.5s ease-out; }
+        .loader-box { width: 50px; height: 50px; border: 3px solid rgba(6, 182, 212, 0.2); border-top-color: var(--primary); border-radius: 50%; animation: spin 0.8s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
 
-        /* ✅ INSTALL VIEW STYLES */
+        /* ✅ PWA NOTIFICATION BANNER */
+        #notification-banner {
+            display: none; position: fixed; bottom: 0; left: 0; width: 100%;
+            background: rgba(30, 41, 59, 0.95); border-top: 1px solid var(--primary);
+            padding: 15px; z-index: 9999; text-align: center;
+            backdrop-filter: blur(10px); box-shadow: 0 -5px 20px rgba(0,0,0,0.5);
+            animation: slideUp 0.5s ease-out;
+        }
+        @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+        .notif-text { color: #fff; margin-bottom: 10px; font-size: 0.9rem; font-weight: bold; }
+
+        /* ✅ DOWNLOAD SITE STYLES (BROWSER MODE) */
         #install-view { 
-            /* Visibility controlled by top script */
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
             background: #0f172a; z-index: 10001; 
             display: flex; flex-direction: column; justify-content: center; align-items: center; 
@@ -112,8 +111,8 @@
             background-image: radial-gradient(circle at 50% 50%, rgba(6, 182, 212, 0.15) 0%, transparent 60%);
         }
         .install-logo { width: 100px; height: 100px; border-radius: 20px; margin-bottom: 20px; box-shadow: 0 10px 30px rgba(6, 182, 212, 0.3); }
-        .install-title { font-family: var(--font-gaming); font-size: 2.5rem; font-weight: 800; color: #fff; margin-bottom: 10px; }
-        .install-desc { color: var(--text-muted); font-size: 1rem; margin-bottom: 30px; max-width: 300px; line-height: 1.5; font-family: var(--font-bn); }
+        .install-title { font-family: var(--font-gaming); font-size: 2.5rem; font-weight: 800; color: #fff; margin-bottom: 10px; letter-spacing: 2px; }
+        .install-desc { color: var(--text-muted); font-size: 1rem; margin-bottom: 30px; max-width: 320px; line-height: 1.6; font-family: var(--font-bn); }
         .btn-install { 
             background: linear-gradient(135deg, var(--primary), var(--secondary)); color: #fff; font-weight: 800; 
             padding: 16px 40px; border-radius: 50px; font-size: 1.1rem; 
@@ -123,61 +122,24 @@
         }
         @keyframes pulseBtn { 0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(6, 182, 212, 0.7); } 70% { transform: scale(1.05); box-shadow: 0 0 0 15px rgba(6, 182, 212, 0); } 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(6, 182, 212, 0); } }
         .install-footer { position: absolute; bottom: 30px; color: var(--text-muted); font-size: 0.8rem; opacity: 0.7; }
-
-        /* Notification Banner */
-        #notification-banner { display: none; position: fixed; bottom: 0; left: 0; width: 100%; background: rgba(30, 41, 59, 0.95); border-top: 1px solid var(--primary); padding: 15px; z-index: 9999; text-align: center; backdrop-filter: blur(10px); box-shadow: 0 -5px 20px rgba(0,0,0,0.5); animation: slideUp 0.5s ease-out; }
-        @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } } .notif-text { color: #fff; margin-bottom: 10px; font-size: 0.9rem; font-weight: bold; }
     </style>
 </head>
 <body>
     
-    <!-- ✅ INSTALL PAGE -->
-    <div id="install-view">
+    <!-- ✅ DOWNLOAD APP / LANDING PAGE VIEW (Default Hidden, Shown by Logic) -->
+    <div id="install-view" class="hidden">
         <img src="https://cdn-icons-png.flaticon.com/512/3233/3233483.png" class="install-logo">
         <div class="install-title">G-ZONE</div>
         <p class="install-desc">G-ZONE ইস্পোর্টস এ আপনাকে স্বাগতম! ফ্রি ফায়ার টুর্নামেন্ট খেলে টাকা ইনকাম করতে আমাদের অ্যাপটি ইন্সটল করুন।</p>
         <button id="btn-install-app" class="btn-install"><i class="fas fa-download"></i> INSTALL APP</button>
-        <div class="install-footer">Secure & Verified • Version 2.3</div>
+        <div class="install-footer">Secure & Verified • Version 2.4</div>
     </div>
 
-    <!-- ✅ LOADING SCREEN -->
+    <!-- ✅ LOADING SCREEN (RESTORED OLD SIMPLE LOADER) -->
     <div id="loading-overlay">
-        <div class="loader-radar"></div>
-        <div class="loader-text">SYSTEM LOADING...</div>
+        <div class="loader-box"></div>
+        <p style="margin-top:15px;color:var(--text-muted);font-size:0.8rem;letter-spacing:1px;">SYSTEM LOADING...</p>
     </div>
-
-    <!-- 🟢 2. FAIL-SAFE SCRIPT (Bottom of Body) -->
-    <!-- Ensures install button works and loading screen doesn't get stuck -->
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            
-            // Fail-Safe: Force Hide Loader after 5 seconds if not PWA
-            setTimeout(() => {
-                const isPwa = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
-                if(!isPwa) {
-                    const loader = document.getElementById('loading-overlay');
-                    if(loader) loader.style.display = 'none';
-                }
-            }, 5000);
-
-            // Install Button Logic
-            const installBtn = document.getElementById('btn-install-app');
-            if (installBtn) {
-                installBtn.addEventListener('click', async () => {
-                    // Check Global Variable from the top script
-                    if (window.deferredPrompt) {
-                        window.deferredPrompt.prompt();
-                        const { outcome } = await window.deferredPrompt.userChoice;
-                        console.log(`User response: ${outcome}`);
-                        window.deferredPrompt = null;
-                    } else {
-                        // Fallback only if prompt not captured (iOS/Desktop/Restricted Envs)
-                        alert("To install: Tap the Share button (Safari) or Menu (Chrome) and select 'Add to Home Screen'.");
-                    }
-                });
-            }
-        });
-    </script>
 
     <div id="toast-box"><i class="fas fa-info-circle" style="color:var(--primary)"></i> <span id="toast-msg"></span></div>
 
@@ -563,6 +525,59 @@
         </div>
     </div>
 
+    <!-- 🟢 2. FAIL-SAFE / VIEW CONTROLLER (Runs at bottom of body) -->
+    <script>
+        (function() {
+            const isPwa = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+            
+            const loader = document.getElementById('loading-overlay');
+            const installView = document.getElementById('install-view');
+            const authContainer = document.getElementById('auth-container');
+            const appContainer = document.getElementById('app-container');
+
+            // --- INSTANT VISUAL LOGIC ---
+            if (!isPwa) {
+                // BROWSER MODE: Force Install Page
+                if(loader) loader.style.display = 'none';
+                if(installView) installView.classList.remove('hidden');
+                if(authContainer) authContainer.classList.add('hidden');
+                if(appContainer) appContainer.classList.add('hidden');
+            } else {
+                // APP MODE: Force Loading Screen
+                if(installView) installView.classList.add('hidden');
+                if(loader) loader.style.display = 'flex';
+                
+                // 🟢 STUCK LOADING FIX: Force hide loader after 5 seconds if logic hangs
+                setTimeout(() => {
+                    const authVisible = !authContainer.classList.contains('hidden');
+                    const appVisible = !appContainer.classList.contains('hidden');
+                    // If neither main screen is visible, force show Auth (assuming user not logged in)
+                    if (!authVisible && !appVisible) {
+                        console.log("Loader stuck protection: Forcing Auth Screen");
+                        loader.style.display = 'none';
+                        authContainer.classList.remove('hidden');
+                    }
+                }, 5000);
+            }
+
+            // Bind Install Button (With Global Event)
+            const installBtn = document.getElementById('btn-install-app');
+            if (installBtn) {
+                installBtn.addEventListener('click', async () => {
+                    if (window.deferredPrompt) {
+                        window.deferredPrompt.prompt();
+                        const { outcome } = await window.deferredPrompt.userChoice;
+                        console.log('User response:', outcome);
+                        window.deferredPrompt = null;
+                    } else {
+                        // Fallback for incompatible browsers
+                        alert("To install: Tap 'Share' (iPhone) or 'Menu' (Android) -> 'Add to Home Screen'");
+                    }
+                });
+            }
+        })();
+    </script>
+
     <!-- JS LOGIC -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
@@ -605,15 +620,13 @@
         let lastBackPress = 0;
         let minW = 50; let maxW = 10000;
         let currentHomeTab = 'BR';
-        let deferredPrompt; 
 
         window.showToast = (msg) => { const t = document.getElementById('toast-box'); if(t) { t.innerHTML = `<i class="fas fa-info-circle"></i> ${msg}`; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 3000); } else { alert(msg); } };
         
-        // OPTIMIZED NAV: Clears Interval on page change to prevent lag
+        // OPTIMIZED NAV
         window.nav = (pid) => { 
             if(sliderInterval && pid !== 'page-home') { clearInterval(sliderInterval); sliderInterval = null; }
             if(pid === 'page-home' && !sliderInterval) loadHomeData(); 
-
             document.querySelectorAll('.page-section').forEach(e => e.classList.remove('active')); 
             const target = document.getElementById(pid); 
             if(target) target.classList.add('active'); 
@@ -635,25 +648,20 @@
         window.addEventListener('popstate', (event) => { const activeSection = document.querySelector('.page-section.active'); if (activeSection && activeSection.id !== 'page-home') { nav('page-home'); } else { const now = new Date().getTime(); if (now - lastBackPress < 2000) { if(confirm("আপনি কি অ্যাপটি বন্ধ করতে চান?")) { history.back(); } else { history.pushState({page: 'home'}, '', '#home'); } } else { lastBackPress = now; showToast("বাহির হতে আবার ব্যাক চাপুন"); history.pushState({page: 'home'}, '', '#home'); } } });
 
         // ==========================================
-        // 🟢 PWA & SYSTEM NOTIFICATION LOGIC (NEW)
+        // 🟢 PWA & SYSTEM NOTIFICATION LOGIC (FIXED)
         // ==========================================
 
-        // 2. CHECK & SHOW BANNER (Modified: No Token Alert, Sticky Logic)
         function checkNotificationPermission(uid) {
             if ("Notification" in window) {
                 if (Notification.permission === "granted") {
-                    // Already granted, hide banner
                     document.getElementById('notification-banner').style.display = 'none';
-                    // Generate token silently in background - WAIT for SW first
                     generateToken(uid);
                 } else {
-                    // Denied or Default -> SHOW BANNER ALWAYS inside Dashboard
                     document.getElementById('notification-banner').style.display = 'block';
                 }
             }
         }
 
-        // 3. ENABLE BUTTON CLICK HANDLER
         window.enableNotifications = async () => {
             const permission = await Notification.requestPermission();
             if (permission === 'granted') {
@@ -663,38 +671,33 @@
                     generateToken(auth.currentUser.uid);
                 }
             } else {
-                // If denied, they need to change settings manually
                 alert("Permission Denied. Please enable notifications in your browser settings.");
             }
         };
 
-        // 4. GENERATE & SAVE TOKEN (SILENT)
         async function generateToken(uid) {
             try {
-                // ✅ KEY FIX: Wait for Service Worker to be ready
-                const registration = await navigator.serviceWorker.ready;
+                if ('serviceWorker' in navigator) {
+                    const registration = await navigator.serviceWorker.ready;
+                    const currentToken = await getToken(messaging, { 
+                        // ✅ CORRECT VAPID KEY
+                        vapidKey: 'BKVqRDof4xyE2oZWEvMO3CSEsCQ9QPkbiT59bnJHQLWJ0ngm5I1pirwwTsNQ94AVR3fuWNeV6WPwhi5f5hsUFyQ',
+                        serviceWorkerRegistration: registration
+                    });
 
-                const currentToken = await getToken(messaging, { 
-                    vapidKey: 'BKVqRDof4xyE2oZWEvMO3CSEsCQ9QPkbiT59bnJHQLWJ0ngm5I1pirwwTsNQ94AVR3fuWNeV6WPwhi5f5hsUFyQ',
-                    serviceWorkerRegistration: registration
-                });
-
-                if (currentToken) {
-                    console.log('✅ FCM Token Generated (Silent Save)');
-                    // Only save to DB, NO ALERT
-                    await setDoc(doc(db, "users", uid), { fcmToken: currentToken }, { merge: true });
+                    if (currentToken) {
+                        console.log('✅ FCM Token Generated');
+                        await setDoc(doc(db, "users", uid), { fcmToken: currentToken }, { merge: true });
+                    }
                 }
             } catch (err) {
                 console.log('Token generation failed: ', err);
-                // Retry if registration failed initially
                 if(err.message && err.message.includes('registration')) {
                    setTimeout(() => generateToken(uid), 2000);
                 }
             }
         }
 
-        // 5. LOCAL SYSTEM NOTIFICATION (MIRROR EFFECT)
-        // This triggers a local notification if the app is open/backgrounded when DB updates
         function sendSystemNotification(title, body) {
             if (Notification.permission === "granted" && 'serviceWorker' in navigator) {
                 navigator.serviceWorker.ready.then(registration => {
@@ -710,7 +713,6 @@
         
         const sessionStartTime = Date.now();
 
-
         // --- MAIN APP LOGIC START ---
 
         onAuthStateChanged(auth, async (user) => {
@@ -722,11 +724,7 @@
 
             if(user) {
                 if (window.AppInventor) { window.AppInventor.setWebViewString(user.uid); }
-                
-                // ✅ CHECK PERMISSION ON DASHBOARD LOAD
                 checkNotificationPermission(user.uid);
-                
-                // ✅ LISTEN FOR IN-APP NOTIFICATIONS & MIRROR TO SYSTEM
                 loadNotifications(user.uid);
 
                 onSnapshot(doc(db,"users",user.uid), async d => {
@@ -734,7 +732,6 @@
                         currentUserData = d.data();
                         if(currentUserData.isBlocked) { alert("Blocked by Admin"); signOut(auth); return; }
                         
-                        // --- RANDOM AVATAR ---
                         if(!currentUserData.photoURL) {
                             const rand = defaultAvatars[Math.floor(Math.random() * defaultAvatars.length)];
                             await setDoc(doc(db, "users", user.uid), { photoURL: rand }, { merge: true });
@@ -751,12 +748,10 @@
                              await setDoc(doc(db, "users", user.uid), { customId: newId }, { merge: true }); return; 
                         }
                         
-                        // -- HEADER UPDATES --
                         const balEl = document.getElementById('header-bal'); if(balEl) balEl.innerText = currentUserData.balance || 0;
                         const nameEl = document.getElementById('p-name'); if(nameEl) nameEl.innerText = currentUserData.fullName || currentUserData.username || "Gamer";
                         const idEl = document.getElementById('p-custom-id'); if(idEl) idEl.innerText = currentUserData.customId;
                         
-                        // -- DRAWER HEADER UPDATES --
                         const dName = document.getElementById('d-name'); if(dName) dName.innerText = currentUserData.fullName || "Gamer";
                         const dUid = document.getElementById('d-uid'); if(dUid) dUid.innerText = "ID: " + currentUserData.customId;
                         const dPic = document.getElementById('d-pic'); if(dPic) dPic.src = currentUserData.photoURL || "https://via.placeholder.com/100";
@@ -772,9 +767,14 @@
                     } else { await signOut(auth); window.location.reload(); }
                 });
                 loadHomeData(); 
-                // loadNotifications called above
                 window.loadPublicCoupons(); loadWithdrawHistory(user.uid); loadConfig(); loadBroadcasts(); loadBalanceLeaderboard(); loadReferralLeaderboard();
-            } else { document.getElementById('app-container').classList.add('hidden'); document.getElementById('auth-container').classList.remove('hidden'); document.getElementById('loading-overlay').style.display='none'; joinedMatchIds.clear(); }
+            } else { 
+                // NOT LOGGED IN
+                document.getElementById('app-container').classList.add('hidden'); 
+                document.getElementById('auth-container').classList.remove('hidden'); 
+                document.getElementById('loading-overlay').style.display='none'; 
+                joinedMatchIds.clear(); 
+            }
         });
         
         window.login=async()=>{try{await signInWithEmailAndPassword(auth, document.getElementById('l-email').value, document.getElementById('l-pass').value);}catch(e){showToast("Invalid Credentials")}};
@@ -788,7 +788,6 @@
                 const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
                 const myReferCode = Array(4).fill(0).map(()=>chars[Math.floor(Math.random()*chars.length)]).join('') + Math.floor(100 + Math.random() * 900);
                 
-                // --- RANDOM AVATAR SELECTION ---
                 const randomPic = defaultAvatars[Math.floor(Math.random() * defaultAvatars.length)];
 
                 let referrerUid = null;
