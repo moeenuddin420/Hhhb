@@ -15,36 +15,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&family=Rajdhani:wght@500;600;700&family=Outfit:wght@300;400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-    <!-- 🟢 CRITICAL: PWA INSTALL SCRIPT -->
-    <script>
-        // 1. Initialize Install Variable
-        window.deferredPrompt = null;
-
-        // 2. Register Service Worker IMMEDIATELY (Using your specific filename)
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                // ✅ UPDATED FILENAME HERE:
-                navigator.serviceWorker.register('./service-worker.js')
-                    .then(reg => console.log('✅ SW Registered:', reg.scope))
-                    .catch(err => console.log('❌ SW Fail:', err));
-            });
-        }
-
-        // 3. Capture the Browser Install Prompt
-        window.addEventListener('beforeinstallprompt', (e) => {
-            e.preventDefault(); // Prevent auto-hiding
-            window.deferredPrompt = e; // Save event
-            console.log("✅ Ready to Install!");
-            
-            // Visual Cue
-            const btn = document.getElementById('btn-install-app');
-            if(btn) {
-                btn.innerHTML = '<i class="fas fa-download"></i> INSTALL APP (Ready)';
-                btn.classList.add('ready');
-            }
-        });
-    </script>
-
     <style>
         /* --- PROFESSIONAL THEME VARIABLES --- */
         :root { --bg-dark: #0f172a; --bg-card: #1e293b; --primary: #06b6d4; --primary-glow: rgba(6, 182, 212, 0.4); --secondary: #6366f1; --accent: #ec4899; --success: #10b981; --warning: #f59e0b; --danger: #ef4444; --glass-bg: rgba(30, 41, 59, 0.7); --glass-border: rgba(255, 255, 255, 0.08); --text-main: #f8fafc; --text-muted: #94a3b8; --font-main: 'Outfit', sans-serif; --font-bn: 'Hind Siliguri', sans-serif; --font-gaming: 'Rajdhani', sans-serif; }
@@ -614,7 +584,7 @@
         let lastBackPress = 0;
         let minW = 50; let maxW = 10000;
         let currentHomeTab = 'BR';
-        // Removed local deferredPrompt let, using window.deferredPrompt
+        let deferredPrompt; 
 
         window.showToast = (msg) => { const t = document.getElementById('toast-box'); if(t) { t.innerHTML = `<i class="fas fa-info-circle"></i> ${msg}`; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 3000); } else { alert(msg); } };
         
@@ -658,18 +628,27 @@
         };
         initAppDisplay(); // Call immediately
 
-        // ✅ FIX 1: SAFE EVENT LISTENERS
+        // ✅ FIX 1: SAFE EVENT LISTENERS & LOCAL VARIABLE LOGIC
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            const isPwa = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+            if (!isPwa) {
+                document.getElementById('install-view').classList.remove('hidden');
+                document.getElementById('auth-container').classList.add('hidden');
+            }
+        });
+
         // Wait for DOM to be fully ready before attaching events
         document.addEventListener('DOMContentLoaded', () => {
             const installBtn = document.getElementById('btn-install-app');
             if (installBtn) {
                 installBtn.addEventListener('click', async () => {
-                    // Check Global Variable from the top script
-                    if (window.deferredPrompt) {
-                        window.deferredPrompt.prompt();
-                        const { outcome } = await window.deferredPrompt.userChoice;
-                        console.log(`User response: ${outcome}`);
-                        window.deferredPrompt = null;
+                    if (deferredPrompt) {
+                        deferredPrompt.prompt();
+                        const { outcome } = await deferredPrompt.userChoice;
+                        console.log(`User response to install prompt: ${outcome}`);
+                        deferredPrompt = null;
                     } else {
                         // Fallback only if prompt not captured (iOS/Desktop/Restricted Envs)
                         alert("To install: Tap the Share button (Safari) or Menu (Chrome) and select 'Add to Home Screen'.");
@@ -687,9 +666,22 @@
 
         let swRegistration = null;
 
-        // Note: SW registration for Notifications is separate or can be reused.
-        // We already registered in HEAD for Install Prompt, so here we just check ready.
-        
+        if ('serviceWorker' in navigator) {
+            // ✅ FILENAME FIXED HERE to service-worker.js
+            try {
+                navigator.serviceWorker.register('./service-worker.js')
+                    .then((reg) => {
+                        console.log('✅ Service Worker Registered:', reg);
+                        swRegistration = reg;
+                    })
+                    .catch((err) => {
+                        console.log('❌ Service Worker Failed', err);
+                    });
+            } catch (e) {
+                console.log('SW Registration Exception:', e);
+            }
+        }
+
         function checkNotificationPermission(uid) {
             if ("Notification" in window) {
                 if (Notification.permission === "granted") {
