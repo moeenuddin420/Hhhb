@@ -1,8 +1,8 @@
 // Service Worker for G-ZONE
-const CACHE_NAME = 'g-zone-v2'; // Bump version to force update
-const urlsToCache = ['./', './index.html'];
+const CACHE_NAME = 'g-zone-v3'; // Version bumped
+const urlsToCache = ['./', './index.html', './manifest.json'];
 
-// Import Firebase (Required for "Closed App" notifications from Console)
+// Import Firebase (Required for "Closed App" notifications)
 importScripts('https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js');
 importScripts('https://www.gstatic.com/firebasejs/10.7.1/firebase-messaging-compat.js');
 
@@ -20,25 +20,44 @@ try {
     
     messaging.onBackgroundMessage((payload) => {
       console.log('[SW] Background FCM:', payload);
-      return self.registration.showNotification(payload.notification.title, {
+      const notificationTitle = payload.notification.title;
+      const notificationOptions = {
         body: payload.notification.body,
         icon: 'https://cdn-icons-png.flaticon.com/512/3233/3233483.png',
         badge: 'https://cdn-icons-png.flaticon.com/512/3233/3233483.png',
         vibrate: [200, 100, 200]
-      });
+      };
+
+      return self.registration.showNotification(notificationTitle, notificationOptions);
     });
 } catch(e) {
     console.log("Firebase SW Error:", e);
 }
 
-// Standard PWA Install
+// 🟢 REQUIRED: Standard PWA Install Logic
 self.addEventListener('install', event => {
   self.skipWaiting(); // Force activate new SW immediately
-  event.waitUntil(caches.open(CACHE_NAME).then(cache => cache.addAll(urlsToCache)));
+  event.waitUntil(
+    caches.open(CACHE_NAME)
+      .then(cache => {
+        return cache.addAll(urlsToCache);
+      })
+  );
 });
 
 self.addEventListener('activate', event => {
-  event.waitUntil(self.clients.claim()); // Take control of all pages immediately
+  event.waitUntil(self.clients.claim()); // Take control immediately
+});
+
+// 🟢 CRITICAL FIX: The "Fetch" Handler
+// Without this specific block, the "Add to Home Screen" banner will NOT appear.
+self.addEventListener('fetch', function(event) {
+  // We can just return to let the network handle it, but the listener must exist.
+  event.respondWith(
+    fetch(event.request).catch(function() {
+      return caches.match(event.request);
+    })
+  );
 });
 
 // Handle Notification Click (Opens app)
@@ -46,12 +65,14 @@ self.addEventListener('notificationclick', function(event) {
   event.notification.close();
   event.waitUntil(
     clients.matchAll({type: 'window'}).then( windowClients => {
+      // If a window is already open, focus it
       for (var i = 0; i < windowClients.length; i++) {
         var client = windowClients[i];
         if (client.url === '/' && 'focus' in client) {
           return client.focus();
         }
       }
+      // Otherwise open a new window
       if (clients.openWindow) {
         return clients.openWindow('./index.html');
       }
