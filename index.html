@@ -15,17 +15,18 @@
     <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&family=Rajdhani:wght@500;600;700&family=Outfit:wght@300;400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-    <!-- 🟢 CRITICAL: PWA INSTALL & SW REGISTRATION (Must be at top) -->
+    <!-- 🟢 CRITICAL: PWA INSTALL SCRIPT -->
     <script>
         // 1. Initialize Install Variable
         window.deferredPrompt = null;
 
-        // 2. Register Service Worker IMMEDIATELY (Required for Install Prompt)
+        // 2. Register Service Worker IMMEDIATELY (Using your specific filename)
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
-                navigator.serviceWorker.register('./firebase-messaging-sw.js')
-                    .then(reg => console.log('✅ SW Registered for Install', reg))
-                    .catch(err => console.log('❌ SW Fail', err));
+                // ✅ UPDATED FILENAME HERE:
+                navigator.serviceWorker.register('./service-worker.js')
+                    .then(reg => console.log('✅ SW Registered:', reg.scope))
+                    .catch(err => console.log('❌ SW Fail:', err));
             });
         }
 
@@ -35,11 +36,11 @@
             window.deferredPrompt = e; // Save event
             console.log("✅ Ready to Install!");
             
-            // Optional: Visually indicate install is ready (e.g. pulse button)
+            // Visual Cue
             const btn = document.getElementById('btn-install-app');
             if(btn) {
-                btn.innerHTML = '<i class="fas fa-download"></i> INSTALL NOW';
-                btn.style.animation = "pulseBtn 1s infinite";
+                btn.innerHTML = '<i class="fas fa-download"></i> INSTALL APP (Ready)';
+                btn.classList.add('ready');
             }
         });
     </script>
@@ -164,7 +165,7 @@
         <div class="install-title">G-ZONE</div>
         <p class="install-desc">G-ZONE ইস্পোর্টস এ আপনাকে স্বাগতম! ফ্রি ফায়ার টুর্নামেন্ট খেলে টাকা ইনকাম করতে আমাদের অ্যাপটি ইন্সটল করুন।</p>
         <button id="btn-install-app" class="btn-install"><i class="fas fa-download"></i> INSTALL APP</button>
-        <div class="install-footer">Secure & Verified • Version 2.1</div>
+        <div class="install-footer">Secure & Verified • Version 2.2</div>
     </div>
 
     <!-- ✅ NEW LOADING SCREEN: Cyberpunk Radar -->
