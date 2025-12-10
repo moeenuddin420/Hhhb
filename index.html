@@ -15,6 +15,20 @@
     <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&family=Rajdhani:wght@500;600;700&family=Outfit:wght@300;400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
+    <!-- 🟢 CRITICAL PWA INSTALL SCRIPT (Must be before main script) -->
+    <script>
+        // Initialize global variable to capture the install event
+        window.deferredPrompt = null;
+        
+        window.addEventListener('beforeinstallprompt', (e) => {
+            // Prevent the mini-infobar from appearing on mobile
+            e.preventDefault();
+            // Stash the event so it can be triggered later.
+            window.deferredPrompt = e;
+            console.log("✅ Install Prompt Captured");
+        });
+    </script>
+
     <style>
         /* --- PROFESSIONAL THEME VARIABLES --- */
         :root { --bg-dark: #0f172a; --bg-card: #1e293b; --primary: #06b6d4; --primary-glow: rgba(6, 182, 212, 0.4); --secondary: #6366f1; --accent: #ec4899; --success: #10b981; --warning: #f59e0b; --danger: #ef4444; --glass-bg: rgba(30, 41, 59, 0.7); --glass-border: rgba(255, 255, 255, 0.08); --text-main: #f8fafc; --text-muted: #94a3b8; --font-main: 'Outfit', sans-serif; --font-bn: 'Hind Siliguri', sans-serif; --font-gaming: 'Rajdhani', sans-serif; }
@@ -54,21 +68,37 @@
         .wheel-container { position: relative; width: 280px; height: 280px; margin: 0 auto; max-width: 100%; }
         #auth-container { background: #0f172a; } .profile-img-container { width: 100px; height: 100px; margin: 0 auto 15px; position: relative; } .profile-pic { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; border: 2px solid var(--primary); padding: 2px; background: #1e293b; }
         
-        /* ✅ SIMPLE & CLEAN LOADING SCREEN (FIXED) */
+        /* ✅ NEW LOADING SCREEN DESIGN */
         #loading-overlay { 
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
             background: #0f172a; z-index: 9999; 
             display: flex; flex-direction: column; align-items: center; justify-content: center; 
             transition: opacity 0.5s ease-out;
         }
-        .loader-box { 
-            width: 40px; height: 40px; 
-            border: 3px solid rgba(6, 182, 212, 0.3); 
-            border-top-color: var(--primary); 
-            border-radius: 50%; 
-            animation: spin 0.8s linear infinite; 
+        /* Glowing Hexagon Loader */
+        .loader-hex {
+            width: 60px; height: 60px;
+            background-color: var(--primary);
+            -webkit-clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+            clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+            animation: pulse-hex 1.5s infinite ease-in-out;
+            box-shadow: 0 0 30px var(--primary-glow);
         }
-        @keyframes spin { to { transform: rotate(360deg); } }
+        .loader-text {
+            margin-top: 25px;
+            font-family: var(--font-gaming);
+            color: #fff;
+            font-size: 1.2rem;
+            letter-spacing: 3px;
+            text-shadow: 0 0 10px var(--primary);
+            animation: blink 2s infinite;
+        }
+        @keyframes pulse-hex {
+            0% { transform: scale(0.8); opacity: 0.5; }
+            50% { transform: scale(1.1); opacity: 1; }
+            100% { transform: scale(0.8); opacity: 0.5; }
+        }
+        @keyframes blink { 0%,100% { opacity: 1; } 50% { opacity: 0.5; } }
 
         /* ✅ PWA NOTIFICATION BANNER */
         #notification-banner {
@@ -114,26 +144,24 @@
         <div class="install-footer">Secure & Verified • Version 2.1</div>
     </div>
 
-    <!-- ✅ SIMPLE LOADING SCREEN -->
+    <!-- ✅ NEW LOADING SCREEN -->
     <div id="loading-overlay">
-        <div class="loader-box"></div>
-        <p style="margin-top:15px;color:var(--text-muted);font-size:0.8rem;letter-spacing:1px;">SYSTEM LOADING...</p>
+        <div class="loader-hex"></div>
+        <div class="loader-text">G-ZONE</div>
     </div>
 
     <!-- 🟢 FAIL-SAFE SCRIPT FOR LOADING SCREEN -->
-    <!-- This ensures the loader disappears even if JS errors occur -->
     <script>
         setTimeout(function() {
             var loader = document.getElementById('loading-overlay');
             var install = document.getElementById('install-view');
-            // Check if user is in browser mode, default to showing install page
             const isPwa = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
             if (loader && !isPwa) {
                 loader.style.opacity = '0';
                 setTimeout(() => loader.style.display = 'none', 500);
                 if(install) install.classList.remove('hidden');
             }
-        }, 3000); // Max wait time 3 seconds
+        }, 3000); 
     </script>
 
     <div id="toast-box"><i class="fas fa-info-circle" style="color:var(--primary)"></i> <span id="toast-msg"></span></div>
@@ -562,7 +590,7 @@
         let lastBackPress = 0;
         let minW = 50; let maxW = 10000;
         let currentHomeTab = 'BR';
-        let deferredPrompt; 
+        // Removed local deferredPrompt let, using window.deferredPrompt
 
         window.showToast = (msg) => { const t = document.getElementById('toast-box'); if(t) { t.innerHTML = `<i class="fas fa-info-circle"></i> ${msg}`; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 3000); } else { alert(msg); } };
         
@@ -612,29 +640,21 @@
             const installBtn = document.getElementById('btn-install-app');
             if (installBtn) {
                 installBtn.addEventListener('click', async () => {
-                    if (deferredPrompt) {
-                        deferredPrompt.prompt();
-                        const { outcome } = await deferredPrompt.userChoice;
-                        deferredPrompt = null;
+                    // Check Global Variable from the top script
+                    if (window.deferredPrompt) {
+                        window.deferredPrompt.prompt();
+                        const { outcome } = await window.deferredPrompt.userChoice;
+                        console.log(`User response: ${outcome}`);
+                        window.deferredPrompt = null;
                     } else {
-                        alert("To install: Tap Share -> Add to Home Screen");
+                        // Fallback only if prompt not captured (iOS/Desktop/Restricted Envs)
+                        alert("To install: Tap the Share button (Safari) or Menu (Chrome) and select 'Add to Home Screen'.");
                     }
                 });
             }
         });
 
         window.addEventListener('popstate', (event) => { const activeSection = document.querySelector('.page-section.active'); if (activeSection && activeSection.id !== 'page-home') { nav('page-home'); } else { const now = new Date().getTime(); if (now - lastBackPress < 2000) { if(confirm("আপনি কি অ্যাপটি বন্ধ করতে চান?")) { history.back(); } else { history.pushState({page: 'home'}, '', '#home'); } } else { lastBackPress = now; showToast("বাহির হতে আবার ব্যাক চাপুন"); history.pushState({page: 'home'}, '', '#home'); } } });
-
-        // --- PWA INSTALL LOGIC ---
-        window.addEventListener('beforeinstallprompt', (e) => {
-            e.preventDefault();
-            deferredPrompt = e;
-            const isPwa = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
-            if (!isPwa) {
-                document.getElementById('install-view').classList.remove('hidden');
-                document.getElementById('auth-container').classList.add('hidden');
-            }
-        });
 
 
         // ==========================================
