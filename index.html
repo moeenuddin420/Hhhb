@@ -15,17 +15,32 @@
     <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&family=Rajdhani:wght@500;600;700&family=Outfit:wght@300;400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-    <!-- 🟢 CRITICAL PWA INSTALL SCRIPT (Must be before main script) -->
+    <!-- 🟢 CRITICAL: PWA INSTALL & SW REGISTRATION (Must be at top) -->
     <script>
-        // Initialize global variable to capture the install event
+        // 1. Initialize Install Variable
         window.deferredPrompt = null;
-        
+
+        // 2. Register Service Worker IMMEDIATELY (Required for Install Prompt)
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./firebase-messaging-sw.js')
+                    .then(reg => console.log('✅ SW Registered for Install', reg))
+                    .catch(err => console.log('❌ SW Fail', err));
+            });
+        }
+
+        // 3. Capture the Browser Install Prompt
         window.addEventListener('beforeinstallprompt', (e) => {
-            // Prevent the mini-infobar from appearing on mobile
-            e.preventDefault();
-            // Stash the event so it can be triggered later.
-            window.deferredPrompt = e;
-            console.log("✅ Install Prompt Captured");
+            e.preventDefault(); // Prevent auto-hiding
+            window.deferredPrompt = e; // Save event
+            console.log("✅ Ready to Install!");
+            
+            // Optional: Visually indicate install is ready (e.g. pulse button)
+            const btn = document.getElementById('btn-install-app');
+            if(btn) {
+                btn.innerHTML = '<i class="fas fa-download"></i> INSTALL NOW';
+                btn.style.animation = "pulseBtn 1s infinite";
+            }
         });
     </script>
 
@@ -68,37 +83,45 @@
         .wheel-container { position: relative; width: 280px; height: 280px; margin: 0 auto; max-width: 100%; }
         #auth-container { background: #0f172a; } .profile-img-container { width: 100px; height: 100px; margin: 0 auto 15px; position: relative; } .profile-pic { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; border: 2px solid var(--primary); padding: 2px; background: #1e293b; }
         
-        /* ✅ NEW LOADING SCREEN DESIGN */
+        /* ✅ NEW LOADING SCREEN: Cyberpunk Radar */
         #loading-overlay { 
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
             background: #0f172a; z-index: 9999; 
             display: flex; flex-direction: column; align-items: center; justify-content: center; 
             transition: opacity 0.5s ease-out;
         }
-        /* Glowing Hexagon Loader */
-        .loader-hex {
-            width: 60px; height: 60px;
-            background-color: var(--primary);
-            -webkit-clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
-            clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
-            animation: pulse-hex 1.5s infinite ease-in-out;
-            box-shadow: 0 0 30px var(--primary-glow);
+        .loader-radar {
+            width: 80px; height: 80px;
+            border-radius: 50%;
+            border: 2px solid rgba(6, 182, 212, 0.2);
+            position: relative;
+            box-shadow: 0 0 20px rgba(6, 182, 212, 0.2);
+        }
+        .loader-radar::before {
+            content: ''; position: absolute; top: 0; left: 0;
+            width: 100%; height: 100%; border-radius: 50%;
+            border-top: 3px solid var(--primary);
+            border-right: 3px solid transparent;
+            animation: radar-spin 1.5s linear infinite;
+        }
+        .loader-radar::after {
+            content: ''; position: absolute; top: 20%; left: 20%;
+            width: 60%; height: 60%; border-radius: 50%;
+            background: var(--primary); opacity: 0.2;
+            animation: radar-pulse 1.5s infinite ease-out;
         }
         .loader-text {
             margin-top: 25px;
             font-family: var(--font-gaming);
-            color: #fff;
-            font-size: 1.2rem;
-            letter-spacing: 3px;
-            text-shadow: 0 0 10px var(--primary);
-            animation: blink 2s infinite;
+            color: var(--primary);
+            font-size: 1.3rem;
+            letter-spacing: 2px;
+            font-weight: 700;
+            animation: text-flicker 2s infinite;
         }
-        @keyframes pulse-hex {
-            0% { transform: scale(0.8); opacity: 0.5; }
-            50% { transform: scale(1.1); opacity: 1; }
-            100% { transform: scale(0.8); opacity: 0.5; }
-        }
-        @keyframes blink { 0%,100% { opacity: 1; } 50% { opacity: 0.5; } }
+        @keyframes radar-spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        @keyframes radar-pulse { 0% { transform: scale(0.8); opacity: 0.5; } 100% { transform: scale(1.5); opacity: 0; } }
+        @keyframes text-flicker { 0%, 100% { opacity: 1; } 50% { opacity: 0.7; } }
 
         /* ✅ PWA NOTIFICATION BANNER */
         #notification-banner {
@@ -144,10 +167,10 @@
         <div class="install-footer">Secure & Verified • Version 2.1</div>
     </div>
 
-    <!-- ✅ NEW LOADING SCREEN -->
+    <!-- ✅ NEW LOADING SCREEN: Cyberpunk Radar -->
     <div id="loading-overlay">
-        <div class="loader-hex"></div>
-        <div class="loader-text">G-ZONE</div>
+        <div class="loader-radar"></div>
+        <div class="loader-text">SYSTEM LOADING...</div>
     </div>
 
     <!-- 🟢 FAIL-SAFE SCRIPT FOR LOADING SCREEN -->
@@ -663,21 +686,9 @@
 
         let swRegistration = null;
 
-        if ('serviceWorker' in navigator) {
-            try {
-                navigator.serviceWorker.register('./firebase-messaging-sw.js')
-                    .then((reg) => {
-                        console.log('✅ Service Worker Registered:', reg);
-                        swRegistration = reg;
-                    })
-                    .catch((err) => {
-                        console.log('❌ Service Worker Failed', err);
-                    });
-            } catch (e) {
-                console.log('SW Registration Exception:', e);
-            }
-        }
-
+        // Note: SW registration for Notifications is separate or can be reused.
+        // We already registered in HEAD for Install Prompt, so here we just check ready.
+        
         function checkNotificationPermission(uid) {
             if ("Notification" in window) {
                 if (Notification.permission === "granted") {
