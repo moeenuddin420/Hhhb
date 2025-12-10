@@ -15,29 +15,99 @@
     <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&family=Rajdhani:wght@500;600;700&family=Outfit:wght@300;400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
+    <!-- 🟢 1. INSTANT DISPLAY LOGIC (Runs before anything else to prevent White Screen) -->
+    <script>
+        // Global Install Variable
+        window.deferredPrompt = null;
+
+        // Register Service Worker
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./service-worker.js')
+                    .then(reg => console.log('✅ SW Registered'))
+                    .catch(err => console.log('❌ SW Fail', err));
+            });
+        }
+
+        // Capture Install Prompt
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            window.deferredPrompt = e;
+            console.log("✅ Install Prompt Captured");
+            
+            // Pulse the button if it exists
+            const btn = document.getElementById('btn-install-app');
+            if(btn) btn.classList.add('ready');
+        });
+
+        // VISUAL LOGIC: Decide whether to show App or Install Page immediately
+        document.addEventListener("DOMContentLoaded", function() {
+            const isPwa = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+            
+            const installView = document.getElementById('install-view');
+            const loader = document.getElementById('loading-overlay');
+            const appContainer = document.getElementById('app-container');
+            const authContainer = document.getElementById('auth-container');
+
+            if (!isPwa) {
+                // 🛑 BROWSER MODE: Show Install Page, Hide Loader & App
+                if(loader) loader.style.display = 'none';
+                if(installView) installView.classList.remove('hidden');
+                if(authContainer) authContainer.classList.add('hidden');
+            } else {
+                // 📱 APP MODE: Hide Install Page, Show Loader (waiting for Firebase)
+                if(installView) installView.classList.add('hidden');
+                if(loader) loader.style.display = 'flex';
+            }
+
+            // Bind Install Button Click
+            const installBtn = document.getElementById('btn-install-app');
+            if (installBtn) {
+                installBtn.addEventListener('click', async () => {
+                    if (window.deferredPrompt) {
+                        window.deferredPrompt.prompt();
+                        const { outcome } = await window.deferredPrompt.userChoice;
+                        console.log('User response:', outcome);
+                        window.deferredPrompt = null;
+                    } else {
+                        alert("To install: Tap 'Share' -> 'Add to Home Screen'");
+                    }
+                });
+            }
+        });
+    </script>
+
     <style>
-        /* --- PROFESSIONAL THEME VARIABLES --- */
+        /* --- THEME & RESET --- */
         :root { --bg-dark: #0f172a; --bg-card: #1e293b; --primary: #06b6d4; --primary-glow: rgba(6, 182, 212, 0.4); --secondary: #6366f1; --accent: #ec4899; --success: #10b981; --warning: #f59e0b; --danger: #ef4444; --glass-bg: rgba(30, 41, 59, 0.7); --glass-border: rgba(255, 255, 255, 0.08); --text-main: #f8fafc; --text-muted: #94a3b8; --font-main: 'Outfit', sans-serif; --font-bn: 'Hind Siliguri', sans-serif; --font-gaming: 'Rajdhani', sans-serif; }
         * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; outline: none; user-select: none; }
         body { background-color: var(--bg-dark); background-image: radial-gradient(circle at 10% 20%, rgba(6, 182, 212, 0.08) 0%, transparent 40%), radial-gradient(circle at 90% 80%, rgba(99, 102, 241, 0.08) 0%, transparent 40%); background-attachment: fixed; color: var(--text-main); font-family: var(--font-bn); min-height: 100vh; overflow-x: hidden; padding-bottom: 30px; }
         .hidden { display: none !important; }
         ::-webkit-scrollbar { width: 4px; } ::-webkit-scrollbar-track { background: transparent; } ::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 4px; }
-        .btn { width: 100%; padding: 14px; border: none; border-radius: 10px; cursor: pointer; font-weight: 600; font-size: 0.95rem; letter-spacing: 0.5px; display: flex; align-items: center; justify-content: center; gap: 8px; transition: transform 0.1s, opacity 0.2s; font-family: var(--font-bn); } .btn:active { transform: scale(0.98); }
+        
+        /* UI Elements */
+        .btn { width: 100%; padding: 14px; border: none; border-radius: 10px; cursor: pointer; font-weight: 600; font-size: 0.95rem; display: flex; align-items: center; justify-content: center; gap: 8px; font-family: var(--font-bn); transition: 0.2s; } .btn:active { transform: scale(0.98); }
         .btn-primary { background: linear-gradient(135deg, var(--primary), var(--secondary)); color: #fff; box-shadow: 0 4px 15px var(--primary-glow); }
         .btn-secondary { background: rgba(255, 255, 255, 0.05); color: var(--text-main); border: 1px solid var(--glass-border); } .btn-secondary:hover { background: rgba(255, 255, 255, 0.1); }
-        .btn-success { background: var(--success); color: #fff; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3); } .btn-danger { background: var(--danger); color: #fff; box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3); }
+        .btn-success { background: var(--success); color: #fff; } .btn-danger { background: var(--danger); color: #fff; }
         .input-group { position: relative; margin-bottom: 15px; } .input-group i { position: absolute; top: 50%; left: 16px; transform: translateY(-50%); color: var(--primary); font-size: 1.1rem; z-index: 2; } .input-group input { width: 100%; padding: 14px 14px 14px 45px; background: rgba(15, 23, 42, 0.6); border: 1px solid var(--glass-border); border-radius: 12px; color: #fff; font-size: 1rem; transition: border-color 0.3s; font-family: var(--font-bn); } .input-group input:focus { border-color: var(--primary); background: rgba(15, 23, 42, 0.9); }
-        header { background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); padding: 0 16px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; border-bottom: 1px solid var(--glass-border); height: 65px; box-shadow: 0 4px 20px rgba(0,0,0,0.2); }
+        
+        /* Layouts */
+        header { background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(15px); padding: 0 16px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; border-bottom: 1px solid var(--glass-border); height: 65px; box-shadow: 0 4px 20px rgba(0,0,0,0.2); }
         .header-left { display: flex; align-items: center; gap: 15px; } .logo { font-family: var(--font-gaming); font-size: 1.5rem; font-weight: 700; color: #fff; letter-spacing: 1px; } .logo span { color: var(--primary); }
         .header-right { display: flex; align-items: center; gap: 12px; }
         .nav-balance { background: rgba(6, 182, 212, 0.1); border: 1px solid rgba(6, 182, 212, 0.3); padding: 6px 14px; border-radius: 50px; display: flex; align-items: center; gap: 8px; cursor: pointer; } .nav-balance span { font-family: var(--font-gaming); font-weight: 700; color: var(--primary); font-size: 1.05rem; } .nav-balance i { color: var(--primary); font-size: 0.9rem; }
         .notif-icon-box { position: relative; width: 38px; height: 38px; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.05); border-radius: 10px; cursor: pointer; border: 1px solid var(--glass-border); } .notification-dot { position: absolute; top: 8px; right: 8px; width: 8px; height: 8px; background: var(--danger); border-radius: 50%; display: none; }
+        
+        /* Drawer */
         .drawer-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); backdrop-filter: blur(4px); z-index: 998; display: none; } .drawer { position: fixed; top: 0; left: 0; width: 280px; height: 100%; background: #0f172a; z-index: 999; transform: translateX(-100%); transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); border-right: 1px solid var(--glass-border); display: flex; flex-direction: column; box-shadow: 10px 0 40px rgba(0,0,0,0.5); } .drawer.open { transform: translateX(0); }
         .drawer-header { padding: 25px 20px; background: linear-gradient(to bottom, #1e293b, #0f172a); border-bottom: 1px solid var(--glass-border); display: flex; align-items: center; gap: 15px; flex-shrink: 0; } .d-user-img { width: 50px; height: 50px; border-radius: 50%; object-fit: cover; border: 2px solid var(--primary); background: #1e293b; } .d-user-info h3 { color: #fff; font-size: 1.1rem; margin: 0; font-family: var(--font-gaming); letter-spacing: 0.5px; } .d-user-info span { color: var(--text-muted); font-size: 0.8rem; font-family: monospace; background: rgba(255,255,255,0.05); padding: 2px 6px; border-radius: 4px; }
         .drawer-items { padding: 15px 15px 80px 15px; flex: 1; overflow-y: auto; background: linear-gradient(#0f172a 30%, rgba(15,23,42,0)), linear-gradient(rgba(15,23,42,0), #0f172a 70%) 0 100%, radial-gradient(farthest-side at 50% 0, rgba(0,0,0,.4), rgba(0,0,0,0)), radial-gradient(farthest-side at 50% 100%, rgba(0,0,0,.4), rgba(0,0,0,0)) 0 100%; background-repeat: no-repeat; background-size: 100% 40px, 100% 40px, 100% 14px, 100% 14px; background-attachment: local, local, scroll, scroll; }
         .menu-group-label { font-size: 0.75rem; color: var(--primary); text-transform: uppercase; font-weight: 700; letter-spacing: 1px; margin: 20px 0 8px 10px; opacity: 0.8; } .menu-group-label:first-child { margin-top: 5px; }
         .d-item { padding: 12px 16px; margin-bottom: 4px; border-radius: 8px; color: var(--text-muted); font-size: 0.95rem; font-weight: 500; display: flex; align-items: center; gap: 15px; transition: all 0.2s; cursor: pointer; border: 1px solid transparent; } .d-item:hover { background: rgba(255,255,255,0.03); color: #fff; } .d-item:active { transform: scale(0.98); } .d-item i { width: 22px; text-align: center; color: var(--text-muted); transition: 0.2s; } .d-item:hover i { color: var(--primary); }
         .drawer-footer { padding: 20px; border-top: 1px solid var(--glass-border); background: #0f172a; flex-shrink: 0; } .btn-logout { width: 100%; padding: 12px; background: rgba(239, 68, 68, 0.1); color: var(--danger); border: 1px solid rgba(239, 68, 68, 0.2); border-radius: 10px; font-weight: 600; display: flex; justify-content: center; align-items: center; gap: 10px; transition: 0.2s; } .btn-logout:hover { background: rgba(239, 68, 68, 0.2); border-color: var(--danger); }
+        
+        /* Main Content */
         .page-section { display: none; padding-top: 15px; animation: fadeIn 0.3s ease-out; } .page-section.active { display: block; } @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
         .quick-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 15px 16px; } .q-btn { background: rgba(255,255,255,0.03); border: 1px solid var(--glass-border); padding: 16px; border-radius: 14px; display: flex; flex-direction: row; align-items: center; justify-content: center; gap: 10px; color: var(--text-main); font-weight: 600; font-size: 0.95rem; transition: 0.2s; } .q-btn:active { background: rgba(255,255,255,0.06); transform: scale(0.98); } .q-add i { color: var(--success); } .q-wd i { color: var(--warning); }
         #banner-slider { display: flex; gap: 12px; overflow-x: auto; margin: 0 16px 25px; scroll-snap-type: x mandatory; padding-bottom: 5px; scroll-behavior: smooth; } .slide { flex: 0 0 100%; width: 100%; height: 160px; border-radius: 16px; object-fit: cover; scroll-snap-align: center; border: 1px solid var(--glass-border); background: #1e293b; }
@@ -46,6 +116,8 @@
         .t-card { background: var(--bg-card); border: 1px solid var(--glass-border); margin: 0 16px 20px; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.1); transition: transform 0.2s; } .t-img-wrap { position: relative; height: 150px; overflow: hidden; } .t-img { width: 100%; height: 100%; object-fit: cover; } .t-type-badge { position: absolute; top: 10px; right: 10px; background: rgba(0,0,0,0.7); color: #fff; padding: 4px 8px; border-radius: 6px; font-size: 0.75rem; font-weight: 700; border: 1px solid var(--primary); backdrop-filter: blur(4px); } .t-overlay { position: absolute; bottom: 0; left: 0; width: 100%; background: linear-gradient(to top, #1e293b, transparent); padding: 30px 15px 10px; } .t-title { color: #fff; font-size: 1.15rem; font-weight: 700; text-shadow: 0 2px 4px rgba(0,0,0,0.5); font-family: var(--font-bn); }
         .t-body { padding: 15px; } .t-stats-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; background: rgba(0,0,0,0.2); border-radius: 10px; padding: 10px; margin-bottom: 12px; border: 1px solid rgba(255,255,255,0.03); } .t-stat { text-align: center; } .t-stat small { display: block; font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; } .t-stat b { display: block; font-size: 1rem; color: var(--primary); font-family: var(--font-gaming); font-weight: 600; }
         .progress-bar { height: 6px; background: rgba(255,255,255,0.05); border-radius: 3px; margin-bottom: 15px; overflow: hidden; } .progress-fill { height: 100%; background: var(--success); border-radius: 3px; } .t-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        
+        /* Modals */
         .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); backdrop-filter: blur(5px); z-index: 2000; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: 0.2s; } .modal:not(.hidden) { opacity: 1; pointer-events: auto; } .modal-content { background: #1e293b; width: 90%; max-width: 380px; padding: 25px; border-radius: 20px; position: relative; border: 1px solid var(--glass-border); box-shadow: 0 10px 40px rgba(0,0,0,0.5); transform: scale(0.95); transition: 0.2s; } .modal:not(.hidden) .modal-content { transform: scale(1); }
         .cred-panel { background: rgba(16, 185, 129, 0.05); border: 1px solid rgba(16, 185, 129, 0.2); border-radius: 12px; padding: 15px; margin-top: 15px; } .cred-box { display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.2); padding: 10px 12px; border-radius: 8px; margin-bottom: 8px; } .cred-value { font-family: monospace; font-size: 1.1rem; letter-spacing: 1px; color: #fff; }
         .method-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 20px; } .method-card { background: rgba(255,255,255,0.03); border: 1px solid var(--glass-border); border-radius: 12px; padding: 15px; text-align: center; cursor: pointer; transition: 0.2s; display: flex; flex-direction: column; align-items: center; gap: 8px; } .method-card:active { transform: scale(0.98); } .method-card.active { border-color: var(--primary); background: rgba(6, 182, 212, 0.05); } .method-card img { width: 40px; height: 40px; object-fit: contain; } .m-name { font-size: 0.85rem; font-weight: 600; color: var(--text-muted); } .method-card.active .m-name { color: #fff; } .method-card input { display: none; }
@@ -54,82 +126,34 @@
         .wheel-container { position: relative; width: 280px; height: 280px; margin: 0 auto; max-width: 100%; }
         #auth-container { background: #0f172a; } .profile-img-container { width: 100px; height: 100px; margin: 0 auto 15px; position: relative; } .profile-pic { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; border: 2px solid var(--primary); padding: 2px; background: #1e293b; }
         
-        /* ✅ NEW LOADING SCREEN: Cyberpunk Radar */
-        #loading-overlay { 
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
-            background: #0f172a; z-index: 9999; 
-            display: flex; flex-direction: column; align-items: center; justify-content: center; 
-            transition: opacity 0.5s ease-out;
-        }
-        .loader-radar {
-            width: 80px; height: 80px;
-            border-radius: 50%;
-            border: 2px solid rgba(6, 182, 212, 0.2);
-            position: relative;
-            box-shadow: 0 0 20px rgba(6, 182, 212, 0.2);
-        }
-        .loader-radar::before {
-            content: ''; position: absolute; top: 0; left: 0;
-            width: 100%; height: 100%; border-radius: 50%;
-            border-top: 3px solid var(--primary);
-            border-right: 3px solid transparent;
-            animation: radar-spin 1.5s linear infinite;
-        }
-        .loader-radar::after {
-            content: ''; position: absolute; top: 20%; left: 20%;
-            width: 60%; height: 60%; border-radius: 50%;
-            background: var(--primary); opacity: 0.2;
-            animation: radar-pulse 1.5s infinite ease-out;
-        }
-        .loader-text {
-            margin-top: 25px;
-            font-family: var(--font-gaming);
-            color: var(--primary);
-            font-size: 1.3rem;
-            letter-spacing: 2px;
-            font-weight: 700;
-            animation: text-flicker 2s infinite;
-        }
+        /* ✅ RADAR LOADER (For App Mode) */
+        #loading-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #0f172a; z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: opacity 0.5s ease-out; }
+        .loader-radar { width: 80px; height: 80px; border-radius: 50%; border: 2px solid rgba(6, 182, 212, 0.2); position: relative; box-shadow: 0 0 20px rgba(6, 182, 212, 0.2); }
+        .loader-radar::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; border-radius: 50%; border-top: 3px solid var(--primary); border-right: 3px solid transparent; animation: radar-spin 1.5s linear infinite; }
+        .loader-radar::after { content: ''; position: absolute; top: 20%; left: 20%; width: 60%; height: 60%; border-radius: 50%; background: var(--primary); opacity: 0.2; animation: radar-pulse 1.5s infinite ease-out; }
+        .loader-text { margin-top: 25px; font-family: var(--font-gaming); color: var(--primary); font-size: 1.3rem; letter-spacing: 2px; font-weight: 700; animation: text-flicker 2s infinite; }
         @keyframes radar-spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         @keyframes radar-pulse { 0% { transform: scale(0.8); opacity: 0.5; } 100% { transform: scale(1.5); opacity: 0; } }
         @keyframes text-flicker { 0%, 100% { opacity: 1; } 50% { opacity: 0.7; } }
 
-        /* ✅ PWA NOTIFICATION BANNER */
-        #notification-banner {
-            display: none; position: fixed; bottom: 0; left: 0; width: 100%;
-            background: rgba(30, 41, 59, 0.95); border-top: 1px solid var(--primary);
-            padding: 15px; z-index: 9999; text-align: center;
-            backdrop-filter: blur(10px); box-shadow: 0 -5px 20px rgba(0,0,0,0.5);
-            animation: slideUp 0.5s ease-out;
-        }
-        @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
-        .notif-text { color: #fff; margin-bottom: 10px; font-size: 0.9rem; font-weight: bold; }
-
-        /* ✅ DOWNLOAD SITE STYLES (BROWSER MODE) */
-        #install-view { 
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
-            background: #0f172a; z-index: 10001; 
-            display: flex; flex-direction: column; justify-content: center; align-items: center; 
-            padding: 20px; text-align: center;
-            background-image: radial-gradient(circle at 50% 50%, rgba(6, 182, 212, 0.15) 0%, transparent 60%);
-        }
+        /* ✅ INSTALL VIEW (For Browser Mode) */
+        #install-view { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #0f172a; z-index: 10001; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 20px; text-align: center; background-image: radial-gradient(circle at 50% 50%, rgba(6, 182, 212, 0.15) 0%, transparent 60%); }
         .install-logo { width: 100px; height: 100px; border-radius: 20px; margin-bottom: 20px; box-shadow: 0 10px 30px rgba(6, 182, 212, 0.3); }
-        .install-title { font-family: var(--font-gaming); font-size: 2.5rem; font-weight: 800; color: #fff; margin-bottom: 10px; letter-spacing: 2px; }
-        .install-desc { color: var(--text-muted); font-size: 1rem; margin-bottom: 30px; max-width: 320px; line-height: 1.6; font-family: var(--font-bn); }
-        .btn-install { 
-            background: linear-gradient(135deg, var(--primary), var(--secondary)); color: #fff; font-weight: 800; 
-            padding: 16px 40px; border-radius: 50px; font-size: 1.1rem; 
-            box-shadow: 0 0 25px rgba(6, 182, 212, 0.4);
-            animation: pulseBtn 2s infinite; border: none; cursor: pointer; text-transform: uppercase; letter-spacing: 1px;
-            font-family: var(--font-main);
-        }
+        .install-title { font-family: var(--font-gaming); font-size: 2.5rem; font-weight: 800; color: #fff; margin-bottom: 10px; }
+        .install-desc { color: var(--text-muted); font-size: 1rem; margin-bottom: 30px; max-width: 300px; line-height: 1.5; font-family: var(--font-bn); }
+        .btn-install { background: linear-gradient(135deg, var(--primary), var(--secondary)); color: #fff; font-weight: 800; padding: 16px 40px; border-radius: 50px; font-size: 1.1rem; box-shadow: 0 0 25px rgba(6, 182, 212, 0.4); border: none; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; font-family: var(--font-main); transition: 0.3s; }
+        .btn-install.ready { box-shadow: 0 0 40px rgba(16, 185, 129, 0.6); background: linear-gradient(135deg, #10b981, #059669); }
         @keyframes pulseBtn { 0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(6, 182, 212, 0.7); } 70% { transform: scale(1.05); box-shadow: 0 0 0 15px rgba(6, 182, 212, 0); } 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(6, 182, 212, 0); } }
         .install-footer { position: absolute; bottom: 30px; color: var(--text-muted); font-size: 0.8rem; opacity: 0.7; }
+
+        /* Notification Banner */
+        #notification-banner { display: none; position: fixed; bottom: 0; left: 0; width: 100%; background: rgba(30, 41, 59, 0.95); border-top: 1px solid var(--primary); padding: 15px; z-index: 9999; text-align: center; backdrop-filter: blur(10px); box-shadow: 0 -5px 20px rgba(0,0,0,0.5); animation: slideUp 0.5s ease-out; }
+        @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } } .notif-text { color: #fff; margin-bottom: 10px; font-size: 0.9rem; font-weight: bold; }
     </style>
 </head>
 <body>
     
-    <!-- ✅ DOWNLOAD APP / LANDING PAGE VIEW -->
+    <!-- ✅ INSTALL PAGE -->
     <div id="install-view" class="hidden">
         <img src="https://cdn-icons-png.flaticon.com/512/3233/3233483.png" class="install-logo">
         <div class="install-title">G-ZONE</div>
@@ -138,33 +162,19 @@
         <div class="install-footer">Secure & Verified • Version 2.2</div>
     </div>
 
-    <!-- ✅ NEW LOADING SCREEN: Cyberpunk Radar -->
+    <!-- ✅ RADAR LOADER -->
     <div id="loading-overlay">
         <div class="loader-radar"></div>
         <div class="loader-text">SYSTEM LOADING...</div>
     </div>
 
-    <!-- 🟢 FAIL-SAFE SCRIPT FOR LOADING SCREEN -->
-    <script>
-        setTimeout(function() {
-            var loader = document.getElementById('loading-overlay');
-            var install = document.getElementById('install-view');
-            const isPwa = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
-            if (loader && !isPwa) {
-                loader.style.opacity = '0';
-                setTimeout(() => loader.style.display = 'none', 500);
-                if(install) install.classList.remove('hidden');
-            }
-        }, 3000); 
-    </script>
-
-    <div id="toast-box"><i class="fas fa-info-circle" style="color:var(--primary)"></i> <span id="toast-msg"></span></div>
-
-    <!-- NOTIFICATION PERMISSION BANNER -->
+    <!-- 🟡 NOTIFICATION BANNER -->
     <div id="notification-banner">
         <div class="notif-text">🔔 আপডেট পেতে নোটিফিকেশন চালু করুন!</div>
         <button class="btn btn-primary" onclick="enableNotifications()">Enable Notifications</button>
     </div>
+
+    <div id="toast-box"><i class="fas fa-info-circle" style="color:var(--primary)"></i> <span id="toast-msg"></span></div>
 
     <!-- AUTH SCREEN -->
     <div id="auth-container" class="hidden" style="display:flex;flex-direction:column;justify-content:center;padding:30px;min-height:100vh;text-align:center;">
@@ -188,359 +198,135 @@
         </div>
     </div>
 
-    <!-- MAIN APP INTERFACE -->
+    <!-- APP CONTAINER -->
     <div id="app-container" class="hidden">
-        
-        <!-- HEADER -->
         <header>
             <div class="header-left">
                 <i class="fas fa-bars fa-lg" onclick="toggleDrawer()" style="cursor:pointer; color:#fff;"></i>
                 <div class="logo">G-ZONE</div>
             </div>
-            
             <div class="header-right">
-                <div class="nav-balance" onclick="nav('page-withdraw')">
-                    <i class="fas fa-wallet"></i>
-                    <span>৳<span id="header-bal">0</span></span>
-                </div>
-                
-                <div class="notif-icon-box" onclick="openNotifications()">
-                    <i class="far fa-bell" style="color:#fff;"></i>
-                    <div id="header-badge" class="notification-dot"></div>
-                </div>
+                <div class="nav-balance" onclick="nav('page-withdraw')"><i class="fas fa-wallet"></i><span>৳<span id="header-bal">0</span></span></div>
+                <div class="notif-icon-box" onclick="openNotifications()"><i class="far fa-bell" style="color:#fff;"></i><div id="header-badge" class="notification-dot"></div></div>
             </div>
         </header>
 
-        <!-- PAGE: HOME -->
+        <!-- Pages -->
         <div id="page-home" class="page-section active">
-            <!-- Quick Actions -->
             <div class="quick-actions">
                 <div class="q-btn q-add" onclick="nav('page-add-money')"><i class="fas fa-plus-circle"></i> এড মানি</div>
                 <div class="q-btn q-wd" onclick="nav('page-withdraw')"><i class="fas fa-arrow-circle-down"></i> উইথড্র</div>
             </div>
-
-            <!-- Banner Slider -->
             <div id="banner-slider"></div>
-
-            <!-- Tournament Section -->
             <div class="section-header"><i class="fas fa-fire"></i> চলমান টুর্নামেন্ট</div>
-            
             <div class="home-tabs">
                 <div class="home-tab active" id="ht-BR" onclick="switchHomeTab('BR')">Battle Royale</div>
                 <div class="home-tab" id="ht-CS" onclick="switchHomeTab('CS')">Clash Squad</div>
             </div>
-
             <div id="tournament-list"></div>
         </div>
 
-        <!-- PAGE: LEADERBOARD -->
-        <div id="page-leaderboard" class="page-section">
-            <div class="section-header"><i class="fas fa-crown"></i> সেরা ১০ ধনী</div>
-            <div class="t-card"><div class="t-body"><div id="balance-leaderboard"></div></div></div>
-        </div>
-
-        <!-- PAGE: REFER -->
+        <div id="page-leaderboard" class="page-section"><div class="section-header"><i class="fas fa-crown"></i> সেরা ১০ ধনী</div><div class="t-card"><div class="t-body"><div id="balance-leaderboard"></div></div></div></div>
+        
         <div id="page-refer" class="page-section">
             <div class="section-header"><i class="fas fa-user-plus"></i> রেফার করুন</div>
-            <div class="t-card">
-                <div class="t-body" style="text-align:center;">
-                    <p style="color:var(--text-muted); font-size:0.9rem;">আপনার রেফার কোড</p>
-                    <div class="cred-panel" style="margin:15px 0;">
-                        <div class="cred-box" style="justify-content:center; gap:15px; border:none; background:transparent; padding:0;">
-                            <span id="my-refer-code" class="cred-value" style="font-size:1.8rem; color:var(--success);">...</span>
-                            <i class="fas fa-copy" onclick="copyReferCode()" style="cursor:pointer; color:var(--text-muted)"></i>
-                        </div>
-                    </div>
-                    <p style="font-size:0.9rem; color:#aaa; margin-bottom:20px; line-height:1.5;">বন্ধুদের ইনভাইট করুন। তারা যখন প্রথম সোলো ম্যাচে জয়েন করবে, আপনি পাবেন <span style="color:var(--success)">৳5</span> বোনাস!</p>
-                    <div style="display:flex; justify-content:space-between; background:rgba(0,0,0,0.2); padding:15px; border-radius:12px; border:1px solid var(--glass-border);">
-                        <div><small style="color:var(--text-muted)">মোট রেফার</small><h3 id="total-refers" style="color:#fff;">0</h3></div>
-                        <div style="text-align:right;"><small style="color:var(--text-muted)">মোট আয়</small><h3 id="total-refer-earn" style="color:var(--success);">৳0</h3></div>
-                    </div>
+            <div class="t-card"><div class="t-body" style="text-align:center;">
+                <p style="color:var(--text-muted);">আপনার রেফার কোড</p>
+                <div class="cred-panel"><div class="cred-box" style="justify-content:center;border:none;"><span id="my-refer-code" class="cred-value" style="color:var(--success);font-size:1.8rem;">...</span><i class="fas fa-copy" onclick="copyReferCode()" style="cursor:pointer;"></i></div></div>
+                <div style="display:flex;justify-content:space-between;padding:15px;background:rgba(0,0,0,0.2);border-radius:12px;margin-top:15px;">
+                    <div><small style="color:var(--text-muted)">মোট রেফার</small><h3 id="total-refers">0</h3></div>
+                    <div style="text-align:right;"><small style="color:var(--text-muted)">মোট আয়</small><h3 id="total-refer-earn" style="color:var(--success)">৳0</h3></div>
                 </div>
-            </div>
-            <div class="section-header"><i class="fas fa-medal"></i> টপ রেফারার</div>
-            <div id="referral-leaderboard" style="margin: 0 16px 20px;"></div>
+            </div></div>
+            <div id="referral-leaderboard" style="margin:0 16px 20px;"></div>
         </div>
 
-        <!-- PAGE: SPIN -->
         <div id="page-spin" class="page-section">
             <div class="section-header"><i class="fas fa-dharmachakra"></i> লাকি স্পিন</div>
-            <div class="t-card">
-                <div class="t-body" style="text-align:center; padding: 30px 10px;">
-                    <div class="wheel-container">
-                        <div class="wheel-pointer"></div>
-                        <div class="wheel-rim">
-                            <div class="rim-lights"></div>
-                            <div id="spin-wheel" class="wheel">
-                                <span class="wheel-text wt-lose">লস</span>
-                                <span class="wheel-text wt-one">১ গুণ</span>
-                                <span class="wheel-text wt-triple">৩ গুণ</span>
-                                <span class="wheel-text wt-double">২ গুণ</span>
-                            </div>
-                        </div>
-                        <div class="wheel-center"><i class="fas fa-star" style="color:#000;"></i></div>
-                    </div>
-                    
-                    <div class="caution-box">
-                        <i class="fas fa-exclamation-circle"></i> <b>সতর্কবার্তা</b><br>
-                        স্পিনে টাকা হারানো গেলে কর্তৃপক্ষ দায়ী থাকবে না। নিজ দায়িত্বে খেলুন।
-                    </div>
-                    <div class="input-group" style="margin-top:20px;">
-                        <i class="fas fa-coins"></i>
-                        <input type="number" id="spin-amt" placeholder="টাকার পরিমাণ লিখুন">
-                    </div>
-                    <button class="btn btn-primary" id="spin-btn" onclick="spinWheel()">স্পিন করুন</button>
-                </div>
-            </div>
+            <div class="t-card"><div class="t-body" style="text-align:center;">
+                <div class="wheel-container"><div class="wheel-pointer"></div><div class="wheel-rim"><div id="spin-wheel" class="wheel"><span class="wheel-text wt-lose">লস</span><span class="wheel-text wt-one">১ গুণ</span><span class="wheel-text wt-triple">৩ গুণ</span><span class="wheel-text wt-double">২ গুণ</span></div></div><div class="wheel-center"><i class="fas fa-star" style="color:#000;"></i></div></div>
+                <div class="input-group" style="margin-top:20px;"><i class="fas fa-coins"></i><input type="number" id="spin-amt" placeholder="টাকার পরিমাণ লিখুন"></div>
+                <button class="btn btn-primary" id="spin-btn" onclick="spinWheel()">স্পিন করুন</button>
+            </div></div>
         </div>
 
-        <!-- PAGE: MATCHES -->
-        <div id="page-matches" class="page-section">
-            <div class="section-header"><i class="fas fa-gamepad"></i> আমার ম্যাচ</div>
-            <div id="my-matches-list"></div>
-        </div>
+        <div id="page-matches" class="page-section"><div class="section-header"><i class="fas fa-gamepad"></i> আমার ম্যাচ</div><div id="my-matches-list"></div></div>
 
-        <!-- PAGE: PROFILE -->
         <div id="page-profile" class="page-section">
             <div class="section-header"><i class="fas fa-user-circle"></i> প্রোফাইল</div>
-            <div class="t-card">
-                <div class="t-body" style="text-align:center; padding:30px 20px;">
-                    <div class="profile-img-container"><img id="p-pic" src="" class="profile-pic" onerror="this.src='https://via.placeholder.com/100'"></div>
-                    <h2 style="color:#fff; margin-bottom:5px; font-size:1.4rem;"><span id="p-name">...</span></h2>
-                    
-                    <div style="background:rgba(0,0,0,0.3); padding:8px 15px; border-radius:20px; display:inline-flex; align-items:center; gap:10px; margin:10px 0; border:1px solid var(--glass-border);">
-                        <span style="color:#aaa; font-size:0.85rem;">UID:</span>
-                        <span id="p-custom-id" style="font-family:monospace; font-weight:bold; letter-spacing:1px; color:var(--primary);">...</span>
-                        <i class="fas fa-copy" onclick="copyCustomId()" style="cursor:pointer; color:var(--text-muted);"></i>
-                    </div>
-
-                    <div style="margin-top:30px; text-align:left;">
-                        <label style="font-size:0.85rem; color:var(--text-muted); margin-bottom:5px; display:block;">প্রোফাইল ছবি পরিবর্তন</label>
-                        <div class="input-group" style="margin-bottom:10px;"><i class="fas fa-link"></i><input type="text" id="new-pic-url" placeholder="ছবির URL লিঙ্ক"></div>
-                        <button class="btn btn-secondary" onclick="updateProfilePic()">আপডেট করুন</button>
-                    </div>
-                </div>
-            </div>
+            <div class="t-card"><div class="t-body" style="text-align:center;padding:30px;">
+                <div class="profile-img-container"><img id="p-pic" src="" class="profile-pic"></div>
+                <h2 style="color:#fff;"><span id="p-name">...</span></h2>
+                <div style="background:rgba(0,0,0,0.3);padding:8px 15px;border-radius:20px;display:inline-flex;gap:10px;margin:10px 0;"><span style="color:#aaa;">UID:</span><span id="p-custom-id" style="font-family:monospace;color:var(--primary);">...</span><i class="fas fa-copy" onclick="copyCustomId()" style="cursor:pointer;"></i></div>
+                <div class="input-group" style="margin-top:20px;"><i class="fas fa-link"></i><input type="text" id="new-pic-url" placeholder="URL"></div>
+                <button class="btn btn-secondary" onclick="updateProfilePic()">আপডেট করুন</button>
+            </div></div>
         </div>
 
-        <!-- PAGE: TRANSFER -->
-        <div id="page-transfer" class="page-section">
-            <div class="section-header"><i class="fas fa-exchange-alt"></i> টাকা ট্রান্সফার</div>
-            <div class="t-card">
-                <div class="t-body">
-                    <p style="color:var(--text-muted); margin-bottom:15px; font-size:0.9rem;">অন্য ইউজারকে টাকা পাঠান:</p>
-                    <div class="input-group"><i class="fas fa-id-card"></i><input type="number" id="tf-id" placeholder="রিসিভারের ইউজার আইডি (১১ সংখ্যা)"></div>
-                    <div class="input-group"><i class="fas fa-coins"></i><input type="number" id="tf-amount" placeholder="টাকার পরিমাণ"></div>
-                    <button class="btn btn-primary" id="btn-transfer" onclick="sendMoney()">টাকা পাঠান</button>
-                </div>
-            </div>
-            <div style="margin:20px; font-size:0.8rem; color:#aaa; text-align:center; padding:0 20px;">
-                <i class="fas fa-info-circle"></i> ভুল আইডিতে টাকা পাঠালে ফেরত পাওয়া যাবে না। আইডি চেক করে নিন।
-            </div>
-        </div>
-
-        <!-- PAGE: WITHDRAW -->
         <div id="page-withdraw" class="page-section">
             <div class="section-header"><i class="fas fa-money-bill-wave"></i> উইথড্র</div>
             <div class="t-card"><div class="t-body">
-                <p style="color:var(--text-muted); margin-bottom:10px; font-size:0.9rem;">মেথড সিলেক্ট করুন:</p>
                 <div class="method-grid">
-                    <label class="method-card" id="method-bkash" onclick="selectMethod(this)">
-                        <input type="radio" name="w_method" value="Bkash">
-                        <img src="https://raw.githubusercontent.com/Shipu/bkash-example/master/bkash_payment_logo.png" alt="Bkash">
-                        <span class="m-name">বিকাশ</span>
-                    </label>
-                    <label class="method-card" id="method-nagad" onclick="selectMethod(this)">
-                        <input type="radio" name="w_method" value="Nagad">
-                        <img src="https://download.logo.wine/logo/Nagad/Nagad-Vertical-Logo.wine.png" alt="Nagad">
-                        <span class="m-name">নগদ</span>
-                    </label>
-                    <label class="method-card" id="method-niva" onclick="selectMethod(this)">
-                        <input type="radio" name="w_method" value="Niva Coin">
-                        <i class="fas fa-coins fa-2x" style="color:#00ff9d; margin-bottom:5px;"></i>
-                        <span class="m-name">নিভা কয়েন</span>
-                    </label>
-                    <!-- PAYEER OPTION -->
-                    <label class="method-card" id="method-payeer" onclick="selectMethod(this)">
-                        <input type="radio" name="w_method" value="Payeer Dollar">
-                        <i class="fas fa-dollar-sign fa-2x" style="color:#00aaff; margin-bottom:5px;"></i>
-                        <span class="m-name">Payeer</span>
-                    </label>
+                    <label class="method-card" id="method-bkash" onclick="selectMethod(this)"><input type="radio" name="w_method" value="Bkash"><img src="https://raw.githubusercontent.com/Shipu/bkash-example/master/bkash_payment_logo.png"><span class="m-name">বিকাশ</span></label>
+                    <label class="method-card" id="method-nagad" onclick="selectMethod(this)"><input type="radio" name="w_method" value="Nagad"><img src="https://download.logo.wine/logo/Nagad/Nagad-Vertical-Logo.wine.png"><span class="m-name">নগদ</span></label>
+                    <label class="method-card" id="method-niva" onclick="selectMethod(this)"><input type="radio" name="w_method" value="Niva Coin"><i class="fas fa-coins fa-2x" style="color:#00ff9d;"></i><span class="m-name">নিভা কয়েন</span></label>
+                    <label class="method-card" id="method-payeer" onclick="selectMethod(this)"><input type="radio" name="w_method" value="Payeer Dollar"><i class="fas fa-dollar-sign fa-2x" style="color:#00aaff;"></i><span class="m-name">Payeer</span></label>
                 </div>
-                
-                <!-- Calc Displays -->
-                <div id="niva-calc" style="display:none; background:rgba(0,255,157,0.1); border:1px dashed var(--success); padding:10px; border-radius:10px; margin-bottom:15px; text-align:center;">
-                    <small>রেট: <span id="niva-rate-disp">...</span></small><br>পাবেন: <b id="niva-amount" style="color:var(--success)">0</b> কয়েন
-                </div>
-                <div id="payeer-calc" style="display:none; background:rgba(0,170,255,0.1); border:1px dashed #00aaff; padding:10px; border-radius:10px; margin-bottom:15px; text-align:center;">
-                    <small>রেট: 1$ = <span id="payeer-rate-disp">...</span>৳</small><br>পাবেন: <b id="payeer-amount" style="color:#00aaff">0</b> USD
-                </div>
-                
+                <div id="niva-calc" style="display:none;background:rgba(0,255,157,0.1);border:1px dashed var(--success);padding:10px;text-align:center;margin-bottom:15px;"><small>রেট: <span id="niva-rate-disp">...</span></small><br>পাবেন: <b id="niva-amount" style="color:var(--success)">0</b> কয়েন</div>
+                <div id="payeer-calc" style="display:none;background:rgba(0,170,255,0.1);border:1px dashed #00aaff;padding:10px;text-align:center;margin-bottom:15px;"><small>রেট: 1$ = <span id="payeer-rate-disp">...</span>৳</small><br>পাবেন: <b id="payeer-amount" style="color:#00aaff">0</b> USD</div>
                 <div class="input-group"><i class="fas fa-coins"></i><input type="number" id="w-amt" placeholder="টাকার পরিমাণ" oninput="calcConversion()"></div>
                 <div class="input-group"><i class="fas fa-address-card"></i><input type="text" id="w-num" placeholder="নাম্বার / ইউজার আইডি"></div>
-                <p style="text-align:center; font-size:0.8rem; color:var(--text-muted); margin-bottom:15px;">লিমিট: <span id="w-limit-text">...</span></p>
+                <p style="text-align:center;font-size:0.8rem;color:var(--text-muted);margin-bottom:15px;">লিমিট: <span id="w-limit-text">...</span></p>
                 <button class="btn btn-primary" onclick="doWithdraw()">রিকুয়েস্ট পাঠান</button>
             </div></div>
             <div class="section-header"><i class="fas fa-history"></i> ইতিহাস</div>
-            <div id="withdraw-history" style="margin: 0 16px 20px;"></div>
+            <div id="withdraw-history" style="margin:0 16px 20px;"></div>
         </div>
 
-        <!-- PAGE: ADD MONEY -->
         <div id="page-add-money" class="page-section">
             <div class="section-header"><i class="fas fa-wallet"></i> অ্যাড মানি</div>
-            <div class="t-card"><div class="t-body" style="text-align:center; padding:50px 20px;">
-                <i class="fab fa-telegram fa-4x" style="color:#0088cc; margin-bottom:20px;"></i>
-                <h3 style="margin-bottom:10px;">টেলিগ্রাম সাপোর্ট</h3>
-                <p style="color:var(--text-muted); margin-bottom:25px; font-size:0.9rem;">টাকা এড করতে অ্যাডমিনের সাথে যোগাযোগ করুন।</p>
-                <a id="btn-admin-support" href="#" target="_blank" class="btn btn-primary" style="background:#0088cc;">
-                    <i class="fab fa-telegram-plane"></i> মেসেজ পাঠান
-                </a>
-            </div></div>
+            <div class="t-card"><div class="t-body" style="text-align:center;padding:50px 20px;"><i class="fab fa-telegram fa-4x" style="color:#0088cc;margin-bottom:20px;"></i><h3>টেলিগ্রাম সাপোর্ট</h3><p style="color:var(--text-muted);margin-bottom:25px;">টাকা এড করতে অ্যাডমিনের সাথে যোগাযোগ করুন।</p><a id="btn-admin-support" href="#" target="_blank" class="btn btn-primary" style="background:#0088cc;"><i class="fab fa-telegram-plane"></i> মেসেজ পাঠান</a></div></div>
         </div>
         
-        <!-- PAGE: BROADCAST -->
-        <div id="page-broadcast" class="page-section">
-            <div class="section-header"><i class="fas fa-video"></i> লার্নিং জোন</div>
-            <div id="video-list" style="margin:0 16px;"></div>
-        </div>
-
-        <!-- PAGE: NOTIFICATION -->
-        <div id="page-notifications" class="page-section">
-            <div class="section-header"><i class="fas fa-bell"></i> নোটিফিকেশন</div>
-            <div id="n-list" style="padding-bottom:20px; margin:0 16px;"></div>
-        </div>
-
-        <!-- PAGE: COUPON -->
-        <div id="page-coupon" class="page-section">
-             <div class="section-header"><i class="fas fa-ticket-alt"></i> কুপন</div>
-             <div class="t-card"><div class="t-body">
-                <div class="input-group"><i class="fas fa-gift"></i><input type="text" id="coupon-code" placeholder="কোড লিখুন"></div>
-                <button class="btn btn-primary" onclick="redeemCoupon()">রিডিম করুন</button>
-             </div></div>
-             <h4 style="margin:25px 20px 15px; color:var(--text-main); font-size:1rem;">পাবলিক কুপন</h4>
-             <div id="public-coupons" style="margin: 0 16px;"></div>
-        </div>
+        <div id="page-broadcast" class="page-section"><div class="section-header"><i class="fas fa-video"></i> লার্নিং জোন</div><div id="video-list" style="margin:0 16px;"></div></div>
+        <div id="page-notifications" class="page-section"><div class="section-header"><i class="fas fa-bell"></i> নোটিফিকেশন</div><div id="n-list" style="margin:0 16px;"></div></div>
+        <div id="page-coupon" class="page-section"><div class="section-header"><i class="fas fa-ticket-alt"></i> কুপন</div><div class="t-card"><div class="t-body"><div class="input-group"><i class="fas fa-gift"></i><input type="text" id="coupon-code" placeholder="কোড লিখুন"></div><button class="btn btn-primary" onclick="redeemCoupon()">রিডিম করুন</button></div></div><h4 style="margin:25px 20px 15px;color:var(--text-main);">পাবলিক কুপন</h4><div id="public-coupons" style="margin:0 16px;"></div></div>
     </div>
 
-    <!-- DRAWER MENU (NEW UX) -->
     <div class="drawer-overlay" onclick="toggleDrawer()"></div>
     <div class="drawer">
-        
-        <!-- HEADER: Shows User Info -->
-        <div class="drawer-header">
-            <img id="d-pic" src="https://via.placeholder.com/100" class="d-user-img">
-            <div class="d-user-info">
-                <h3 id="d-name">Loading...</h3>
-                <span id="d-uid">ID: ...</span>
-            </div>
-        </div>
-
-        <!-- SCROLLABLE ITEMS -->
+        <div class="drawer-header"><img id="d-pic" src="" class="d-user-img"><div class="d-user-info"><h3 id="d-name">...</h3><span id="d-uid">...</span></div></div>
         <div class="drawer-items">
-            
-            <!-- Section 1: Main -->
             <div class="menu-group-label">Gaming Zone</div>
             <div class="d-item" onclick="nav('page-home')"><i class="fas fa-home"></i> হোম</div>
             <div class="d-item" onclick="nav('page-matches')"><i class="fas fa-gamepad"></i> আমার ম্যাচ</div>
             <div class="d-item" onclick="nav('page-leaderboard')"><i class="fas fa-crown"></i> লিডারবোর্ড</div>
-
-            <!-- Section 2: Finance -->
             <div class="menu-group-label">Finance</div>
             <div class="d-item" onclick="nav('page-withdraw')"><i class="fas fa-wallet"></i> উইথড্র</div>
             <div class="d-item" onclick="nav('page-add-money')"><i class="fas fa-plus-circle"></i> অ্যাড মানি</div>
             <div class="d-item" onclick="nav('page-transfer')"><i class="fas fa-exchange-alt"></i> ট্রান্সফার</div>
             <div class="d-item" onclick="nav('page-coupon')"><i class="fas fa-ticket-alt"></i> কুপন</div>
-
-            <!-- Section 3: Account -->
-            <div class="menu-group-label">Account & Fun</div>
+            <div class="menu-group-label">Account</div>
             <div class="d-item" onclick="nav('page-profile')"><i class="fas fa-user-circle"></i> প্রোফাইল</div>
             <div class="d-item" onclick="nav('page-refer')"><i class="fas fa-user-plus"></i> রেফার</div>
             <div id="nav-spin-item" class="d-item" onclick="nav('page-spin')"><i class="fas fa-dharmachakra"></i> স্পিন হুইল</div>
             <div class="d-item" onclick="nav('page-broadcast')"><i class="fas fa-video"></i> লার্নিং জোন</div>
         </div>
-
-        <!-- FOOTER: Pinned Logout -->
-        <div class="drawer-footer">
-            <button class="btn-logout" onclick="logout()">
-                <i class="fas fa-sign-out-alt"></i> লগআউট
-            </button>
-        </div>
+        <div class="drawer-footer"><button class="btn-logout" onclick="logout()"><i class="fas fa-sign-out-alt"></i> লগআউট</button></div>
     </div>
 
-    <!-- MODALS -->
+    <!-- Modals -->
     <div id="modal-area" class="hidden modal"><div class="modal-content" id="modal-content"></div></div>
-    
-    <!-- JOIN MODAL -->
-    <div id="join-modal" class="hidden modal">
-        <div class="modal-content">
-            <h3 style="text-align:center; color:#fff; margin-bottom:5px;">টুর্নামেন্ট জয়েন</h3>
-            <p style="text-align:center; color:var(--text-muted); font-size:0.9rem; margin-bottom:20px;">সঠিক তথ্য দিন</p>
-            
-            <div id="squad-tabs" class="sq-tabs hidden">
-                <div class="sq-tab active" id="tab-create" onclick="switchTab('create')">স্কোয়াড কিনুন</div>
-                <div class="sq-tab" id="tab-join" onclick="switchTab('join')">টিমে জয়েন করুন</div>
-            </div>
-            
-            <div id="view-create">
-                <div style="text-align:center; margin-bottom:15px; background:rgba(0,0,0,0.2); padding:10px; border-radius:10px;">
-                    <span style="color:#aaa;">এন্ট্রি ফি:</span> <b style="color:var(--warning); font-size:1.1rem;" id="j-fee">0</b>
-                </div>
-                <div class="input-group"><i class="fas fa-gamepad"></i><input type="text" id="j-uid" placeholder="গেম ইউআইডি (UID)"></div>
-                <div id="squad-inputs" class="hidden">
-                    <div class="input-group"><i class="fas fa-users"></i><input type="text" id="j-team" placeholder="টিমের নাম"></div>
-                </div>
-                <button class="btn btn-primary" id="btn-conf" onclick="confirmJoin()">কনফার্ম ও পেমেন্ট</button>
-            </div>
-            
-            <div id="view-join" class="hidden">
-                <p style="text-align:center; color:#aaa; font-size:0.9rem; margin-bottom:10px;">লিডারের দেওয়া কোড দিন</p>
-                <div class="input-group"><i class="fas fa-key"></i><input type="text" id="m-code" placeholder="টিম কোড"></div>
-                <div class="input-group"><i class="fas fa-gamepad"></i><input type="text" id="m-uid" placeholder="আপনার গেম ইউআইডি (UID)"></div>
-                <button class="btn btn-success" onclick="joinTeamMember()">টিমে জয়েন করুন</button>
-            </div>
-            
-            <button class="btn btn-secondary" onclick="closeJoin()" style="margin-top:10px;">বাতিল করুন</button>
-        </div>
-    </div>
-    
-    <!-- TEAM CODE MODAL -->
-    <div id="team-code-modal" class="hidden modal">
-        <div class="modal-content" style="text-align:center;">
-            <i class="fas fa-check-circle fa-3x" style="color:var(--success); margin-bottom:15px;"></i>
-            <h3 style="color:#fff;">সফলভাবে তৈরি হয়েছে!</h3>
-            <p style="color:#aaa; margin-top:5px; font-size:0.9rem;">নিচের কোডটি আপনার টিমমেটদের দিন:</p>
-            <div class="cred-panel" style="margin:20px 0;">
-                <div class="cred-box" style="justify-content:center; gap:10px; background:transparent; border:none; padding:0;">
-                    <span id="gen-team-code" class="cred-value" style="font-size:1.6rem; color:var(--success);">...</span>
-                    <i class="fas fa-copy" onclick="copyGenCode()" style="cursor:pointer; color:#fff;"></i>
-                </div>
-            </div>
-            <button class="btn btn-primary" onclick="closeTeamCodeModal()">ঠিক আছে</button>
-        </div>
-    </div>
-    
-    <!-- INFO MODAL -->
-    <div id="info-modal" class="hidden modal">
-        <div class="modal-content">
-            <h3 style="text-align:center; color:var(--primary); margin-bottom:15px;">ডিটেইলস</h3>
-            <div id="info-text" style="color:#e0e0e0; white-space:pre-wrap; font-size:0.9rem; line-height:1.6; max-height:300px; overflow-y:auto;"></div>
-            <button class="btn btn-secondary" onclick="document.getElementById('info-modal').classList.add('hidden')" style="margin-top:20px;">বন্ধ করুন</button>
-        </div>
-    </div>
-
-    <!-- PROOF MODAL -->
-    <div id="proof-modal" class="hidden modal">
-        <div class="modal-content" style="text-align:center;">
-            <h3 style="color:var(--primary); margin-bottom:10px;">প্রুফ জমা দিন</h3>
-            <p style="color:#aaa; font-size:0.9rem; margin-bottom:25px;">আপনার তথ্য কপি হয়েছে। টেলিগ্রাম বটে গিয়ে পেস্ট করুন এবং স্ক্রিনশট দিন।</p>
-            
-            <a id="btn-proof-link" href="#" target="_blank" class="btn btn-primary" style="background:#0088cc; margin-bottom:12px;">
-                <i class="fab fa-telegram-plane"></i> প্রুফ পাঠান (Telegram)
-            </a>
-            
-            <button class="btn btn-secondary" onclick="document.getElementById('proof-modal').classList.add('hidden')">বন্ধ করুন</button>
-        </div>
-    </div>
+    <div id="join-modal" class="hidden modal"><div class="modal-content">
+        <h3 style="text-align:center;color:#fff;margin-bottom:5px;">টুর্নামেন্ট জয়েন</h3><p style="text-align:center;color:var(--text-muted);font-size:0.9rem;margin-bottom:20px;">সঠিক তথ্য দিন</p>
+        <div id="squad-tabs" class="sq-tabs hidden"><div class="sq-tab active" id="tab-create" onclick="switchTab('create')">স্কোয়াড কিনুন</div><div class="sq-tab" id="tab-join" onclick="switchTab('join')">টিমে জয়েন করুন</div></div>
+        <div id="view-create"><div style="text-align:center;margin-bottom:15px;background:rgba(0,0,0,0.2);padding:10px;border-radius:10px;"><span style="color:#aaa;">এন্ট্রি ফি:</span> <b style="color:var(--warning);font-size:1.1rem;" id="j-fee">0</b></div><div class="input-group"><i class="fas fa-gamepad"></i><input type="text" id="j-uid" placeholder="গেম ইউআইডি (UID)"></div><div id="squad-inputs" class="hidden"><div class="input-group"><i class="fas fa-users"></i><input type="text" id="j-team" placeholder="টিমের নাম"></div></div><button class="btn btn-primary" id="btn-conf" onclick="confirmJoin()">কনফার্ম ও পেমেন্ট</button></div>
+        <div id="view-join" class="hidden"><p style="text-align:center;color:#aaa;font-size:0.9rem;margin-bottom:10px;">লিডারের দেওয়া কোড দিন</p><div class="input-group"><i class="fas fa-key"></i><input type="text" id="m-code" placeholder="টিম কোড"></div><div class="input-group"><i class="fas fa-gamepad"></i><input type="text" id="m-uid" placeholder="আপনার গেম ইউআইডি (UID)"></div><button class="btn btn-success" onclick="joinTeamMember()">টিমে জয়েন করুন</button></div>
+        <button class="btn btn-secondary" onclick="closeJoin()" style="margin-top:10px;">বাতিল করুন</button>
+    </div></div>
+    <div id="team-code-modal" class="hidden modal"><div class="modal-content" style="text-align:center;"><i class="fas fa-check-circle fa-3x" style="color:var(--success);margin-bottom:15px;"></i><h3 style="color:#fff;">সফলভাবে তৈরি হয়েছে!</h3><p style="color:#aaa;margin-top:5px;font-size:0.9rem;">নিচের কোডটি আপনার টিমমেটদের দিন:</p><div class="cred-panel" style="margin:20px 0;"><div class="cred-box" style="justify-content:center;gap:10px;border:none;"><span id="gen-team-code" class="cred-value" style="font-size:1.6rem;color:var(--success);">...</span><i class="fas fa-copy" onclick="copyGenCode()" style="cursor:pointer;color:#fff;"></i></div></div><button class="btn btn-primary" onclick="closeTeamCodeModal()">ঠিক আছে</button></div></div>
+    <div id="info-modal" class="hidden modal"><div class="modal-content"><h3 style="text-align:center;color:var(--primary);margin-bottom:15px;">ডিটেইলস</h3><div id="info-text" style="color:#e0e0e0;white-space:pre-wrap;font-size:0.9rem;line-height:1.6;max-height:300px;overflow-y:auto;"></div><button class="btn btn-secondary" onclick="document.getElementById('info-modal').classList.add('hidden')" style="margin-top:20px;">বন্ধ করুন</button></div></div>
+    <div id="proof-modal" class="hidden modal"><div class="modal-content" style="text-align:center;"><h3 style="color:var(--primary);margin-bottom:10px;">প্রুফ জমা দিন</h3><p style="color:#aaa;font-size:0.9rem;margin-bottom:25px;">আপনার তথ্য কপি হয়েছে। টেলিগ্রাম বটে গিয়ে পেস্ট করুন এবং স্ক্রিনশট দিন।</p><a id="btn-proof-link" href="#" target="_blank" class="btn btn-primary" style="background:#0088cc;margin-bottom:12px;"><i class="fab fa-telegram-plane"></i> প্রুফ পাঠান (Telegram)</a><button class="btn btn-secondary" onclick="document.getElementById('proof-modal').classList.add('hidden')">বন্ধ করুন</button></div></div>
 
     <!-- JS LOGIC -->
     <script type="module">
@@ -584,7 +370,7 @@
         let lastBackPress = 0;
         let minW = 50; let maxW = 10000;
         let currentHomeTab = 'BR';
-        let deferredPrompt; 
+        // Removed global let deferredPrompt; as it's defined in top script
 
         window.showToast = (msg) => { const t = document.getElementById('toast-box'); if(t) { t.innerHTML = `<i class="fas fa-info-circle"></i> ${msg}`; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 3000); } else { alert(msg); } };
         
@@ -631,7 +417,7 @@
         // ✅ FIX 1: SAFE EVENT LISTENERS & LOCAL VARIABLE LOGIC
         window.addEventListener('beforeinstallprompt', (e) => {
             e.preventDefault();
-            deferredPrompt = e;
+            window.deferredPrompt = e; // Use Global
             const isPwa = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
             if (!isPwa) {
                 document.getElementById('install-view').classList.remove('hidden');
@@ -644,11 +430,11 @@
             const installBtn = document.getElementById('btn-install-app');
             if (installBtn) {
                 installBtn.addEventListener('click', async () => {
-                    if (deferredPrompt) {
-                        deferredPrompt.prompt();
-                        const { outcome } = await deferredPrompt.userChoice;
+                    if (window.deferredPrompt) {
+                        window.deferredPrompt.prompt();
+                        const { outcome } = await window.deferredPrompt.userChoice;
                         console.log(`User response to install prompt: ${outcome}`);
-                        deferredPrompt = null;
+                        window.deferredPrompt = null;
                     } else {
                         // Fallback only if prompt not captured (iOS/Desktop/Restricted Envs)
                         alert("To install: Tap the Share button (Safari) or Menu (Chrome) and select 'Add to Home Screen'.");
