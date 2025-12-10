@@ -76,8 +76,7 @@
         #install-view { 
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
             background: #0f172a; z-index: 10001; 
-            display: none; /* Controlled via JS */
-            flex-direction: column; justify-content: center; align-items: center; 
+            display: flex; flex-direction: column; justify-content: center; align-items: center; 
             padding: 20px; text-align: center;
             background-image: radial-gradient(circle at 50% 50%, rgba(6, 182, 212, 0.15) 0%, transparent 60%);
         }
@@ -97,13 +96,13 @@
 </head>
 <body>
 
-<!-- ✅ DOWNLOAD APP / LANDING PAGE VIEW -->
-<div id="install-view">
+<!-- ✅ DOWNLOAD APP / LANDING PAGE VIEW (TRANSLATED) -->
+<div id="install-view" class="hidden">
     <img src="https://cdn-icons-png.flaticon.com/512/3233/3233483.png" class="install-logo">
     <div class="install-title">G-ZONE</div>
     <p class="install-desc">G-ZONE ইস্পোর্টস এ আপনাকে স্বাগতম! ফ্রি ফায়ার টুর্নামেন্ট খেলে টাকা ইনকাম করতে আমাদের অ্যাপটি ইন্সটল করুন।</p>
     <button id="btn-install-app" class="btn-install"><i class="fas fa-download"></i> অ্যাপ ইন্সটল করুন</button>
-    <div class="install-footer">সুরক্ষিত এবং ভেরিফাইড • Version 2.2</div>
+    <div class="install-footer">সুরক্ষিত এবং ভেরিফাইড • Version 2.0</div>
 </div>
 
 <!-- SYSTEM LOADERS -->
