@@ -1,968 +1,961 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="bn">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>G-ZONE ESPORTS</title>
-    <meta name="theme-color" content="#0f172a">
-    <link rel="manifest" href="manifest.json">
     
-    <!-- Fonts & Icons -->
-    <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- PWA MANIFEST -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#0f172a">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+    <!-- FONTS -->
+    <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&family=Rajdhani:wght@500;600;700&family=Outfit:wght@300;400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
-        :root {
-            --primary: #f59e0b; /* Amber 500 */
-            --bg: #0f172a; /* Slate 900 */
-            --surface: #1e293b; /* Slate 800 */
-            --text: #f1f5f9;
-            --text-muted: #94a3b8;
-            --danger: #ef4444;
-            --success: #10b981;
-            --glass: rgba(30, 41, 59, 0.7);
-        }
-
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        body { margin: 0; font-family: 'Hind Siliguri', sans-serif; background: var(--bg); color: var(--text); overflow-x: hidden; }
-        
-        /* Utils */
+        /* --- PROFESSIONAL THEME VARIABLES --- */
+        :root { --bg-dark: #0f172a; --bg-card: #1e293b; --primary: #06b6d4; --primary-glow: rgba(6, 182, 212, 0.4); --secondary: #6366f1; --accent: #ec4899; --success: #10b981; --warning: #f59e0b; --danger: #ef4444; --glass-bg: rgba(30, 41, 59, 0.7); --glass-border: rgba(255, 255, 255, 0.08); --text-main: #f8fafc; --text-muted: #94a3b8; --font-main: 'Outfit', sans-serif; --font-bn: 'Hind Siliguri', sans-serif; --font-gaming: 'Rajdhani', sans-serif; }
+        * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; outline: none; user-select: none; }
+        body { background-color: var(--bg-dark); background-image: radial-gradient(circle at 10% 20%, rgba(6, 182, 212, 0.08) 0%, transparent 40%), radial-gradient(circle at 90% 80%, rgba(99, 102, 241, 0.08) 0%, transparent 40%); background-attachment: fixed; color: var(--text-main); font-family: var(--font-bn); min-height: 100vh; overflow-x: hidden; padding-bottom: 30px; }
         .hidden { display: none !important; }
-        .flex { display: flex; }
-        .flex-col { flex-direction: column; }
-        .items-center { align-items: center; }
-        .justify-between { justify-content: space-between; }
-        .justify-center { justify-content: center; }
-        .w-full { width: 100%; }
-        .text-center { text-align: center; }
-        .text-primary { color: var(--primary); }
-        .font-bold { font-weight: 700; }
-        .p-4 { padding: 1rem; }
-        .mt-4 { margin-top: 1rem; }
-        .mb-4 { margin-bottom: 1rem; }
+        ::-webkit-scrollbar { width: 4px; } ::-webkit-scrollbar-track { background: transparent; } ::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 4px; }
+        .btn { width: 100%; padding: 14px; border: none; border-radius: 10px; cursor: pointer; font-weight: 600; font-size: 0.95rem; letter-spacing: 0.5px; display: flex; align-items: center; justify-content: center; gap: 8px; transition: transform 0.1s, opacity 0.2s; font-family: var(--font-bn); } .btn:active { transform: scale(0.98); }
+        .btn-primary { background: linear-gradient(135deg, var(--primary), var(--secondary)); color: #fff; box-shadow: 0 4px 15px var(--primary-glow); }
+        .btn-secondary { background: rgba(255, 255, 255, 0.05); color: var(--text-main); border: 1px solid var(--glass-border); } .btn-secondary:hover { background: rgba(255, 255, 255, 0.1); }
+        .btn-success { background: var(--success); color: #fff; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3); } .btn-danger { background: var(--danger); color: #fff; box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3); }
+        .input-group { position: relative; margin-bottom: 15px; } .input-group i { position: absolute; top: 50%; left: 16px; transform: translateY(-50%); color: var(--primary); font-size: 1.1rem; z-index: 2; } .input-group input { width: 100%; padding: 14px 14px 14px 45px; background: rgba(15, 23, 42, 0.6); border: 1px solid var(--glass-border); border-radius: 12px; color: #fff; font-size: 1rem; transition: border-color 0.3s; font-family: var(--font-bn); } .input-group input:focus { border-color: var(--primary); background: rgba(15, 23, 42, 0.9); }
+        header { background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); padding: 0 16px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; border-bottom: 1px solid var(--glass-border); height: 65px; box-shadow: 0 4px 20px rgba(0,0,0,0.2); }
+        .header-left { display: flex; align-items: center; gap: 15px; } .logo { font-family: var(--font-gaming); font-size: 1.5rem; font-weight: 700; color: #fff; letter-spacing: 1px; } .logo span { color: var(--primary); }
+        .header-right { display: flex; align-items: center; gap: 12px; }
+        .nav-balance { background: rgba(6, 182, 212, 0.1); border: 1px solid rgba(6, 182, 212, 0.3); padding: 6px 14px; border-radius: 50px; display: flex; align-items: center; gap: 8px; cursor: pointer; } .nav-balance span { font-family: var(--font-gaming); font-weight: 700; color: var(--primary); font-size: 1.05rem; } .nav-balance i { color: var(--primary); font-size: 0.9rem; }
+        .notif-icon-box { position: relative; width: 38px; height: 38px; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.05); border-radius: 10px; cursor: pointer; border: 1px solid var(--glass-border); } .notification-dot { position: absolute; top: 8px; right: 8px; width: 8px; height: 8px; background: var(--danger); border-radius: 50%; display: none; }
+        .drawer-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); backdrop-filter: blur(4px); z-index: 998; display: none; } .drawer { position: fixed; top: 0; left: 0; width: 280px; height: 100%; background: #0f172a; z-index: 999; transform: translateX(-100%); transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); border-right: 1px solid var(--glass-border); display: flex; flex-direction: column; box-shadow: 10px 0 40px rgba(0,0,0,0.5); } .drawer.open { transform: translateX(0); }
+        .drawer-header { padding: 25px 20px; background: linear-gradient(to bottom, #1e293b, #0f172a); border-bottom: 1px solid var(--glass-border); display: flex; align-items: center; gap: 15px; flex-shrink: 0; } .d-user-img { width: 50px; height: 50px; border-radius: 50%; object-fit: cover; border: 2px solid var(--primary); background: #1e293b; } .d-user-info h3 { color: #fff; font-size: 1.1rem; margin: 0; font-family: var(--font-gaming); letter-spacing: 0.5px; } .d-user-info span { color: var(--text-muted); font-size: 0.8rem; font-family: monospace; background: rgba(255,255,255,0.05); padding: 2px 6px; border-radius: 4px; }
+        .drawer-items { padding: 15px 15px 80px 15px; flex: 1; overflow-y: auto; background: linear-gradient(#0f172a 30%, rgba(15,23,42,0)), linear-gradient(rgba(15,23,42,0), #0f172a 70%) 0 100%, radial-gradient(farthest-side at 50% 0, rgba(0,0,0,.4), rgba(0,0,0,0)), radial-gradient(farthest-side at 50% 100%, rgba(0,0,0,.4), rgba(0,0,0,0)) 0 100%; background-repeat: no-repeat; background-size: 100% 40px, 100% 40px, 100% 14px, 100% 14px; background-attachment: local, local, scroll, scroll; }
+        .menu-group-label { font-size: 0.75rem; color: var(--primary); text-transform: uppercase; font-weight: 700; letter-spacing: 1px; margin: 20px 0 8px 10px; opacity: 0.8; } .menu-group-label:first-child { margin-top: 5px; }
+        .d-item { padding: 12px 16px; margin-bottom: 4px; border-radius: 8px; color: var(--text-muted); font-size: 0.95rem; font-weight: 500; display: flex; align-items: center; gap: 15px; transition: all 0.2s; cursor: pointer; border: 1px solid transparent; } .d-item:hover { background: rgba(255,255,255,0.03); color: #fff; } .d-item:active { transform: scale(0.98); } .d-item i { width: 22px; text-align: center; color: var(--text-muted); transition: 0.2s; } .d-item:hover i { color: var(--primary); }
+        .drawer-footer { padding: 20px; border-top: 1px solid var(--glass-border); background: #0f172a; flex-shrink: 0; } .btn-logout { width: 100%; padding: 12px; background: rgba(239, 68, 68, 0.1); color: var(--danger); border: 1px solid rgba(239, 68, 68, 0.2); border-radius: 10px; font-weight: 600; display: flex; justify-content: center; align-items: center; gap: 10px; transition: 0.2s; } .btn-logout:hover { background: rgba(239, 68, 68, 0.2); border-color: var(--danger); }
+        .page-section { display: none; padding-top: 15px; animation: fadeIn 0.3s ease-out; } .page-section.active { display: block; } @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+        .quick-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 15px 16px; } .q-btn { background: rgba(255,255,255,0.03); border: 1px solid var(--glass-border); padding: 16px; border-radius: 14px; display: flex; flex-direction: row; align-items: center; justify-content: center; gap: 10px; color: var(--text-main); font-weight: 600; font-size: 0.95rem; transition: 0.2s; } .q-btn:active { background: rgba(255,255,255,0.06); transform: scale(0.98); } .q-add i { color: var(--success); } .q-wd i { color: var(--warning); }
+        #banner-slider { display: flex; gap: 12px; overflow-x: auto; margin: 0 16px 25px; scroll-snap-type: x mandatory; padding-bottom: 5px; scroll-behavior: smooth; } .slide { flex: 0 0 100%; width: 100%; height: 160px; border-radius: 16px; object-fit: cover; scroll-snap-align: center; border: 1px solid var(--glass-border); background: #1e293b; }
+        .section-header { display: flex; align-items: center; gap: 8px; margin: 0 16px 12px; font-size: 1.1rem; font-weight: 700; color: var(--text-main); letter-spacing: 0.5px; } .section-header i { color: var(--primary); }
+        .home-tabs { display: flex; margin: 0 16px 16px; background: rgba(0,0,0,0.2); padding: 4px; border-radius: 12px; border: 1px solid var(--glass-border); } .home-tab { flex: 1; padding: 10px; text-align: center; cursor: pointer; color: var(--text-muted); border-radius: 8px; font-weight: 600; font-size: 0.9rem; transition: 0.3s; } .home-tab.active { background: var(--primary); color: #fff; box-shadow: 0 2px 8px rgba(0,0,0,0.2); }
+        .t-card { background: var(--bg-card); border: 1px solid var(--glass-border); margin: 0 16px 20px; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.1); transition: transform 0.2s; } .t-img-wrap { position: relative; height: 150px; overflow: hidden; } .t-img { width: 100%; height: 100%; object-fit: cover; } .t-type-badge { position: absolute; top: 10px; right: 10px; background: rgba(0,0,0,0.7); color: #fff; padding: 4px 8px; border-radius: 6px; font-size: 0.75rem; font-weight: 700; border: 1px solid var(--primary); backdrop-filter: blur(4px); } .t-overlay { position: absolute; bottom: 0; left: 0; width: 100%; background: linear-gradient(to top, #1e293b, transparent); padding: 30px 15px 10px; } .t-title { color: #fff; font-size: 1.15rem; font-weight: 700; text-shadow: 0 2px 4px rgba(0,0,0,0.5); font-family: var(--font-bn); }
+        .t-body { padding: 15px; } .t-stats-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; background: rgba(0,0,0,0.2); border-radius: 10px; padding: 10px; margin-bottom: 12px; border: 1px solid rgba(255,255,255,0.03); } .t-stat { text-align: center; } .t-stat small { display: block; font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; } .t-stat b { display: block; font-size: 1rem; color: var(--primary); font-family: var(--font-gaming); font-weight: 600; }
+        .progress-bar { height: 6px; background: rgba(255,255,255,0.05); border-radius: 3px; margin-bottom: 15px; overflow: hidden; } .progress-fill { height: 100%; background: var(--success); border-radius: 3px; } .t-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); backdrop-filter: blur(5px); z-index: 2000; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: 0.2s; } .modal:not(.hidden) { opacity: 1; pointer-events: auto; } .modal-content { background: #1e293b; width: 90%; max-width: 380px; padding: 25px; border-radius: 20px; position: relative; border: 1px solid var(--glass-border); box-shadow: 0 10px 40px rgba(0,0,0,0.5); transform: scale(0.95); transition: 0.2s; } .modal:not(.hidden) .modal-content { transform: scale(1); }
+        .cred-panel { background: rgba(16, 185, 129, 0.05); border: 1px solid rgba(16, 185, 129, 0.2); border-radius: 12px; padding: 15px; margin-top: 15px; } .cred-box { display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.2); padding: 10px 12px; border-radius: 8px; margin-bottom: 8px; } .cred-value { font-family: monospace; font-size: 1.1rem; letter-spacing: 1px; color: #fff; }
+        .method-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 20px; } .method-card { background: rgba(255,255,255,0.03); border: 1px solid var(--glass-border); border-radius: 12px; padding: 15px; text-align: center; cursor: pointer; transition: 0.2s; display: flex; flex-direction: column; align-items: center; gap: 8px; } .method-card:active { transform: scale(0.98); } .method-card.active { border-color: var(--primary); background: rgba(6, 182, 212, 0.05); } .method-card img { width: 40px; height: 40px; object-fit: contain; } .m-name { font-size: 0.85rem; font-weight: 600; color: var(--text-muted); } .method-card.active .m-name { color: #fff; } .method-card input { display: none; }
+        .rank-item { display: flex; justify-content: space-between; align-items: center; padding: 12px 15px; background: rgba(255,255,255,0.02); border-radius: 10px; margin-bottom: 8px; border: 1px solid var(--glass-border); } .rank-pos { font-family: var(--font-gaming); font-weight: 700; font-size: 1.1rem; width: 30px; color: var(--text-muted); } .rank-item.top-1 { border-color: rgba(255, 215, 0, 0.3); background: rgba(255, 215, 0, 0.05); } .rank-item.top-2 { border-color: rgba(192, 192, 192, 0.3); background: rgba(192, 192, 192, 0.05); } .rank-item.top-3 { border-color: rgba(205, 127, 50, 0.3); background: rgba(205, 127, 50, 0.05); }
+        #toast-box { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: #1e293b; border: 1px solid var(--glass-border); color: #fff; padding: 12px 20px; border-radius: 30px; z-index: 10000; display: none; align-items: center; gap: 10px; box-shadow: 0 10px 30px rgba(0,0,0,0.4); font-size: 0.9rem; white-space: nowrap; } #toast-box.show { display: flex; animation: fadeUp 0.3s ease; }
+        .wheel-container { position: relative; width: 280px; height: 280px; margin: 0 auto; max-width: 100%; }
+        /* Wheel Styling */
+        .wheel-rim { width: 100%; height: 100%; border-radius: 50%; border: 8px solid #0f172a; box-shadow: 0 0 20px rgba(6, 182, 212, 0.3); position: relative; overflow: hidden; background: #1e293b; }
+        .wheel { width: 100%; height: 100%; border-radius: 50%; background: conic-gradient(#ef4444 0deg 90deg, #10b981 90deg 180deg, #3b82f6 180deg 270deg, #f59e0b 270deg 360deg); transition: transform 4s cubic-bezier(0.17, 0.67, 0.83, 0.67); display: flex; align-items: center; justify-content: center; }
+        .wheel-pointer { position: absolute; top: -10px; left: 50%; transform: translateX(-50%); width: 0; height: 0; border-left: 15px solid transparent; border-right: 15px solid transparent; border-top: 25px solid #fff; z-index: 10; filter: drop-shadow(0 4px 4px rgba(0,0,0,0.5)); }
+        .wheel-center { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 50px; height: 50px; background: #fff; border-radius: 50%; z-index: 5; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 10px rgba(0,0,0,0.5); }
         
-        /* Glassmorphism Components */
-        .card {
-            background: var(--surface);
-            border: 1px solid rgba(255,255,255,0.05);
-            border-radius: 16px;
-            padding: 16px;
-            margin-bottom: 16px;
-            backdrop-filter: blur(10px);
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-        }
-
-        /* Inputs & Buttons */
-        input, select {
-            width: 100%;
-            padding: 12px;
-            background: rgba(0,0,0,0.3);
-            border: 1px solid rgba(255,255,255,0.1);
-            color: white;
-            border-radius: 8px;
-            outline: none;
-            margin-bottom: 10px;
-            font-family: inherit;
-        }
-        input:focus { border-color: var(--primary); }
-
-        .btn {
-            background: var(--primary);
-            color: #000;
-            border: none;
-            padding: 12px 24px;
-            border-radius: 8px;
-            font-weight: 600;
-            cursor: pointer;
-            width: 100%;
-            transition: 0.2s;
-        }
-        .btn:active { transform: scale(0.98); }
-        .btn-outline { background: transparent; border: 1px solid var(--primary); color: var(--primary); }
-
-        /* PWA Install Screen */
-        #pwa-install {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: var(--bg); z-index: 9999;
-            display: flex; flex-direction: column; justify-content: center; align-items: center;
-            padding: 20px;
-        }
-
-        /* Navigation */
-        .nav-bottom {
-            position: fixed; bottom: 0; left: 0; width: 100%;
-            background: rgba(15, 23, 42, 0.95);
-            backdrop-filter: blur(10px);
-            border-top: 1px solid rgba(255,255,255,0.05);
-            display: flex; justify-content: space-around;
-            padding: 12px 0; z-index: 100;
-        }
-        .nav-item { color: var(--text-muted); font-size: 0.8rem; display: flex; flex-direction: column; align-items: center; gap: 4px; }
-        .nav-item.active { color: var(--primary); }
-        .nav-item i { font-size: 1.2rem; }
-
-        /* Pages */
-        .page { padding: 20px 20px 80px 20px; min-height: 100vh; display: none; }
-        .page.active { display: block; animation: fadeIn 0.3s ease; }
-
-        /* Header */
-        .header { display: flex; justify-content: space-between; align-items: center; padding: 15px 0; }
-        .profile-pic { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; border: 2px solid var(--primary); }
+        #auth-container { background: #0f172a; } .profile-img-container { width: 100px; height: 100px; margin: 0 auto 15px; position: relative; } .profile-pic { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; border: 2px solid var(--primary); padding: 2px; background: #1e293b; }
         
-        /* Match Card */
-        .match-card { position: relative; overflow: hidden; }
-        .match-badge { position: absolute; top: 10px; right: 10px; background: var(--primary); color: #000; padding: 2px 8px; border-radius: 4px; font-size: 0.7rem; font-weight: bold; }
-        
-        /* Spin Wheel */
-        .wheel-container { position: relative; width: 300px; height: 300px; margin: 0 auto; }
-        .wheel { width: 100%; height: 100%; border-radius: 50%; border: 4px solid var(--primary); transition: transform 4s cubic-bezier(0.17, 0.67, 0.83, 0.67); background: conic-gradient( #ef4444 0deg 120deg, #3b82f6 120deg 240deg, #10b981 240deg 360deg ); }
-        .wheel-arrow { position: absolute; top: -10px; left: 50%; transform: translateX(-50%); width: 0; height: 0; border-left: 15px solid transparent; border-right: 15px solid transparent; border-top: 20px solid white; z-index: 2; }
-        
-        /* Toast */
-        #toast { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background: var(--surface); border: 1px solid var(--primary); padding: 10px 20px; border-radius: 20px; z-index: 2000; display: none; }
+        /* LOADING SCREEN */
+        #loading-overlay { 
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            background: #0f172a; z-index: 9999; 
+            display: flex; flex-direction: column; align-items: center; justify-content: center; 
+            transition: opacity 0.5s ease-out;
+        }
+        .loader-logo-wrap { position: relative; width: 80px; height: 80px; margin-bottom: 20px; }
+        .loader-logo-img { width: 100%; height: 100%; object-fit: contain; animation: logoPulse 2s infinite ease-in-out; }
+        .loader-bar-bg { width: 160px; height: 4px; background: rgba(255,255,255,0.1); border-radius: 2px; overflow: hidden; }
+        .loader-bar-fill { height: 100%; background: var(--primary); width: 0%; animation: loadProgress 2s ease-in-out infinite; }
+        @keyframes logoPulse { 0% { transform: scale(1); filter: drop-shadow(0 0 5px rgba(6, 182, 212, 0.3)); } 50% { transform: scale(1.1); filter: drop-shadow(0 0 15px rgba(6, 182, 212, 0.6)); } 100% { transform: scale(1); filter: drop-shadow(0 0 5px rgba(6, 182, 212, 0.3)); } }
+        @keyframes loadProgress { 0% { width: 0%; transform: translateX(-100%); } 50% { width: 100%; transform: translateX(0); } 100% { width: 0%; transform: translateX(100%); } }
 
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        
-        /* Loaders */
-        .spinner { border: 3px solid rgba(255,255,255,0.1); border-top: 3px solid var(--primary); border-radius: 50%; width: 24px; height: 24px; animation: spin 1s linear infinite; margin: 0 auto; }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        /* PWA NOTIFICATION BANNER */
+        #notification-banner {
+            display: none; position: fixed; bottom: 0; left: 0; width: 100%;
+            background: rgba(30, 41, 59, 0.95); border-top: 1px solid var(--primary);
+            padding: 15px; z-index: 9999; text-align: center;
+            backdrop-filter: blur(10px); box-shadow: 0 -5px 20px rgba(0,0,0,0.5);
+            animation: slideUp 0.5s ease-out;
+        }
+        @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+        .notif-text { color: #fff; margin-bottom: 10px; font-size: 0.9rem; font-weight: bold; }
+
+        /* DOWNLOAD SITE STYLES (BROWSER MODE) */
+        #install-view { 
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            background: #0f172a; z-index: 10001; 
+            display: flex; flex-direction: column; justify-content: center; align-items: center; 
+            padding: 20px; text-align: center;
+            background-image: radial-gradient(circle at 50% 50%, rgba(6, 182, 212, 0.15) 0%, transparent 60%);
+        }
+        .install-logo { width: 100px; height: 100px; border-radius: 20px; margin-bottom: 20px; box-shadow: 0 10px 30px rgba(6, 182, 212, 0.3); }
+        .install-title { font-family: var(--font-gaming); font-size: 2.5rem; font-weight: 800; color: #fff; margin-bottom: 10px; letter-spacing: 2px; }
+        .install-desc { color: var(--text-muted); font-size: 1rem; margin-bottom: 30px; max-width: 320px; line-height: 1.6; font-family: var(--font-bn); }
+        .btn-install { 
+            background: linear-gradient(135deg, var(--primary), var(--secondary)); color: #fff; font-weight: 800; 
+            padding: 16px 40px; border-radius: 50px; font-size: 1.1rem; 
+            box-shadow: 0 0 25px rgba(6, 182, 212, 0.4);
+            animation: pulseBtn 2s infinite; border: none; cursor: pointer; text-transform: uppercase; letter-spacing: 1px;
+            font-family: var(--font-main);
+        }
+        @keyframes pulseBtn { 0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(6, 182, 212, 0.7); } 70% { transform: scale(1.05); box-shadow: 0 0 0 15px rgba(6, 182, 212, 0); } 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(6, 182, 212, 0); } }
+        .install-footer { position: absolute; bottom: 30px; color: var(--text-muted); font-size: 0.8rem; opacity: 0.7; }
     </style>
 </head>
 <body>
+    
+    <!-- DOWNLOAD APP / LANDING PAGE VIEW -->
+    <div id="install-view" class="hidden">
+        <img src="https://cdn-icons-png.flaticon.com/512/3233/3233483.png" class="install-logo">
+        <div class="install-title">G-ZONE</div>
+        <p class="install-desc">G-ZONE ইস্পোর্টস এ আপনাকে স্বাগতম! ফ্রি ফায়ার টুর্নামেন্ট খেলে টাকা ইনকাম করতে আমাদের অ্যাপটি ইন্সটল করুন।</p>
+        <button id="btn-install-app" class="btn-install"><i class="fas fa-download"></i> INSTALL APP</button>
+        <div class="install-footer">Secure & Verified • Version 2.1</div>
+    </div>
 
-    <!-- PWA INSTALL PROMPT (Shown if not standalone) -->
-    <div id="pwa-install">
-        <div class="text-center">
-            <h1 class="text-primary text-2xl mb-4">G-ZONE ESPORTS</h1>
-            <p class="mb-4 text-gray-400">Install the app for the best experience.</p>
-            <button id="install-btn" class="btn mb-4">Install App</button>
-            <button id="dev-bypass-btn" class="btn btn-outline" style="font-size: 0.8rem;">Continue to Web (Dev)</button>
+    <!-- LOADING SCREEN -->
+    <div id="loading-overlay">
+        <div class="loader-logo-wrap">
+            <img src="https://cdn-icons-png.flaticon.com/512/3233/3233483.png" class="loader-logo-img">
+        </div>
+        <div class="loader-bar-bg">
+            <div class="loader-bar-fill"></div>
         </div>
     </div>
 
-    <!-- MAIN APP CONTAINER -->
+    <div id="toast-box"><i class="fas fa-info-circle" style="color:var(--primary)"></i> <span id="toast-msg"></span></div>
+
+    <!-- NOTIFICATION PERMISSION BANNER -->
+    <div id="notification-banner">
+        <div class="notif-text">🔔 আপডেট পেতে নোটিফিকেশন চালু করুন!</div>
+        <button class="btn btn-primary" onclick="enableNotifications()">Enable Notifications</button>
+    </div>
+
+    <!-- AUTH SCREEN -->
+    <div id="auth-container" class="hidden" style="display:flex;flex-direction:column;justify-content:center;padding:30px;min-height:100vh;text-align:center;">
+        <h1 class="logo" style="font-size:3rem; margin-bottom:10px;">G-ZONE <span>ESPORTS</span></h1>
+        <p style="color:var(--text-muted); margin-bottom:30px;">Play & Earn Money</p>
+        
+        <div id="login-form">
+            <div class="input-group"><i class="fas fa-envelope"></i><input type="email" id="l-email" placeholder="ইমেইল"></div>
+            <div class="input-group"><i class="fas fa-lock"></i><input type="password" id="l-pass" placeholder="পাসওয়ার্ড"></div>
+            <button class="btn btn-primary" onclick="login()">লগইন করুন</button>
+            <p style="margin-top:20px;color:var(--text-muted);cursor:pointer;font-size:0.9rem;" onclick="toggleAuth()">নতুন একাউন্ট খুলুন</p>
+        </div>
+
+        <div id="signup-form" class="hidden">
+            <div class="input-group"><i class="fas fa-user"></i><input type="text" id="r-user" placeholder="পুরো নাম (Full Name)"></div>
+            <div class="input-group"><i class="fas fa-envelope"></i><input type="email" id="r-email" placeholder="ইমেইল"></div>
+            <div class="input-group"><i class="fas fa-lock"></i><input type="password" id="r-pass" placeholder="পাসওয়ার্ড"></div>
+            <div class="input-group"><i class="fas fa-gift"></i><input type="text" id="r-refer" placeholder="রেফার কোড (Optional)"></div>
+            <button class="btn btn-primary" onclick="register()">রেজিস্ট্রেশন</button>
+            <p style="margin-top:20px;color:var(--text-muted);cursor:pointer;font-size:0.9rem;" onclick="toggleAuth()">লগইন করুন</p>
+        </div>
+    </div>
+
+    <!-- MAIN APP INTERFACE -->
     <div id="app-container" class="hidden">
         
-        <!-- Toast Notification -->
-        <div id="toast"></div>
-
-        <!-- AUTH PAGES -->
-        <div id="auth-section">
-            <!-- LOGIN -->
-            <div id="page-login" class="page active">
-                <div class="flex flex-col justify-center" style="height: 80vh;">
-                    <h1 class="text-3xl font-bold text-center mb-6">Welcome Back</h1>
-                    <input type="email" id="login-email" placeholder="Email Address">
-                    <input type="password" id="login-pass" placeholder="Password">
-                    <button id="btn-login" class="btn mt-2">Login</button>
-                    <p class="text-center mt-4 text-sm" onclick="app.router('register')">Don't have an account? <span class="text-primary">Register</span></p>
+        <!-- HEADER -->
+        <header>
+            <div class="header-left">
+                <i class="fas fa-bars fa-lg" onclick="toggleDrawer()" style="cursor:pointer; color:#fff;"></i>
+                <div class="logo">G-ZONE</div>
+            </div>
+            
+            <div class="header-right">
+                <div class="nav-balance" onclick="nav('page-withdraw')">
+                    <i class="fas fa-wallet"></i>
+                    <span>৳<span id="header-bal">0</span></span>
+                </div>
+                
+                <div class="notif-icon-box" onclick="openNotifications()">
+                    <i class="far fa-bell" style="color:#fff;"></i>
+                    <div id="header-badge" class="notification-dot"></div>
                 </div>
             </div>
+        </header>
 
-            <!-- REGISTER -->
-            <div id="page-register" class="page">
-                <div class="flex flex-col justify-center" style="height: 80vh;">
-                    <h1 class="text-3xl font-bold text-center mb-6">Create Account</h1>
-                    <input type="text" id="reg-name" placeholder="Full Name">
-                    <input type="text" id="reg-username" placeholder="Username">
-                    <input type="email" id="reg-email" placeholder="Email Address">
-                    <input type="password" id="reg-pass" placeholder="Password">
-                    <input type="text" id="reg-refer" placeholder="Referral Code (Optional)">
-                    <button id="btn-register" class="btn mt-2">Register</button>
-                    <p class="text-center mt-4 text-sm" onclick="app.router('login')">Already have an account? <span class="text-primary">Login</span></p>
+        <!-- PAGE: HOME -->
+        <div id="page-home" class="page-section active">
+            <!-- Quick Actions -->
+            <div class="quick-actions">
+                <div class="q-btn q-add" onclick="nav('page-add-money')"><i class="fas fa-plus-circle"></i> এড মানি</div>
+                <div class="q-btn q-wd" onclick="nav('page-withdraw')"><i class="fas fa-arrow-circle-down"></i> উইথড্র</div>
+            </div>
+
+            <!-- Banner Slider -->
+            <div id="banner-slider"></div>
+
+            <!-- Tournament Section -->
+            <div class="section-header"><i class="fas fa-fire"></i> চলমান টুর্নামেন্ট</div>
+            
+            <div class="home-tabs">
+                <div class="home-tab active" id="ht-BR" onclick="switchHomeTab('BR')">Battle Royale</div>
+                <div class="home-tab" id="ht-CS" onclick="switchHomeTab('CS')">Clash Squad</div>
+            </div>
+
+            <div id="tournament-list"></div>
+        </div>
+
+        <!-- PAGE: LEADERBOARD -->
+        <div id="page-leaderboard" class="page-section">
+            <div class="section-header"><i class="fas fa-crown"></i> সেরা ১০ ধনী</div>
+            <div class="t-card"><div class="t-body"><div id="balance-leaderboard"></div></div></div>
+        </div>
+
+        <!-- PAGE: REFER -->
+        <div id="page-refer" class="page-section">
+            <div class="section-header"><i class="fas fa-user-plus"></i> রেফার করুন</div>
+            <div class="t-card">
+                <div class="t-body" style="text-align:center;">
+                    <p style="color:var(--text-muted); font-size:0.9rem;">আপনার রেফার কোড</p>
+                    <div class="cred-panel" style="margin:15px 0;">
+                        <div class="cred-box" style="justify-content:center; gap:15px; border:none; background:transparent; padding:0;">
+                            <span id="my-refer-code" class="cred-value" style="font-size:1.8rem; color:var(--success);">...</span>
+                            <i class="fas fa-copy" onclick="copyReferCode()" style="cursor:pointer; color:var(--text-muted)"></i>
+                        </div>
+                    </div>
+                    <p style="font-size:0.9rem; color:#aaa; margin-bottom:20px; line-height:1.5;">বন্ধুদের ইনভাইট করুন। তারা যখন প্রথম সোলো ম্যাচে জয়েন করবে, আপনি পাবেন <span style="color:var(--success)">৳5</span> বোনাস!</p>
+                    <div style="display:flex; justify-content:space-between; background:rgba(0,0,0,0.2); padding:15px; border-radius:12px; border:1px solid var(--glass-border);">
+                        <div><small style="color:var(--text-muted)">মোট রেফার</small><h3 id="total-refers" style="color:#fff;">0</h3></div>
+                        <div style="text-align:right;"><small style="color:var(--text-muted)">মোট আয়</small><h3 id="total-refer-earn" style="color:var(--success);">৳0</h3></div>
+                    </div>
+                </div>
+            </div>
+            <div class="section-header"><i class="fas fa-medal"></i> টপ রেফারার</div>
+            <div id="referral-leaderboard" style="margin: 0 16px 20px;"></div>
+        </div>
+
+        <!-- PAGE: SPIN -->
+        <div id="page-spin" class="page-section">
+            <div class="section-header"><i class="fas fa-dharmachakra"></i> লাকি স্পিন</div>
+            <div class="t-card">
+                <div class="t-body" style="text-align:center; padding: 30px 10px;">
+                    <div class="wheel-container">
+                        <div class="wheel-pointer"></div>
+                        <div class="wheel-rim">
+                            <div id="spin-wheel" class="wheel"></div>
+                        </div>
+                        <div class="wheel-center"><i class="fas fa-star" style="color:#000;"></i></div>
+                    </div>
+                    
+                    <div style="background:rgba(239,68,68,0.1); border:1px solid rgba(239,68,68,0.2); padding:10px; border-radius:10px; margin-top:20px; font-size:0.8rem; color:#fca5a5;">
+                        <i class="fas fa-exclamation-circle"></i> <b>সতর্কবার্তা</b><br>
+                        স্পিনে টাকা হারানো গেলে কর্তৃপক্ষ দায়ী থাকবে না। নিজ দায়িত্বে খেলুন।
+                    </div>
+                    <div class="input-group" style="margin-top:20px;">
+                        <i class="fas fa-coins"></i>
+                        <input type="number" id="spin-amt" placeholder="টাকার পরিমাণ লিখুন">
+                    </div>
+                    <button class="btn btn-primary" id="spin-btn" onclick="spinWheel()">স্পিন করুন</button>
                 </div>
             </div>
         </div>
 
-        <!-- DASHBOARD PAGES (Protected) -->
-        <div id="dashboard-section" class="hidden">
-            
-            <!-- HOME / MATCHES -->
-            <div id="page-home" class="page">
-                <div class="header">
-                    <div>
-                        <div class="text-sm text-muted">Welcome,</div>
-                        <div class="font-bold text-lg" id="home-username">G-Zone User</div>
-                    </div>
-                    <div class="flex items-center gap-3">
-                        <div class="card p-2 mb-0 flex items-center gap-2">
-                            <i class="fas fa-coins text-primary"></i>
-                            <span id="home-balance">0</span>
-                        </div>
-                        <img id="home-profile-pic" src="https://via.placeholder.com/40" class="profile-pic">
-                    </div>
-                </div>
+        <!-- PAGE: MATCHES -->
+        <div id="page-matches" class="page-section">
+            <div class="section-header"><i class="fas fa-gamepad"></i> আমার ম্যাচ</div>
+            <div id="my-matches-list"></div>
+        </div>
 
-                <!-- Slider / Banner -->
-                <div class="card p-0 overflow-hidden" style="height: 150px; background: linear-gradient(45deg, #f59e0b, #ef4444);">
-                    <div class="flex items-center justify-center h-full">
-                        <h2 class="text-2xl font-bold text-black">PLAY & WIN</h2>
+        <!-- PAGE: PROFILE -->
+        <div id="page-profile" class="page-section">
+            <div class="section-header"><i class="fas fa-user-circle"></i> প্রোফাইল</div>
+            <div class="t-card">
+                <div class="t-body" style="text-align:center; padding:30px 20px;">
+                    <div class="profile-img-container"><img id="p-pic" src="" class="profile-pic" onerror="this.src='https://via.placeholder.com/100'"></div>
+                    <h2 style="color:#fff; margin-bottom:5px; font-size:1.4rem;"><span id="p-name">...</span></h2>
+                    
+                    <div style="background:rgba(0,0,0,0.3); padding:8px 15px; border-radius:20px; display:inline-flex; align-items:center; gap:10px; margin:10px 0; border:1px solid var(--glass-border);">
+                        <span style="color:#aaa; font-size:0.85rem;">UID:</span>
+                        <span id="p-custom-id" style="font-family:monospace; font-weight:bold; letter-spacing:1px; color:var(--primary);">...</span>
+                        <i class="fas fa-copy" onclick="copyCustomId()" style="cursor:pointer; color:var(--text-muted);"></i>
                     </div>
-                </div>
 
-                <h3 class="mb-4 border-l-4 border-primary pl-2">Upcoming Matches</h3>
-                <div id="matches-list">
-                    <!-- Matches injected via JS -->
-                    <div class="text-center text-muted mt-10">Loading matches...</div>
+                    <div style="margin-top:30px; text-align:left;">
+                        <label style="font-size:0.85rem; color:var(--text-muted); margin-bottom:5px; display:block;">প্রোফাইল ছবি পরিবর্তন</label>
+                        <div class="input-group" style="margin-bottom:10px;"><i class="fas fa-link"></i><input type="text" id="new-pic-url" placeholder="ছবির URL লিঙ্ক"></div>
+                        <button class="btn btn-secondary" onclick="updateProfilePic()">আপডেট করুন</button>
+                    </div>
                 </div>
             </div>
+        </div>
 
-            <!-- MATCH DETAILS (Dynamic) -->
-            <div id="page-match-details" class="page">
-                <div class="header">
-                    <i class="fas fa-arrow-left text-xl" onclick="app.router('home')"></i>
-                    <span class="font-bold">Match Details</span>
-                    <div></div>
-                </div>
-                <div id="match-details-content"></div>
-            </div>
-
-            <!-- WALLET -->
-            <div id="page-wallet" class="page">
-                <h2 class="text-2xl font-bold mb-4">My Wallet</h2>
-                <div class="card text-center">
-                    <div class="text-muted">Total Balance</div>
-                    <div class="text-4xl font-bold text-primary mt-2">৳ <span id="wallet-balance">0</span></div>
-                </div>
-
-                <div class="grid grid-cols-2 gap-4 mb-6">
-                    <div class="card text-center p-4" onclick="app.showWithdraw('bkash')">
-                        <i class="fas fa-mobile-alt text-2xl mb-2"></i>
-                        <div>bKash</div>
-                    </div>
-                    <div class="card text-center p-4" onclick="app.showWithdraw('nagad')">
-                        <i class="fas fa-money-bill-wave text-2xl mb-2"></i>
-                        <div>Nagad</div>
-                    </div>
-                </div>
-
-                <h3 class="mb-4">Withdraw</h3>
-                <div class="card">
-                    <select id="withdraw-method">
-                        <option value="bkash">bKash</option>
-                        <option value="nagad">Nagad</option>
-                        <option value="payeer">Payeer</option>
-                        <option value="nivacoin">Niva Coin</option>
-                    </select>
-                    <input type="number" id="withdraw-amount" placeholder="Amount">
-                    <input type="text" id="withdraw-number" placeholder="Wallet Number / ID">
-                    <div id="conversion-rate" class="text-xs text-muted mb-2 text-right"></div>
-                    <button id="btn-withdraw" class="btn">Request Withdraw</button>
-                </div>
-
-                <h3 class="mb-4">History</h3>
-                <div id="withdraw-history"></div>
-            </div>
-
-            <!-- SPIN WHEEL -->
-            <div id="page-spin" class="page">
-                <h2 class="text-2xl font-bold text-center mb-8">Lucky Spin</h2>
-                <div class="wheel-container">
-                    <div class="wheel-arrow"></div>
-                    <div id="the-wheel" class="wheel"></div>
-                </div>
-                <div class="text-center mt-8">
-                    <p class="mb-4">Cost: 10 TK per spin</p>
-                    <button id="btn-spin" class="btn w-1/2">SPIN NOW</button>
+        <!-- PAGE: TRANSFER -->
+        <div id="page-transfer" class="page-section">
+            <div class="section-header"><i class="fas fa-exchange-alt"></i> টাকা ট্রান্সফার</div>
+            <div class="t-card">
+                <div class="t-body">
+                    <p style="color:var(--text-muted); margin-bottom:15px; font-size:0.9rem;">অন্য ইউজারকে টাকা পাঠান:</p>
+                    <div class="input-group"><i class="fas fa-id-card"></i><input type="number" id="tf-id" placeholder="রিসিভারের ইউজার আইডি (১১ সংখ্যা)"></div>
+                    <div class="input-group"><i class="fas fa-coins"></i><input type="number" id="tf-amount" placeholder="টাকার পরিমাণ"></div>
+                    <button class="btn btn-primary" id="btn-transfer" onclick="sendMoney()">টাকা পাঠান</button>
                 </div>
             </div>
-
-            <!-- PROFILE -->
-            <div id="page-profile" class="page">
-                <div class="text-center mb-6">
-                    <img id="profile-pic-lg" src="" class="profile-pic" style="width:80px; height:80px;">
-                    <h2 id="profile-name" class="text-xl font-bold mt-2">...</h2>
-                    <p id="profile-id" class="text-muted text-sm">ID: ...</p>
-                </div>
-
-                <div class="card flex justify-between items-center">
-                    <div>
-                        <div class="text-xs text-muted">Refer Code</div>
-                        <div id="profile-refer-code" class="font-bold text-xl text-primary">...</div>
-                    </div>
-                    <button class="btn btn-outline" style="width: auto; padding: 5px 10px;" onclick="app.copyRefer()">Copy</button>
-                </div>
-
-                <div class="grid grid-cols-2 gap-4">
-                    <div class="card text-center">
-                        <div class="text-muted text-xs">Total Refers</div>
-                        <div id="profile-total-refers" class="font-bold text-lg">0</div>
-                    </div>
-                    <div class="card text-center">
-                        <div class="text-muted text-xs">Refer Earn</div>
-                        <div id="profile-refer-earn" class="font-bold text-lg">0</div>
-                    </div>
-                </div>
-
-                <div class="card" onclick="window.open(app.config.telegramSupport, '_blank')">
-                    <div class="flex items-center gap-3">
-                        <i class="fab fa-telegram text-2xl text-blue-400"></i>
-                        <span>Telegram Support</span>
-                    </div>
-                </div>
-
-                <button class="btn" style="background: var(--surface); border: 1px solid var(--danger); color: var(--danger);" onclick="app.logout()">Logout</button>
+            <div style="margin:20px; font-size:0.8rem; color:#aaa; text-align:center; padding:0 20px;">
+                <i class="fas fa-info-circle"></i> ভুল আইডিতে টাকা পাঠালে ফেরত পাওয়া যাবে না। আইডি চেক করে নিন।
             </div>
+        </div>
 
-            <!-- NAV BOTTOM -->
-            <div class="nav-bottom">
-                <div class="nav-item active" onclick="app.router('home')"><i class="fas fa-home"></i> Home</div>
-                <div class="nav-item" onclick="app.router('spin')"><i class="fas fa-dharmachakra"></i> Spin</div>
-                <div class="nav-item" onclick="app.router('wallet')"><i class="fas fa-wallet"></i> Wallet</div>
-                <div class="nav-item" onclick="app.router('profile')"><i class="fas fa-user"></i> Profile</div>
-            </div>
+        <!-- PAGE: WITHDRAW -->
+        <div id="page-withdraw" class="page-section">
+            <div class="section-header"><i class="fas fa-money-bill-wave"></i> উইথড্র</div>
+            <div class="t-card"><div class="t-body">
+                <p style="color:var(--text-muted); margin-bottom:10px; font-size:0.9rem;">মেথড সিলেক্ট করুন:</p>
+                <div class="method-grid">
+                    <label class="method-card" id="method-bkash" onclick="selectMethod(this)">
+                        <input type="radio" name="w_method" value="Bkash">
+                        <img src="https://raw.githubusercontent.com/Shipu/bkash-example/master/bkash_payment_logo.png" alt="Bkash">
+                        <span class="m-name">বিকাশ</span>
+                    </label>
+                    <label class="method-card" id="method-nagad" onclick="selectMethod(this)">
+                        <input type="radio" name="w_method" value="Nagad">
+                        <img src="https://download.logo.wine/logo/Nagad/Nagad-Vertical-Logo.wine.png" alt="Nagad">
+                        <span class="m-name">নগদ</span>
+                    </label>
+                    <label class="method-card" id="method-niva" onclick="selectMethod(this)">
+                        <input type="radio" name="w_method" value="Niva Coin">
+                        <i class="fas fa-coins fa-2x" style="color:#00ff9d; margin-bottom:5px;"></i>
+                        <span class="m-name">নিভা কয়েন</span>
+                    </label>
+                    <label class="method-card" id="method-payeer" onclick="selectMethod(this)">
+                        <input type="radio" name="w_method" value="Payeer Dollar">
+                        <i class="fas fa-dollar-sign fa-2x" style="color:#00aaff; margin-bottom:5px;"></i>
+                        <span class="m-name">Payeer</span>
+                    </label>
+                </div>
+                
+                <!-- Calc Displays -->
+                <div id="niva-calc" style="display:none; background:rgba(0,255,157,0.1); border:1px dashed var(--success); padding:10px; border-radius:10px; margin-bottom:15px; text-align:center;">
+                    <small>রেট: <span id="niva-rate-disp">...</span></small><br>পাবেন: <b id="niva-amount" style="color:var(--success)">0</b> কয়েন
+                </div>
+                <div id="payeer-calc" style="display:none; background:rgba(0,170,255,0.1); border:1px dashed #00aaff; padding:10px; border-radius:10px; margin-bottom:15px; text-align:center;">
+                    <small>রেট: 1$ = <span id="payeer-rate-disp">...</span>৳</small><br>পাবেন: <b id="payeer-amount" style="color:#00aaff">0</b> USD
+                </div>
+                
+                <div class="input-group"><i class="fas fa-coins"></i><input type="number" id="w-amt" placeholder="টাকার পরিমাণ" oninput="calcConversion()"></div>
+                <div class="input-group"><i class="fas fa-address-card"></i><input type="text" id="w-num" placeholder="নাম্বার / ইউজার আইডি"></div>
+                <p style="text-align:center; font-size:0.8rem; color:var(--text-muted); margin-bottom:15px;">লিমিট: <span id="w-limit-text">...</span></p>
+                <button class="btn btn-primary" onclick="doWithdraw()">রিকুয়েস্ট পাঠান</button>
+            </div></div>
+            <div class="section-header"><i class="fas fa-history"></i> ইতিহাস</div>
+            <div id="withdraw-history" style="margin: 0 16px 20px;"></div>
+        </div>
+
+        <!-- PAGE: ADD MONEY -->
+        <div id="page-add-money" class="page-section">
+            <div class="section-header"><i class="fas fa-wallet"></i> অ্যাড মানি</div>
+            <div class="t-card"><div class="t-body" style="text-align:center; padding:50px 20px;">
+                <i class="fab fa-telegram fa-4x" style="color:#0088cc; margin-bottom:20px;"></i>
+                <h3 style="margin-bottom:10px;">টেলিগ্রাম সাপোর্ট</h3>
+                <p style="color:var(--text-muted); margin-bottom:25px; font-size:0.9rem;">টাকা এড করতে অ্যাডমিনের সাথে যোগাযোগ করুন।</p>
+                <a id="btn-admin-support" href="#" target="_blank" class="btn btn-primary" style="background:#0088cc;">
+                    <i class="fab fa-telegram-plane"></i> মেসেজ পাঠান
+                </a>
+            </div></div>
+        </div>
+        
+        <!-- PAGE: BROADCAST -->
+        <div id="page-broadcast" class="page-section">
+            <div class="section-header"><i class="fas fa-video"></i> লার্নিং জোন</div>
+            <div id="video-list" style="margin:0 16px;"></div>
+        </div>
+
+        <!-- PAGE: NOTIFICATION -->
+        <div id="page-notifications" class="page-section">
+            <div class="section-header"><i class="fas fa-bell"></i> নোটিফিকেশন</div>
+            <div id="n-list" style="padding-bottom:20px; margin:0 16px;"></div>
+        </div>
+
+        <!-- PAGE: COUPON -->
+        <div id="page-coupon" class="page-section">
+             <div class="section-header"><i class="fas fa-ticket-alt"></i> কুপন</div>
+             <div class="t-card"><div class="t-body">
+                <div class="input-group"><i class="fas fa-gift"></i><input type="text" id="coupon-code" placeholder="কোড লিখুন"></div>
+                <button class="btn btn-primary" onclick="redeemCoupon()">রিডিম করুন</button>
+             </div></div>
+             <h4 style="margin:25px 20px 15px; color:var(--text-main); font-size:1rem;">পাবলিক কুপন</h4>
+             <div id="public-coupons" style="margin: 0 16px;"></div>
         </div>
     </div>
 
-    <!-- FIREBASE MODULES -->
+    <!-- DRAWER MENU -->
+    <div class="drawer-overlay" onclick="toggleDrawer()"></div>
+    <div class="drawer">
+        <div class="drawer-header">
+            <img id="d-pic" src="https://via.placeholder.com/100" class="d-user-img">
+            <div class="d-user-info">
+                <h3 id="d-name">Loading...</h3>
+                <span id="d-uid">ID: ...</span>
+            </div>
+        </div>
+        <div class="drawer-items">
+            <div class="menu-group-label">Gaming Zone</div>
+            <div class="d-item" onclick="nav('page-home')"><i class="fas fa-home"></i> হোম</div>
+            <div class="d-item" onclick="nav('page-matches')"><i class="fas fa-gamepad"></i> আমার ম্যাচ</div>
+            <div class="d-item" onclick="nav('page-leaderboard')"><i class="fas fa-crown"></i> লিডারবোর্ড</div>
+            <div class="menu-group-label">Finance</div>
+            <div class="d-item" onclick="nav('page-withdraw')"><i class="fas fa-wallet"></i> উইথড্র</div>
+            <div class="d-item" onclick="nav('page-add-money')"><i class="fas fa-plus-circle"></i> অ্যাড মানি</div>
+            <div class="d-item" onclick="nav('page-transfer')"><i class="fas fa-exchange-alt"></i> ট্রান্সফার</div>
+            <div class="d-item" onclick="nav('page-coupon')"><i class="fas fa-ticket-alt"></i> কুপন</div>
+            <div class="menu-group-label">Account & Fun</div>
+            <div class="d-item" onclick="nav('page-profile')"><i class="fas fa-user-circle"></i> প্রোফাইল</div>
+            <div class="d-item" onclick="nav('page-refer')"><i class="fas fa-user-plus"></i> রেফার</div>
+            <div id="nav-spin-item" class="d-item" onclick="nav('page-spin')"><i class="fas fa-dharmachakra"></i> স্পিন হুইল</div>
+            <div class="d-item" onclick="nav('page-broadcast')"><i class="fas fa-video"></i> লার্নিং জোন</div>
+        </div>
+        <div class="drawer-footer">
+            <button class="btn-logout" onclick="logout()">
+                <i class="fas fa-sign-out-alt"></i> লগআউট
+            </button>
+        </div>
+    </div>
+
+    <!-- MODALS -->
+    <div id="modal-area" class="hidden modal"><div class="modal-content" id="modal-content"></div></div>
+    
+    <!-- JOIN MODAL -->
+    <div id="join-modal" class="hidden modal">
+        <div class="modal-content">
+            <h3 style="text-align:center; color:#fff; margin-bottom:5px;">টুর্নামেন্ট জয়েন</h3>
+            <p style="text-align:center; color:var(--text-muted); font-size:0.9rem; margin-bottom:20px;">সঠিক তথ্য দিন</p>
+            
+            <div id="squad-tabs" class="sq-tabs hidden" style="display:flex; margin-bottom:15px; background:rgba(0,0,0,0.3); border-radius:8px; padding:4px;">
+                <div class="sq-tab active" id="tab-create" onclick="switchTab('create')" style="flex:1; text-align:center; padding:8px; border-radius:6px; cursor:pointer;">স্কোয়াড কিনুন</div>
+                <div class="sq-tab" id="tab-join" onclick="switchTab('join')" style="flex:1; text-align:center; padding:8px; border-radius:6px; cursor:pointer;">টিমে জয়েন</div>
+            </div>
+            
+            <div id="view-create">
+                <div style="text-align:center; margin-bottom:15px; background:rgba(0,0,0,0.2); padding:10px; border-radius:10px;">
+                    <span style="color:#aaa;">এন্ট্রি ফি:</span> <b style="color:var(--warning); font-size:1.1rem;" id="j-fee">0</b>
+                </div>
+                <div class="input-group"><i class="fas fa-gamepad"></i><input type="text" id="j-uid" placeholder="গেম ইউআইডি (UID)"></div>
+                <div id="squad-inputs" class="hidden">
+                    <div class="input-group"><i class="fas fa-users"></i><input type="text" id="j-team" placeholder="টিমের নাম"></div>
+                </div>
+                <button class="btn btn-primary" id="btn-conf" onclick="confirmJoin()">কনফার্ম ও পেমেন্ট</button>
+            </div>
+            
+            <div id="view-join" class="hidden">
+                <p style="text-align:center; color:#aaa; font-size:0.9rem; margin-bottom:10px;">লিডারের দেওয়া কোড দিন</p>
+                <div class="input-group"><i class="fas fa-key"></i><input type="text" id="m-code" placeholder="টিম কোড"></div>
+                <div class="input-group"><i class="fas fa-gamepad"></i><input type="text" id="m-uid" placeholder="আপনার গেম ইউআইডি (UID)"></div>
+                <button class="btn btn-success" onclick="joinTeamMember()">টিমে জয়েন করুন</button>
+            </div>
+            
+            <button class="btn btn-secondary" onclick="closeJoin()" style="margin-top:10px;">বাতিল করুন</button>
+        </div>
+    </div>
+    
+    <!-- TEAM CODE MODAL -->
+    <div id="team-code-modal" class="hidden modal">
+        <div class="modal-content" style="text-align:center;">
+            <i class="fas fa-check-circle fa-3x" style="color:var(--success); margin-bottom:15px;"></i>
+            <h3 style="color:#fff;">সফলভাবে তৈরি হয়েছে!</h3>
+            <p style="color:#aaa; margin-top:5px; font-size:0.9rem;">নিচের কোডটি আপনার টিমমেটদের দিন:</p>
+            <div class="cred-panel" style="margin:20px 0;">
+                <div class="cred-box" style="justify-content:center; gap:10px; background:transparent; border:none; padding:0;">
+                    <span id="gen-team-code" class="cred-value" style="font-size:1.6rem; color:var(--success);">...</span>
+                    <i class="fas fa-copy" onclick="copyGenCode()" style="cursor:pointer; color:#fff;"></i>
+                </div>
+            </div>
+            <button class="btn btn-primary" onclick="closeTeamCodeModal()">ঠিক আছে</button>
+        </div>
+    </div>
+    
+    <!-- INFO MODAL -->
+    <div id="info-modal" class="hidden modal">
+        <div class="modal-content">
+            <h3 style="text-align:center; color:var(--primary); margin-bottom:15px;">ডিটেইলস</h3>
+            <div id="info-text" style="color:#e0e0e0; white-space:pre-wrap; font-size:0.9rem; line-height:1.6; max-height:300px; overflow-y:auto;"></div>
+            <button class="btn btn-secondary" onclick="document.getElementById('info-modal').classList.add('hidden')" style="margin-top:20px;">বন্ধ করুন</button>
+        </div>
+    </div>
+
+    <!-- PROOF MODAL -->
+    <div id="proof-modal" class="hidden modal">
+        <div class="modal-content" style="text-align:center;">
+            <h3 style="color:var(--primary); margin-bottom:10px;">প্রুফ জমা দিন</h3>
+            <p style="color:#aaa; font-size:0.9rem; margin-bottom:25px;">আপনার তথ্য কপি হয়েছে। টেলিগ্রাম বটে গিয়ে পেস্ট করুন এবং স্ক্রিনশট দিন।</p>
+            
+            <a id="btn-proof-link" href="#" target="_blank" class="btn btn-primary" style="background:#0088cc; margin-bottom:12px;">
+                <i class="fab fa-telegram-plane"></i> প্রুফ পাঠান (Telegram)
+            </a>
+            
+            <button class="btn btn-secondary" onclick="document.getElementById('proof-modal').classList.add('hidden')">বন্ধ করুন</button>
+        </div>
+    </div>
+
+    <!-- JS LOGIC -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut, updateProfile } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-        import { getFirestore, collection, doc, getDoc, getDocs, setDoc, updateDoc, onSnapshot, query, where, orderBy, increment, arrayUnion, runTransaction, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { getFirestore, doc, setDoc, getDoc, updateDoc, collection, query, where, orderBy, addDoc, increment, arrayUnion, serverTimestamp, writeBatch, onSnapshot, getDocs, limit } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
         import { getMessaging, getToken, onMessage } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-messaging.js";
 
-        // --- 1. CONFIGURATION ---
-        const firebaseConfig = {
-            apiKey: "AIzaSyAafXkJwyZ5F7Xuax0VktZ9cpqWD4oCvxU",
-            authDomain: "tournament-97743.firebaseapp.com",
-            projectId: "tournament-97743",
-            messagingSenderId: "584797187828",
-            appId: "1:584797187828:web:4c643f83dfd9b700adb8a1"
+        const firebaseConfig = { 
+            apiKey: "AIzaSyAafXkJwyZ5F7Xuax0VktZ9cpqWD4oCvxU", 
+            authDomain: "tournament-97743.firebaseapp.com", 
+            projectId: "tournament-97743", 
+            messagingSenderId: "584797187828", 
+            appId: "1:584797187828:web:4c643f83dfd9b700adb8a1" 
+        };
+        
+        const app = initializeApp(firebaseConfig); 
+        const auth = getAuth(app); 
+        const db = getFirestore(app);
+        const messaging = getMessaging(app);
+
+        // --- GLOBAL VARIABLES ---
+        const defaultAvatars = [
+            "https://i.pinimg.com/736x/5c/84/42/5c84428d983d26ce85a84f946e4ce8ab.jpg",
+            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTyAcF57Bqp8agckepgWzFwV0xBxe2gDcbChteoaL41YzUUL62kxx3hvsU&s=10",
+            "https://w0.peakpx.com/wallpaper/264/475/HD-wallpaper-profile-pic-girl-profile-thumbnail.jpg",
+            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSy3WjPE0K2GQYxbNrMNm83QolhuPiom4owlQkhi7f66XXxnAHXBatc3JY&s=10"
+        ];
+
+        let currentUserData = null;
+        let sliderInterval = null;
+        let nivaRate = 10;
+        let payeerRate = 115;
+        let proofBotUrl = "";
+        let selMatch = null;
+        let allTournaments = [];
+        let joinedMatchIds = new Set();
+        let spinProcessing = false;
+        let currentRotation = 0;
+        let lastBackPress = 0;
+        let minW = 50; let maxW = 10000;
+        let currentHomeTab = 'BR';
+        let deferredPrompt; 
+
+        // --- DOM HELPER FUNCTIONS ATTACHED TO WINDOW ---
+        window.showToast = (msg) => { const t = document.getElementById('toast-box'); if(t) { t.innerHTML = `<i class="fas fa-info-circle"></i> ${msg}`; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 3000); } else { alert(msg); } };
+        
+        window.nav = (pid) => { 
+            if(sliderInterval && pid !== 'page-home') { clearInterval(sliderInterval); sliderInterval = null; }
+            if(pid === 'page-home' && !sliderInterval) loadHomeData();
+            document.querySelectorAll('.page-section').forEach(e => e.classList.remove('active')); 
+            const target = document.getElementById(pid); 
+            if(target) target.classList.add('active'); 
+            const drawer = document.querySelector('.drawer');
+            if(drawer && drawer.style.transform === 'translateX(0px)') window.toggleDrawer(); 
+            if (pid === 'page-home') { history.pushState({page: 'home'}, '', '#home'); } else { history.pushState({page: pid}, '', '#' + pid.replace('page-', '')); } window.scrollTo(0,0); 
         };
 
-        const vapidKey = "BKVqRDof4xyE2oZWEvMO3CSEsCQ9QPkbiT59bnJHQLWJ0ngm5I1pirwwTsNQ94AVR3fuWNeV6WPwhi5f5hsUFyQ";
+        window.selectMethod = (el) => { document.querySelectorAll('.method-card').forEach(c => c.classList.remove('active')); el.classList.add('active'); el.querySelector('input').checked = true; window.calcConversion(); }
+        window.toggleAuth = () => { document.getElementById('login-form').classList.toggle('hidden'); document.getElementById('signup-form').classList.toggle('hidden'); };
+        window.toggleDrawer = () => { const d=document.querySelector('.drawer'), o=document.querySelector('.drawer-overlay'); if(d.style.transform==='translateX(0px)'){d.style.transform='translateX(-100%)';o.style.display='none';}else{d.style.transform='translateX(0px)';o.style.display='block';} };
+        window.closeModal = () => document.getElementById('modal-area').classList.add('hidden');
+        window.closeJoin = () => document.getElementById('join-modal').classList.add('hidden');
+        window.copyToClipboard = (t) => { navigator.clipboard.writeText(t).then(()=>showToast("Copied!")).catch(err=>showToast("Copy Failed")); };
+        window.copyGenCode = () => { const code = document.getElementById('gen-team-code').innerText; window.copyToClipboard(code); }
+        window.copyCustomId = () => { if(currentUserData && currentUserData.customId) { window.copyToClipboard(currentUserData.customId); } }
+        window.copyReferCode = () => { if(currentUserData && currentUserData.referralCode) { window.copyToClipboard(currentUserData.referralCode); } }
+        window.closeTeamCodeModal = () => { document.getElementById('team-code-modal').classList.add('hidden'); nav('page-matches'); }
+        window.switchTab = (t) => { document.querySelectorAll('.sq-tab').forEach(e=>e.classList.remove('active')); document.getElementById('tab-'+t).classList.add('active'); if(t==='create'){document.getElementById('view-create').classList.remove('hidden'); document.getElementById('view-join').classList.add('hidden');} else{document.getElementById('view-create').classList.add('hidden'); document.getElementById('view-join').classList.remove('hidden');} }
 
-        const fbApp = initializeApp(firebaseConfig);
-        const auth = getAuth(fbApp);
-        const db = getFirestore(fbApp);
-        const messaging = getMessaging(fbApp);
-
-        // --- 2. GLOBAL STATE ---
-        const state = {
-            user: null, // Auth User
-            userData: null, // Firestore User Data
-            config: {},
-            listeners: {}, // Store unsubscribe functions
-            currentMatchId: null
-        };
-
-        // --- 3. DOM HELPERS ---
-        const $ = (id) => document.getElementById(id);
-        const showToast = (msg) => {
-            const t = $('toast');
-            t.textContent = msg;
-            t.style.display = 'block';
-            t.style.animation = 'fadeIn 0.3s';
-            setTimeout(() => { t.style.display = 'none'; }, 3000);
-        };
-
-        // --- 4. APP LOGIC CLASS ---
-        class App {
-            constructor() {
-                this.initPWA();
-                this.initAuth();
-                this.bindEvents();
+        // --- PWA INSTALLATION ---
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            const isPwa = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+            if (!isPwa) {
+                document.getElementById('install-view').classList.remove('hidden');
+                document.getElementById('auth-container').classList.add('hidden');
             }
+        });
 
-            // PWA Logic
-            initPWA() {
-                const isStandalone = window.matchMedia('(display-mode: standalone)').matches;
-                if (isStandalone || window.navigator.standalone === true) {
-                    $('pwa-install').classList.add('hidden');
-                    $('app-container').classList.remove('hidden');
+        const installBtn = document.getElementById('btn-install-app');
+        if(installBtn) {
+            installBtn.addEventListener('click', async () => {
+                if (deferredPrompt) {
+                    deferredPrompt.prompt();
+                    const { outcome } = await deferredPrompt.userChoice;
+                    deferredPrompt = null;
                 } else {
-                    // Browser Mode
-                    $('install-btn').onclick = () => {
-                        // In a real scenario, we catch the 'beforeinstallprompt' event.
-                        // For this demo, we assume user adds manually or clicks dev bypass.
-                        alert("Please tap 'Share' > 'Add to Home Screen' to install.");
-                    };
-                    $('dev-bypass-btn').onclick = () => {
-                        $('pwa-install').classList.add('hidden');
-                        $('app-container').classList.remove('hidden');
-                    };
+                    alert("Please use your browser's 'Add to Home Screen' option.");
                 }
-            }
-
-            // Auth Monitor
-            initAuth() {
-                onAuthStateChanged(auth, (user) => {
-                    if (user) {
-                        state.user = user;
-                        this.loadUserData(user.uid);
-                        this.setupNotifications(user.uid);
-                        $('auth-section').classList.add('hidden');
-                        $('dashboard-section').classList.remove('hidden');
-                        this.router('home');
-                        this.fetchConfig();
-                    } else {
-                        state.user = null;
-                        state.userData = null;
-                        $('auth-section').classList.remove('hidden');
-                        $('dashboard-section').classList.add('hidden');
-                        this.router('login');
-                    }
-                });
-            }
-
-            // Listen to User Data
-            loadUserData(uid) {
-                if (state.listeners.user) state.listeners.user(); // Detach old
-                state.listeners.user = onSnapshot(doc(db, "users", uid), (doc) => {
-                    if (doc.exists()) {
-                        state.userData = doc.data();
-                        this.updateUI(state.userData);
-                    }
-                });
-            }
-
-            // Update Header UI
-            updateUI(data) {
-                if($('home-username')) $('home-username').innerText = data.username || "User";
-                if($('home-balance')) $('home-balance').innerText = data.balance || 0;
-                if($('wallet-balance')) $('wallet-balance').innerText = data.balance || 0;
-                
-                // Profile Page
-                if($('profile-name')) $('profile-name').innerText = data.fullName;
-                if($('profile-id')) $('profile-id').innerText = "ID: " + data.customId;
-                if($('profile-refer-code')) $('profile-refer-code').innerText = data.referralCode;
-                if($('profile-total-refers')) $('profile-total-refers').innerText = data.totalRefers || 0;
-                if($('profile-refer-earn')) $('profile-refer-earn').innerText = data.referEarn || 0;
-                if($('profile-pic-lg')) $('profile-pic-lg').src = data.photoURL || "https://via.placeholder.com/80";
-                if($('home-profile-pic')) $('home-profile-pic').src = data.photoURL || "https://via.placeholder.com/40";
-            }
-
-            // Fetch Global Config
-            async fetchConfig() {
-                const docSnap = await getDoc(doc(db, "config", "settings"));
-                if (docSnap.exists()) {
-                    state.config = docSnap.data();
-                    this.config = docSnap.data(); // expose to class
-                }
-            }
-
-            // Routing
-            router(pageName) {
-                document.querySelectorAll('.page').forEach(el => el.classList.remove('active'));
-                
-                // Special handlers
-                if (pageName === 'home') this.loadMatches();
-                if (pageName === 'wallet') this.loadWithdrawals();
-
-                const target = $(`page-${pageName}`);
-                if (target) {
-                    target.classList.add('active');
-                }
-
-                // Nav highlight
-                document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
-                if (['home','spin','wallet','profile'].includes(pageName)) {
-                    // Simple logic to highlight based on order or class matching
-                    // For now, simple text match in onclick
-                }
-            }
-
-            // --- FEATURES: MATCHES ---
-            loadMatches() {
-                const container = $('matches-list');
-                container.innerHTML = '<div class="spinner mt-4"></div>';
-                
-                if (state.listeners.matches) state.listeners.matches();
-
-                const q = query(collection(db, "tournaments"), orderBy("date", "desc"));
-                state.listeners.matches = onSnapshot(q, (snapshot) => {
-                    container.innerHTML = '';
-                    snapshot.forEach(docSnap => {
-                        const m = docSnap.data();
-                        const id = docSnap.id;
-                        
-                        // Calculate Progress
-                        const percent = (m.joined / m.total) * 100;
-
-                        const html = `
-                        <div class="card match-card" onclick="app.openMatch('${id}')">
-                            <span class="match-badge">${m.category} - ${m.type}</span>
-                            <div class="flex justify-between items-end mt-4">
-                                <div>
-                                    <h3 class="font-bold text-lg">${m.title}</h3>
-                                    <div class="text-xs text-muted"><i class="far fa-clock"></i> ${new Date(m.date).toLocaleString()}</div>
-                                </div>
-                                <div class="text-right">
-                                    <div class="text-primary font-bold text-xl">Entry: ${m.fee}৳</div>
-                                    <div class="text-xs text-muted">Prize: ${m.total * m.fee * 0.8}৳</div>
-                                </div>
-                            </div>
-                            <div class="mt-3">
-                                <div class="flex justify-between text-xs text-muted mb-1">
-                                    <span>Joined: ${m.joined}/${m.total}</span>
-                                </div>
-                                <div style="width:100%; height:6px; background:rgba(255,255,255,0.1); border-radius:3px;">
-                                    <div style="width:${percent}%; height:100%; background:var(--primary); border-radius:3px;"></div>
-                                </div>
-                            </div>
-                        </div>`;
-                        container.innerHTML += html;
-                    });
-                });
-            }
-
-            openMatch(id) {
-                state.currentMatchId = id;
-                this.router('match-details');
-                const container = $('match-details-content');
-                container.innerHTML = '<div class="spinner"></div>';
-
-                // Get single doc
-                getDoc(doc(db, "tournaments", id)).then(snap => {
-                    if (!snap.exists()) return;
-                    const m = snap.data();
-                    
-                    let actionButton = '';
-                    
-                    // Logic to check if user already joined
-                    // We need to query the subcollection 'participants' or 'teams'
-                    // However, we stored joined matches in users/{uid}/matches. Let's check that efficiently?
-                    // For simplicity, we will query the subcollection "participants" for SOLO
-                    
-                    if (m.type === "Solo") {
-                        actionButton = `<button class="btn" onclick="app.joinSolo('${id}', ${m.fee})">JOIN MATCH (${m.fee}৳)</button>`;
-                    } else {
-                        actionButton = `
-                            <div class="grid grid-cols-2 gap-2">
-                                <button class="btn" onclick="app.createTeam('${id}', ${m.fee})">CREATE TEAM</button>
-                                <button class="btn btn-outline" onclick="app.joinTeamUI('${id}')">JOIN TEAM</button>
-                            </div>
-                        `;
-                    }
-
-                    // Room Info Logic (Only show if joined)
-                    let roomInfo = `<div class="card bg-gray-900 p-4 text-center text-muted">Room ID & Password will appear here 15 mins before match.</div>`;
-                    if (m.roomId && m.password) {
-                        // In a real app, verify user is participant before showing.
-                         roomInfo = `<div class="card p-4 text-center border-green-500 border">
-                            <div class="text-success font-bold">ROOM ID: ${m.roomId}</div>
-                            <div class="text-success font-bold">PASS: ${m.password}</div>
-                         </div>`;
-                    }
-
-                    container.innerHTML = `
-                        <div class="card">
-                            <h2 class="text-2xl font-bold">${m.title}</h2>
-                            <div class="flex justify-between mt-2 text-sm text-muted">
-                                <span>Type: ${m.type}</span>
-                                <span>Map: ${m.category}</span>
-                            </div>
-                        </div>
-                        
-                        ${roomInfo}
-
-                        <div class="mt-4 p-4" style="padding-bottom:100px;">
-                            <h3 class="mb-2">Rules</h3>
-                            <ul class="text-sm text-muted pl-4 list-disc">
-                                <li>Don't use hacks.</li>
-                                <li>Teaming up with enemies is forbidden.</li>
-                                <li>Emulator not allowed.</li>
-                            </ul>
-                            <div class="fixed bottom-0 left-0 w-full p-4 bg-surface" style="background:var(--bg);">
-                                ${actionButton}
-                            </div>
-                        </div>
-                    `;
-                });
-            }
-
-            // --- JOIN LOGIC (SOLO) ---
-            async joinSolo(tourneyId, fee) {
-                if (!confirm(`Join for ${fee} TK?`)) return;
-                
-                const uid = auth.currentUser.uid;
-                const userRef = doc(db, "users", uid);
-                const tourneyRef = doc(db, "tournaments", tourneyId);
-                const participantRef = doc(db, `tournaments/${tourneyId}/participants`, uid);
-
-                try {
-                    await runTransaction(db, async (transaction) => {
-                        const userDoc = await transaction.get(userRef);
-                        const tDoc = await transaction.get(tourneyRef);
-                        
-                        if (!tDoc.exists()) throw "Match not found";
-                        const tData = tDoc.data();
-                        if (tData.joined >= tData.total) throw "Match Full";
-
-                        const uData = userDoc.data();
-                        
-                        // Referral Logic
-                        let cost = fee;
-                        let isReferralClaim = false;
-                        let referrerUid = null;
-
-                        if (uData.referBonusPending === true) {
-                            cost = fee + 5; // Deduct extra 5
-                            if (uData.balance < cost) throw "Insufficient Balance (Fee + 5 Pending deduction)";
-                            referrerUid = uData.referredBy;
-                            isReferralClaim = true;
-                        } else {
-                            if (uData.balance < cost) throw "Insufficient Balance";
-                        }
-
-                        // Operations
-                        transaction.update(userRef, { 
-                            balance: increment(-cost),
-                            referBonusPending: false // Clear flag
-                        });
-
-                        if (isReferralClaim && referrerUid) {
-                            const refUserRef = doc(db, "users", referrerUid);
-                            transaction.update(refUserRef, {
-                                balance: increment(5),
-                                referEarn: increment(5),
-                                totalRefers: increment(1)
-                            });
-                        }
-
-                        transaction.update(tourneyRef, { joined: increment(1) });
-                        transaction.set(participantRef, {
-                            uid: uid,
-                            ffUid: uData.username // Or ask prompt
-                        });
-
-                        // Add to user matches
-                        const userMatchRef = doc(collection(userRef, "matches"));
-                        transaction.set(userMatchRef, {
-                            tourneyId: tourneyId,
-                            type: "Solo",
-                            joinedAt: serverTimestamp()
-                        });
-                    });
-                    
-                    showToast("Joined Successfully!");
-                    this.router('home');
-                } catch (e) {
-                    alert(e);
-                }
-            }
-
-            // --- JOIN LOGIC (SQUAD) ---
-            async createTeam(tourneyId, fee) {
-                const teamName = prompt("Enter Team Name:");
-                if (!teamName) return;
-
-                const uid = auth.currentUser.uid;
-                const userRef = doc(db, "users", uid);
-                const tourneyRef = doc(db, "tournaments", tourneyId);
-
-                try {
-                    await runTransaction(db, async (transaction) => {
-                        const userDoc = await transaction.get(userRef);
-                        if (userDoc.data().balance < fee) throw "Insufficient Balance";
-                        
-                        const tDoc = await transaction.get(tourneyRef);
-                        if (tDoc.data().joined >= tDoc.data().total) throw "Match Full";
-
-                        // Generate Join Code
-                        const joinCode = Math.floor(1000 + Math.random() * 9000).toString();
-                        
-                        // Deduct
-                        transaction.update(userRef, { balance: increment(-fee) });
-                        transaction.update(tourneyRef, { joined: increment(1) }); // Count teams as joined slots? usually squad match counts teams. assuming 1 slot = 1 team here based on context, or slot = 1 player. 
-                        // Assuming fee is per TEAM for creation? Or fee per player? 
-                        // Prompt implies "Create Team: Pay Fee". Let's assume Leader pays.
-
-                        // Create Team Doc
-                        const teamRef = doc(collection(tourneyRef, "teams"));
-                        transaction.set(teamRef, {
-                            teamName: teamName,
-                            joinCode: joinCode,
-                            leaderUid: uid,
-                            members: [uid]
-                        });
-                        
-                        // Add to User Matches
-                        const userMatchRef = doc(collection(userRef, "matches"));
-                        transaction.set(userMatchRef, { tourneyId, type: "Squad", teamId: teamRef.id });
-
-                        alert(`Team Created! Code: ${joinCode}`);
-                    });
-                    this.router('home');
-                } catch (e) { alert(e); }
-            }
-
-            async joinTeamUI(tourneyId) {
-                const code = prompt("Enter Team Join Code:");
-                if (!code) return;
-                
-                const uid = auth.currentUser.uid;
-                // Query teams
-                const q = query(collection(db, `tournaments/${tourneyId}/teams`), where("joinCode", "==", code));
-                const snaps = await getDocs(q);
-                
-                if (snaps.empty) { alert("Invalid Code"); return; }
-                const teamDoc = snaps.docs[0];
-                const teamRef = teamDoc.ref;
-                
-                // Add member
-                if (teamDoc.data().members.includes(uid)) { alert("Already in team"); return; }
-                if (teamDoc.data().members.length >= 4) { alert("Team Full"); return; }
-
-                await updateDoc(teamRef, {
-                    members: arrayUnion(uid)
-                });
-                
-                // Add to user matches
-                await addDoc(collection(db, `users/${uid}/matches`), {
-                    tourneyId: tourneyId,
-                    type: "Squad",
-                    teamId: teamDoc.id
-                });
-                
-                showToast("Joined Team Successfully!");
-                this.router('home');
-            }
-
-            // --- WALLET ---
-            showWithdraw(method) {
-                $('withdraw-method').value = method;
-                $('withdraw-amount').focus();
-            }
-
-            async loadWithdrawals() {
-                const uid = auth.currentUser.uid;
-                const q = query(collection(db, "withdrawals"), where("userId", "==", uid), orderBy("date", "desc")); // Needs index
-                // For simplicity without index, just grab all and filter client side or remove orderby if it fails
-                // We will use user subcollection or root? Prompt says root `withdrawals`.
-                // Note: Compound query (userId + date) requires index.
-                
-                const list = $('withdraw-history');
-                list.innerHTML = 'Loading...';
-                
-                // Fallback if index missing: remove orderBy
-                const snaps = await getDocs(q); 
-                list.innerHTML = '';
-                snaps.forEach(d => {
-                    const w = d.data();
-                    list.innerHTML += `
-                        <div class="card p-2 flex justify-between items-center">
-                            <div>
-                                <div class="font-bold uppercase">${w.method}</div>
-                                <div class="text-xs text-muted">${w.number}</div>
-                            </div>
-                            <div class="text-right">
-                                <div class="font-bold text-red-400">-${w.amount}</div>
-                                <div class="text-xs ${w.status === 'pending' ? 'text-primary' : 'text-success'}">${w.status}</div>
-                            </div>
-                        </div>
-                    `;
-                });
-            }
-
-            // --- SPIN WHEEL ---
-            initSpin() {
-                $('btn-spin').onclick = async () => {
-                    const cost = 10;
-                    if (state.userData.balance < cost) { showToast("Low Balance"); return; }
-
-                    $('btn-spin').disabled = true;
-                    
-                    // Deduct first
-                    await updateDoc(doc(db, "users", state.user.uid), { balance: increment(-cost) });
-                    
-                    // Visual Spin
-                    const wheel = $('the-wheel');
-                    const deg = Math.floor(5000 + Math.random() * 5000); 
-                    wheel.style.transform = `rotate(${deg}deg)`;
-
-                    // Calculate Result (Mock Logic matching CSS gradient)
-                    // We need to sync visual with backend logic ideally.
-                    // Here: Random logic.
-                    setTimeout(async () => {
-                        const r = Math.random();
-                        let win = 0;
-                        if (r > 0.8) win = 20; // 2x
-                        else if (r > 0.5) win = 10; // 1x
-                        else win = 0; // Lose
-
-                        if (win > 0) {
-                            await updateDoc(doc(db, "users", state.user.uid), { balance: increment(win) });
-                            showToast(`You Won ${win} TK!`);
-                        } else {
-                            showToast("Better Luck Next Time");
-                        }
-                        $('btn-spin').disabled = false;
-                    }, 4000);
-                };
-            }
-
-            // --- AUTH ACTIONS ---
-            async login() {
-                const email = $('login-email').value;
-                const pass = $('login-pass').value;
-                try {
-                    await signInWithEmailAndPassword(auth, email, pass);
-                } catch(e) { alert(e.message); }
-            }
-
-            async register() {
-                const name = $('reg-name').value;
-                const username = $('reg-username').value;
-                const email = $('reg-email').value;
-                const pass = $('reg-pass').value;
-                const referCodeInput = $('reg-refer').value;
-
-                if(!name || !email || !pass) return alert("Fill all fields");
-
-                try {
-                    const cred = await createUserWithEmailAndPassword(auth, email, pass);
-                    const uid = cred.user.uid;
-                    
-                    // Generate ID & Code
-                    const customId = Math.floor(10000000000 + Math.random() * 90000000000).toString(); // 11 digit
-                    const myReferCode = Math.random().toString(36).substring(2, 6).toUpperCase();
-
-                    let referData = {
-                        referredBy: null,
-                        referBonusPending: false
-                    };
-
-                    // Check Referrer
-                    if (referCodeInput) {
-                        const q = query(collection(db, "users"), where("referralCode", "==", referCodeInput));
-                        const snap = await getDocs(q);
-                        if (!snap.empty) {
-                            referData.referredBy = snap.docs[0].id;
-                            referData.referBonusPending = true; // Mark for future deduction/bonus
-                        }
-                    }
-
-                    await setDoc(doc(db, "users", uid), {
-                        fullName: name,
-                        username: username,
-                        email: email,
-                        balance: 0,
-                        customId: customId,
-                        referralCode: myReferCode,
-                        totalRefers: 0,
-                        referEarn: 0,
-                        photoURL: "https://cdn-icons-png.flaticon.com/512/149/149071.png",
-                        ...referData
-                    });
-
-                    showToast("Account Created!");
-                } catch(e) { alert(e.message); }
-            }
-            
-            async logout() {
-                await signOut(auth);
-            }
-
-            copyRefer() {
-                navigator.clipboard.writeText(state.userData.referralCode);
-                showToast("Code Copied!");
-            }
-
-            // --- NOTIFICATIONS ---
-            setupNotifications(uid) {
-                // Get Token
-                getToken(messaging, { vapidKey: vapidKey }).then((currentToken) => {
-                    if (currentToken) {
-                        updateDoc(doc(db, "users", uid), { fcmToken: currentToken });
-                    }
-                }).catch((err) => console.log('An error occurred while retrieving token. ', err));
-
-                // Listen to Firestore Notifications
-                const q = query(collection(db, "notifications"), where("targetUid", "==", uid), where("read", "==", false));
-                onSnapshot(q, (snapshot) => {
-                    snapshot.docChanges().forEach((change) => {
-                        if (change.type === "added") {
-                            const data = change.doc.data();
-                            // Trigger Local Notification via Service Worker registration
-                            if (navigator.serviceWorker.controller) {
-                                navigator.serviceWorker.controller.postMessage({
-                                    type: 'SHOW_NOTIFICATION',
-                                    title: data.title,
-                                    body: data.body
-                                });
-                            }
-                            showToast(data.title);
-                            // Mark read
-                            updateDoc(change.doc.ref, { read: true });
-                        }
-                    });
-                });
-
-                // Foreground FCM
-                onMessage(messaging, (payload) => {
-                    showToast(payload.notification.title);
-                });
-            }
-
-            bindEvents() {
-                $('btn-login').onclick = () => this.login();
-                $('btn-register').onclick = () => this.register();
-                
-                // Wallet Logic
-                $('btn-withdraw').onclick = async () => {
-                    const method = $('withdraw-method').value;
-                    const amount = parseFloat($('withdraw-amount').value);
-                    const number = $('withdraw-number').value;
-
-                    if (!amount || !number) return alert("Fill all fields");
-                    if (amount < (this.config.minWithdraw || 100)) return alert("Below Min Withdraw");
-                    if (amount > state.userData.balance) return alert("Insufficient Balance");
-
-                    // Rate Calc
-                    let finalAmount = amount; // bKash/Nagad default 1:1
-                    
-                    if (method === 'nivacoin') {
-                        // Formula: (Amount / Price) * 1000
-                        const price = this.config.nivaCoinPrice || 1; 
-                        finalAmount = (amount / price) * 1000; 
-                        // Note: usually coin withdrawals store the coin amount, but logic depends on admin panel. 
-                        // I will store the BDT amount deducted, and maybe add a note? 
-                        // Actually schema says: amount, method, number. Admin sees amount in BDT and calculates manualy or field needed?
-                        // I will stick to storing the requested BDT amount.
-                    }
-                    
-                    try {
-                        await addDoc(collection(db, "withdrawals"), {
-                            userId: auth.currentUser.uid,
-                            amount: amount,
-                            method: method,
-                            number: number,
-                            status: "pending",
-                            date: serverTimestamp()
-                        });
-                        await updateDoc(doc(db, "users", auth.currentUser.uid), { balance: increment(-amount) });
-                        showToast("Withdraw Request Sent");
-                        $('withdraw-amount').value = '';
-                        this.loadWithdrawals();
-                    } catch(e) { alert(e); }
-                };
-
-                // Conversion display
-                $('withdraw-amount').oninput = (e) => {
-                    const val = parseFloat(e.target.value);
-                    const method = $('withdraw-method').value;
-                    if(!val) return;
-                    
-                    const display = $('conversion-rate');
-                    if (method === 'nivacoin') {
-                        const price = this.config.nivaCoinPrice || 100;
-                        display.innerText = `Get: ${((val/price)*1000).toFixed(2)} Coins`;
-                    } else if (method === 'payeer') {
-                        const rate = this.config.payeerRate || 100;
-                        display.innerText = `Get: $${(val/rate).toFixed(2)}`;
-                    } else {
-                        display.innerText = `Get: ${val} BDT`;
-                    }
-                }
-                
-                this.initSpin();
-            }
+            });
         }
 
-        // Initialize App
-        const app = new App();
-        window.app = app; // Expose to global scope for HTML onclicks
+        // --- NOTIFICATION PERMISSIONS ---
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('firebase-messaging-sw.js').then((reg) => {
+                console.log('SW Registered', reg);
+            });
+        }
+
+        window.enableNotifications = async () => {
+            const permission = await Notification.requestPermission();
+            if (permission === 'granted') {
+                document.getElementById('notification-banner').style.display = 'none';
+                showToast("Notifications Enabled!");
+                if (auth.currentUser) generateToken(auth.currentUser.uid);
+            }
+        };
+
+        async function generateToken(uid) {
+            try {
+                const registration = await navigator.serviceWorker.ready;
+                const currentToken = await getToken(messaging, { 
+                    vapidKey: 'BKVqRDof4xyE2oZWEvMO3CSEsCQ9QPkbiT59bnJHQLWJ0ngm5I1pirwwTsNQ94AVR3fuWNeV6WPwhi5f5hsUFyQ',
+                    serviceWorkerRegistration: registration
+                });
+                if (currentToken) {
+                    await setDoc(doc(db, "users", uid), { fcmToken: currentToken }, { merge: true });
+                }
+            } catch (err) { console.log(err); }
+        }
+
+        function sendSystemNotification(title, body) {
+            if (Notification.permission === "granted") {
+                navigator.serviceWorker.ready.then(registration => {
+                    registration.showNotification(title, {
+                        body: body,
+                        icon: 'https://cdn-icons-png.flaticon.com/512/3233/3233483.png'
+                    });
+                });
+            }
+        }
+        
+        const sessionStartTime = Date.now();
+
+        // --- AUTH & MAIN LOGIC ---
+        onAuthStateChanged(auth, async (user) => {
+            const isPwa = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+            if (!isPwa) return; // Stay on install page if not PWA
+
+            if(user) {
+                if (Notification.permission !== "granted") document.getElementById('notification-banner').style.display = 'block';
+                loadNotifications(user.uid);
+
+                onSnapshot(doc(db,"users",user.uid), async d => {
+                    if(d.exists()){
+                        currentUserData = d.data();
+                        
+                        // Setup Default Data if missing
+                        if(!currentUserData.photoURL) await setDoc(doc(db, "users", user.uid), { photoURL: defaultAvatars[0] }, { merge: true });
+                        if(!currentUserData.customId) {
+                             const newId = Math.floor(10000000000 + Math.random() * 90000000000).toString();
+                             await setDoc(doc(db, "users", user.uid), { customId: newId }, { merge: true }); return; 
+                        }
+
+                        // Update UI
+                        const balEl = document.getElementById('header-bal'); if(balEl) balEl.innerText = currentUserData.balance || 0;
+                        const nameEl = document.getElementById('p-name'); if(nameEl) nameEl.innerText = currentUserData.fullName || "User";
+                        const idEl = document.getElementById('p-custom-id'); if(idEl) idEl.innerText = currentUserData.customId;
+                        document.getElementById('d-name').innerText = currentUserData.fullName;
+                        document.getElementById('d-uid').innerText = "ID: " + currentUserData.customId;
+                        document.getElementById('d-pic').src = currentUserData.photoURL || defaultAvatars[0];
+                        document.getElementById('p-pic').src = currentUserData.photoURL || defaultAvatars[0];
+                        document.getElementById('my-refer-code').innerText = currentUserData.referralCode || "...";
+                        document.getElementById('total-refers').innerText = currentUserData.totalRefers || 0;
+                        document.getElementById('total-refer-earn').innerText = `৳${currentUserData.referEarn || 0}`;
+
+                        document.getElementById('auth-container').classList.add('hidden'); 
+                        document.getElementById('app-container').classList.remove('hidden'); 
+                        document.getElementById('loading-overlay').classList.add('hidden');
+                        loadMyMatches(user.uid);
+                    }
+                });
+                loadHomeData(); loadConfig(); loadWithdrawHistory(user.uid);
+                loadBalanceLeaderboard(); loadReferralLeaderboard(); loadPublicCoupons(); loadBroadcasts();
+            } else {
+                document.getElementById('app-container').classList.add('hidden'); 
+                document.getElementById('auth-container').classList.remove('hidden'); 
+                document.getElementById('loading-overlay').classList.add('hidden');
+            }
+        });
+
+        // --- CORE FUNCTIONS ---
+        window.login = async() => {
+            try { await signInWithEmailAndPassword(auth, document.getElementById('l-email').value, document.getElementById('l-pass').value); } 
+            catch(e){ showToast("Login Failed"); }
+        };
+
+        window.register = async() => {
+            try {
+                const name = document.getElementById('r-user').value; const email = document.getElementById('r-email').value; const pass = document.getElementById('r-pass').value; const ref = document.getElementById('r-refer').value.trim();
+                if(!name || !email || !pass) return showToast("Fill all fields");
+                
+                const c = await createUserWithEmailAndPassword(auth, email, pass);
+                const customId = Math.floor(10000000000 + Math.random() * 90000000000).toString();
+                const myReferCode = Math.random().toString(36).substring(2, 6).toUpperCase();
+                
+                let refData = {};
+                if(ref) {
+                    const q = query(collection(db,"users"), where("referralCode","==",ref));
+                    const s = await getDocs(q);
+                    if(!s.empty) { refData = { referredBy: s.docs[0].id, referBonusPending: true }; }
+                }
+
+                await setDoc(doc(db, "users", c.user.uid), {
+                    fullName: name, username: name, email, balance: 0, uid: c.user.uid,
+                    customId, referralCode: myReferCode, totalRefers: 0, referEarn: 0,
+                    photoURL: defaultAvatars[0], createdAt: serverTimestamp(), ...refData
+                });
+                showToast("Registered!");
+            } catch(e) { showToast(e.message); }
+        };
+        
+        window.logout = () => signOut(auth);
+
+        function loadConfig() {
+            onSnapshot(doc(db,"config","settings"), s=>{ 
+                if(s.exists()){ 
+                    const d=s.data(); 
+                    nivaRate=d.nivaCoinPrice||10; payeerRate=d.payeerRate||115; 
+                    proofBotUrl=d.telegramSupport; 
+                    minW=d.minWithdraw||50; maxW=d.maxWithdraw||10000;
+                    document.getElementById('w-limit-text').innerText = `Min: ৳${minW} - Max: ৳${maxW}`;
+                    document.getElementById('niva-rate-disp').innerText=`1000=${nivaRate}TK`;
+                    document.getElementById('payeer-rate-disp').innerText = payeerRate; 
+                    if(d.telegramSupport) document.getElementById('btn-admin-support').href = d.telegramSupport;
+                    if(d.telegramSupport) document.getElementById('btn-proof-link').href = d.telegramSupport;
+                } 
+            });
+        }
+
+        window.switchHomeTab = (tab) => {
+            currentHomeTab = tab;
+            document.querySelectorAll('.home-tab').forEach(t => t.classList.remove('active'));
+            document.getElementById(`ht-${tab}`).classList.add('active');
+            renderHomeTournaments();
+        }
+
+        function renderHomeTournaments() {
+            const l = document.getElementById('tournament-list'); l.innerHTML='';
+            const filtered = allTournaments.filter(d => { const t = d.data(); const cat = t.category || 'BR'; return cat === currentHomeTab; });
+            if(filtered.length === 0) { l.innerHTML = "<p style='text-align:center;color:#aaa;padding:20px;'>No Matches Available</p>"; return; }
+            filtered.forEach(d=>{
+                const t=d.data();
+                const isJoined = joinedMatchIds.has(d.id);
+                let btn = isJoined ? `<button class="btn btn-success" onclick="nav('page-matches')">View Details</button>` : (t.joined >= t.total ? `<button class="btn btn-secondary" disabled>FULL</button>` : `<button class="btn btn-primary" onclick="openJoin('${d.id}','${t.type}',${t.fee})">JOIN</button>`);
+                l.innerHTML += `
+                <div class="t-card">
+                    <div class="t-img-wrap"><img src="${t.image||'https://via.placeholder.com/300x150'}" class="t-img"><div class="t-type-badge">${t.type}</div><div class="t-overlay"><div class="t-title">${t.title}</div></div></div>
+                    <div class="t-body">
+                        <div class="t-stats-grid"><div class="t-stat"><small>FEE</small><b>৳${t.fee}</b></div><div class="t-stat"><small>SLOTS</small><b>${t.joined}/${t.total}</b></div><div class="t-stat"><small>TIME</small><b>${new Date(t.date).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'})}</b></div></div>
+                        <div class="progress-bar"><div class="progress-fill" style="width:${Math.min((t.joined/t.total)*100,100)}%;"></div></div>
+                        <div class="t-actions">${btn}<button class="btn btn-secondary" onclick="showInfo('${(t.extraDetails||'').replace(/'/g,"\\'").replace(/\n/g,'<br>')}')">Rules</button></div>
+                    </div>
+                </div>`;
+            });
+        }
+
+        function loadHomeData() {
+            onSnapshot(collection(db,"sliders"), s=>{ 
+                const c=document.getElementById('banner-slider'); c.innerHTML=''; 
+                s.forEach(d=>{c.innerHTML+=`<img src="${d.data().url}" class="slide">`}); 
+                if(sliderInterval) clearInterval(sliderInterval);
+                if(s.size > 1) sliderInterval=setInterval(()=>{ if(c.scrollLeft+c.offsetWidth>=c.scrollWidth-10){c.scrollTo({left:0,behavior:'smooth'})}else{c.scrollBy({left:c.offsetWidth+12,behavior:'smooth'})} },4000);
+            });
+            onSnapshot(query(collection(db,"tournaments"), orderBy("date","asc")), s=>{ allTournaments = s.docs; renderHomeTournaments(); });
+        }
+
+        window.openJoin = (id, type, fee) => {
+            selMatch = {id, type, fee};
+            document.getElementById('join-modal').classList.remove('hidden');
+            let displayFee = fee; if (type !== 'Squad' && currentUserData.referBonusPending) { displayFee += 5; }
+            document.getElementById('j-fee').innerText = `৳${displayFee}`;
+            if(type==='Squad') { document.getElementById('squad-tabs').classList.remove('hidden'); document.getElementById('squad-inputs').classList.remove('hidden'); switchTab('create'); } else { document.getElementById('squad-tabs').classList.add('hidden'); document.getElementById('squad-inputs').classList.add('hidden'); document.getElementById('view-create').classList.remove('hidden'); document.getElementById('view-join').classList.add('hidden'); }
+        }
+
+        window.confirmJoin = async() => {
+            const uid=document.getElementById('j-uid').value; if(!uid)return showToast("Enter UID");
+            const btn = document.getElementById('btn-conf'); btn.disabled = true;
+            try {
+                let cost = selMatch.fee; let referPay = false;
+                if(selMatch.type!=='Squad' && currentUserData.referBonusPending) { cost += 5; referPay = true; }
+                if(currentUserData.balance < cost) throw new Error("Insufficient Balance");
+                
+                const b = writeBatch(db);
+                b.update(doc(db,"users",auth.currentUser.uid), {balance: increment(-cost)});
+                b.update(doc(db,"tournaments",selMatch.id), {joined: increment(1)});
+                
+                if(referPay && currentUserData.referredBy) {
+                    b.update(doc(db,"users",auth.currentUser.uid), {referBonusPending: false});
+                    b.update(doc(db,"users",currentUserData.referredBy), {balance:increment(5), totalRefers:increment(1), referEarn:increment(5)});
+                }
+
+                if(selMatch.type==='Squad') {
+                    const tName = document.getElementById('j-team').value; if(!tName) throw new Error("Enter Team Name");
+                    const jCode = Math.floor(1000+Math.random()*9000).toString();
+                    const teamRef = doc(collection(db,`tournaments/${selMatch.id}/teams`));
+                    b.set(teamRef, {teamName: tName, joinCode: jCode, leaderUid: auth.currentUser.uid, members: arrayUnion({uid:auth.currentUser.uid, gameUid:uid, role:'leader', name:currentUserData.username})});
+                    b.set(doc(db,`users/${auth.currentUser.uid}/matches/${selMatch.id}`), {tourneyId:selMatch.id, type:'Squad', teamId:teamRef.id});
+                    await b.commit();
+                    document.getElementById('gen-team-code').innerText = jCode; document.getElementById('team-code-modal').classList.remove('hidden');
+                } else {
+                    b.set(doc(db,`tournaments/${selMatch.id}/participants/${auth.currentUser.uid}`), {uid:auth.currentUser.uid, ffUid:uid});
+                    b.set(doc(db,`users/${auth.currentUser.uid}/matches/${selMatch.id}`), {tourneyId:selMatch.id, type:'Solo'});
+                    await b.commit(); showToast("Joined!"); nav('page-matches');
+                }
+                closeJoin();
+            } catch(e) { showToast(e.message); } finally { btn.disabled = false; }
+        }
+
+        window.joinTeamMember = async() => {
+            const code=document.getElementById('m-code').value, uid=document.getElementById('m-uid').value;
+            const q = query(collection(db,`tournaments/${selMatch.id}/teams`), where("joinCode","==",code));
+            const s = await getDocs(q);
+            if(s.empty) return showToast("Invalid Code");
+            const team = s.docs[0];
+            if(team.data().members.length >= 4) return showToast("Team Full");
+            
+            const b = writeBatch(db);
+            b.update(team.ref, {members: arrayUnion({uid:auth.currentUser.uid, gameUid:uid, role:'member', name:currentUserData.username})});
+            b.set(doc(db,`users/${auth.currentUser.uid}/matches/${selMatch.id}`), {tourneyId:selMatch.id, type:'Squad', teamId:team.id});
+            b.set(doc(db,`tournaments/${selMatch.id}/participants/${auth.currentUser.uid}`), {uid:auth.currentUser.uid, ffUid:uid});
+            await b.commit(); showToast("Joined!"); closeJoin(); nav('page-matches');
+        }
+
+        // --- SPIN WHEEL ---
+        window.spinWheel = async () => {
+            if(spinProcessing) return;
+            const amt = parseInt(document.getElementById('spin-amt').value);
+            if(!amt || amt < 1 || amt > currentUserData.balance) return showToast("Invalid Amount");
+            spinProcessing = true; document.getElementById('spin-btn').disabled = true;
+            
+            await updateDoc(doc(db,"users",auth.currentUser.uid), {balance: increment(-amt)});
+            const wheel = document.getElementById('spin-wheel');
+            const spins = 5; 
+            const deg = Math.floor(Math.random() * 360);
+            const totalDeg = (spins * 360) + deg;
+            wheel.style.transform = `rotate(${totalDeg}deg)`;
+            
+            setTimeout(async()=>{
+                showToast("Better luck next time!");
+                spinProcessing = false; document.getElementById('spin-btn').disabled = false;
+            }, 4000);
+        };
+
+        // --- WALLET & HELPERS ---
+        window.calcConversion = () => { 
+            const amt = document.getElementById('w-amt').value; 
+            const m = document.querySelector('input[name="w_method"]:checked')?.value;
+            document.getElementById('niva-calc').style.display = m === 'Niva Coin' ? 'block' : 'none';
+            document.getElementById('payeer-calc').style.display = m === 'Payeer Dollar' ? 'block' : 'none';
+            if(m === 'Niva Coin') document.getElementById('niva-amount').innerText = ((amt/nivaRate)*1000).toFixed(0);
+            if(m === 'Payeer Dollar') document.getElementById('payeer-amount').innerText = (amt/payeerRate).toFixed(2);
+        }
+
+        window.doWithdraw = async () => {
+            const amt = Number(document.getElementById('w-amt').value);
+            const num = document.getElementById('w-num').value;
+            const method = document.querySelector('input[name="w_method"]:checked')?.value;
+            if(!amt || !num || !method) return showToast("Fill all");
+            if(amt > currentUserData.balance) return showToast("Insufficient Balance");
+            if(amt < minW || amt > maxW) return showToast(`Min: ${minW}, Max: ${maxW}`);
+
+            await addDoc(collection(db,"withdrawals"), {
+                userId: auth.currentUser.uid, amount: amt, number: num, method: method,
+                status: "pending", time: serverTimestamp()
+            });
+            await updateDoc(doc(db,"users",auth.currentUser.uid), {balance: increment(-amt)});
+            showToast("Withdraw Pending"); nav('page-home');
+        };
+
+        window.sendMoney = async () => {
+            const tid = document.getElementById('tf-id').value; const amt = Number(document.getElementById('tf-amount').value);
+            if(!tid || !amt || amt > currentUserData.balance) return showToast("Invalid Request");
+            const q = query(collection(db,"users"), where("customId","==",tid));
+            const s = await getDocs(q);
+            if(s.empty) return showToast("User Not Found");
+            const rUser = s.docs[0];
+            const b = writeBatch(db);
+            b.update(doc(db,"users",auth.currentUser.uid), {balance: increment(-amt)});
+            b.update(rUser.ref, {balance: increment(amt)});
+            b.add(collection(db,"notifications"), {targetUid: rUser.id, title: "Received Money", body: `You got ৳${amt}`, read: false, createdAt: serverTimestamp()});
+            await b.commit(); showToast("Sent!"); nav('page-home');
+        };
+
+        window.updateProfilePic = async() => {
+            const u = document.getElementById('new-pic-url').value;
+            if(u) await setDoc(doc(db,"users",auth.currentUser.uid), {photoURL:u}, {merge:true});
+            showToast("Updated!");
+        };
+
+        // --- LOADERS ---
+        function loadBalanceLeaderboard() { onSnapshot(query(collection(db,"users"),orderBy("balance","desc"),limit(10)), s=>{ document.getElementById('balance-leaderboard').innerHTML = s.docs.map((d,i)=>`<div class="rank-item top-${i+1}"><span class="rank-pos">#${i+1}</span> <b>${d.data().fullName}</b> <span style="color:var(--success)">৳${d.data().balance}</span></div>`).join(''); }); }
+        function loadReferralLeaderboard() { onSnapshot(query(collection(db,"users"),orderBy("totalRefers","desc"),limit(5)), s=>{ document.getElementById('referral-leaderboard').innerHTML = s.docs.map((d,i)=>`<div class="rank-item"><span class="rank-pos">#${i+1}</span> <b>${d.data().fullName}</b> <span style="color:var(--warning)">${d.data().totalRefers} Refs</span></div>`).join(''); }); }
+        function loadWithdrawHistory(uid){ onSnapshot(query(collection(db,"withdrawals"),where("userId","==",uid)),s=>{ document.getElementById('withdraw-history').innerHTML = s.docs.map(d=>`<div class="t-card" style="padding:10px;display:flex;justify-content:space-between;"><b>৳${d.data().amount} (${d.data().method})</b> <span style="color:${d.data().status==='pending'?'var(--warning)':'var(--success)'}">${d.data().status}</span></div>`).join(''); }); }
+        
+        function loadMyMatches(uid) {
+            onSnapshot(collection(db,`users/${uid}/matches`), async s => {
+                joinedMatchIds.clear(); s.forEach(d=>joinedMatchIds.add(d.data().tourneyId)); renderHomeTournaments();
+                const html = await Promise.all(s.docs.map(async d=>{
+                    const m = d.data();
+                    const tSnap = await getDoc(doc(db,"tournaments",m.tourneyId));
+                    if(!tSnap.exists()) return '';
+                    const t = tSnap.data();
+                    
+                    let room = `<div style="border:1px dashed #555; padding:10px; margin-top:10px; text-align:center; color:#888;">Room ID/Pass Coming Soon</div>`;
+                    if(t.roomId && t.password) room = `<div class="cred-panel"><div class="cred-box"><span>ID: ${t.roomId}</span><i class="fas fa-copy" onclick="copyToClipboard('${t.roomId}')"></i></div><div class="cred-box"><span>PASS: ${t.password}</span><i class="fas fa-copy" onclick="copyToClipboard('${t.password}')"></i></div></div>`;
+                    
+                    return `<div class="t-card"><div class="t-body"><h3 style="color:var(--primary)">${t.title}</h3><small>${t.type} • ${new Date(t.date).toLocaleString()}</small>${room}<button class="btn btn-primary" onclick="handleProof('${currentUserData.customId}','${m.type}','${m.tourneyId}')" style="margin-top:10px;">Upload Proof</button></div></div>`;
+                }));
+                document.getElementById('my-matches-list').innerHTML = html.join('');
+            });
+        }
+        
+        window.handleProof = (uid, type, tid) => {
+            const txt = `UID:${uid}\nType:${type}\nMatch:${tid}`;
+            window.copyToClipboard(txt);
+            document.getElementById('proof-modal').classList.remove('hidden');
+        }
+
+        function loadNotifications(uid) {
+            const q = query(collection(db, "notifications"), where("targetUid", "==", uid));
+            onSnapshot(q, s => {
+                s.docChanges().forEach(c => {
+                    if (c.type === "added") {
+                        const d = c.doc.data();
+                        if (!d.read && (d.createdAt?.seconds*1000 > sessionStartTime)) sendSystemNotification(d.title, d.body);
+                    }
+                });
+                const list = s.docs.sort((a,b)=>(b.data().createdAt?.seconds||0)-(a.data().createdAt?.seconds||0));
+                document.getElementById('n-list').innerHTML = list.map(d=>`<div class="t-card" style="padding:15px; border-left:4px solid ${d.data().read?'transparent':'var(--primary)'}; background:${d.data().read?'transparent':'rgba(6,182,212,0.1)'}"><b>${d.data().title}</b><p style="color:#ccc">${d.data().body}</p></div>`).join('');
+                document.getElementById('header-badge').style.display = list.some(d=>!d.data().read) ? 'block' : 'none';
+            });
+        }
+        
+        window.openNotifications = async () => {
+            nav('page-notifications');
+            const q = query(collection(db,"notifications"), where("targetUid","==",auth.currentUser.uid), where("read","==",false));
+            const s = await getDocs(q);
+            const b = writeBatch(db); s.forEach(d=>b.update(d.ref,{read:true})); await b.commit();
+        };
+
+        window.loadPublicCoupons = () => { onSnapshot(query(collection(db,"coupons"),where("type","==","public")), s=>{ document.getElementById('public-coupons').innerHTML = s.docs.map(d=>`<div class="t-card" style="padding:10px; display:flex; justify-content:space-between;"><b>${d.data().code}</b> <span style="color:var(--success)">+${d.data().bonus}TK</span></div>`).join(''); }); }
+        window.redeemCoupon = async () => {
+            const code = document.getElementById('coupon-code').value.trim();
+            if(!code) return;
+            const q = query(collection(db,"coupons"),where("code","==",code));
+            const s = await getDocs(q);
+            if(s.empty) return showToast("Invalid Code");
+            const c = s.docs[0];
+            const red = await getDoc(doc(db,`coupons/${c.id}/redemptions/${auth.currentUser.uid}`));
+            if(red.exists()) return showToast("Already Used");
+            if(c.data().used >= c.data().max) return showToast("Limit Reached");
+            
+            const b = writeBatch(db);
+            b.update(c.ref,{used:increment(1)});
+            b.set(doc(db,`coupons/${c.id}/redemptions/${auth.currentUser.uid}`),{at:serverTimestamp()});
+            b.update(doc(db,"users",auth.currentUser.uid),{balance:increment(c.data().bonus)});
+            await b.commit(); showToast("Redeemed!");
+        };
+        
+        window.showInfo = (txt) => { document.getElementById('info-text').innerHTML = txt; document.getElementById('info-modal').classList.remove('hidden'); }
+        function loadBroadcasts() { onSnapshot(collection(db,"videos"), s=>{ document.getElementById('video-list').innerHTML = s.docs.map(d=>`<div class="t-card" style="padding:0;"><iframe src="${d.data().link}" style="width:100%;height:180px;border:none;"></iframe><div style="padding:10px;">${d.data().title}</div></div>`).join(''); }); }
     </script>
 </body>
 </html>
