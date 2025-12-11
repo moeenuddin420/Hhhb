@@ -1,24 +1,26 @@
 {
   "name": "G-ZONE ESPORTS",
   "short_name": "G-ZONE",
-  "description": "G-ZONE — Fast and secure esports platform as a PWA.",
-  "start_url": "/",
-  "scope": "/",
+  "description": "Play Tournaments, Join Squads, and Earn Money in G-ZONE ESPORTS.",
+  "start_url": "index.html",
   "display": "standalone",
-  "background_color": "#061122",
-  "theme_color": "#2dd4bf",
+  "background_color": "#0f172a",
+  "theme_color": "#06b6d4",
+  "orientation": "portrait-primary",
+  "scope": "/",
+  "categories": ["games", "sports", "entertainment"],
   "icons": [
     {
-      "src": "/icons/icon-192.png",
+      "src": "icons/icon-192.png",
       "sizes": "192x192",
       "type": "image/png",
-      "purpose": "any"
+      "purpose": "any maskable"
     },
     {
-      "src": "/icons/icon-512.png",
+      "src": "icons/icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "any"
+      "purpose": "any maskable"
     }
   ]
 }
