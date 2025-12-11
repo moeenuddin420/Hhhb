@@ -148,7 +148,7 @@
         .q-wd i { color: var(--warning); text-shadow: 0 0 10px var(--warning); }
         
         #banner-slider { display: flex; gap: 12px; overflow-x: auto; margin: 0 16px 25px; scroll-snap-type: x mandatory; padding-bottom: 5px; scroll-behavior: smooth; } 
-        .slide { flex: 0 0 100%; width: 100%; height: 170px; border-radius: 16px; object-fit: cover; scroll-snap-align: center; border: 1px solid var(--glass-border); background: #1e293b; box-shadow: 0 5px 15px rgba(0,0,0,0.3); }
+        .slide { flex: 0 0 100%; width: 100%; height: 170px; border-radius: 16px; object-fit: cover; scroll-snap-align: center; border: 1px solid var(--border); background: #1e293b; box-shadow: 0 5px 15px rgba(0,0,0,0.3); }
         
         .section-header { display: flex; align-items: center; gap: 8px; margin: 0 16px 12px; font-size: 1.2rem; font-weight: 700; color: var(--text-main); letter-spacing: 0.5px; font-family: var(--font-gaming); } 
         .section-header i { color: var(--primary); text-shadow: 0 0 10px var(--primary); }
@@ -259,7 +259,7 @@
             box-shadow: 0 0 30px rgba(6, 182, 212, 0.4);
             animation: pulseBtn 2s infinite; border: none; cursor: pointer; text-transform: uppercase; letter-spacing: 1px;
             font-family: var(--font-main);
-            display: none; /* Hidden by default, shown via JS */
+            display: flex; /* FORCE VISIBLE NOW */
         }
         @keyframes pulseBtn { 0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(6, 182, 212, 0.7); } 70% { transform: scale(1.05); box-shadow: 0 0 0 20px rgba(6, 182, 212, 0); } 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(6, 182, 212, 0); } }
         .install-footer { position: absolute; bottom: 30px; color: var(--text-muted); font-size: 0.8rem; opacity: 0.7; }
@@ -272,10 +272,7 @@
         <img src="https://cdn-icons-png.flaticon.com/512/3233/3233483.png" class="install-logo">
         <div class="install-title">G-ZONE</div>
         <p class="install-desc">G-ZONE ইস্পোর্টস এ আপনাকে স্বাগতম! ফ্রি ফায়ার টুর্নামেন্ট খেলে টাকা ইনকাম করতে আমাদের অ্যাপটি ইন্সটল করুন।</p>
-        
-        <!-- Button is hidden until valid PWA signal received -->
         <button id="btn-install-app" class="btn-install"><i class="fas fa-download"></i> INSTALL APP</button>
-        
         <div class="install-footer">Secure & Verified • Version 2.1</div>
     </div>
 
@@ -699,7 +696,11 @@
             "https://i.pinimg.com/736x/5c/84/42/5c84428d983d26ce85a84f946e4ce8ab.jpg",
             "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTyAcF57Bqp8agckepgWzFwV0xBxe2gDcbChteoaL41YzUUL62kxx3hvsU&s=10",
             "https://w0.peakpx.com/wallpaper/264/475/HD-wallpaper-profile-pic-girl-profile-thumbnail.jpg",
-            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSy3WjPE0K2GQYxbNrMNm83QolhuPiom4owlQkhi7f66XXxnAHXBatc3JY&s=10"
+            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSy3WjPE0K2GQYxbNrMNm83QolhuPiom4owlQkhi7f66XXxnAHXBatc3JY&s=10",
+            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR7TR-91MtVx3Zyg4mVGvbMchzouv9ajRiXeYEKWDmhRobPcNmPsT3Dhu8&s=10",
+            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcToqJSrJs571Mn_CaYsV0M6pYVz3p5ygUPbEsR5wuZojA&s=10",
+            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQy8-AqEVRQZDvyiWLka_22hAn2tyosADPj3o1gHV2_aQ&s=10",
+            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSysX8k1gABg8LHF0QSukobgjnwgnxqX1Pqjcxx6AafbTLSGRq8560Mz8I&s=10"
         ];
 
         let currentUserData = null;
@@ -717,30 +718,23 @@
         let currentHomeTab = 'BR';
         let deferredPrompt; 
 
-        // --- PWA INSTALLATION LOGIC ---
-        // 1. Capture the event
+        // --- INSTALL PROMPT LOGIC ---
         window.addEventListener('beforeinstallprompt', (e) => {
             e.preventDefault();
             deferredPrompt = e;
-            
-            // Show the button if not standalone
-            const isPwa = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
-            if (!isPwa) {
-                const btn = document.getElementById('btn-install-app');
-                if(btn) btn.style.display = 'flex'; // Show button only when ready
-            }
+            console.log("Install prompt ready");
         });
 
-        // 2. Button Click Handler
         const installBtn = document.getElementById('btn-install-app');
         if(installBtn) {
             installBtn.addEventListener('click', async () => {
                 if (deferredPrompt) {
-                    deferredPrompt.prompt(); // Show native browser popup
+                    deferredPrompt.prompt();
                     const { outcome } = await deferredPrompt.userChoice;
                     console.log(`User response: ${outcome}`);
                     deferredPrompt = null;
-                    installBtn.style.display = 'none'; // Hide button after choice
+                } else {
+                    alert("App installation not available right now. Try adding to home screen from browser menu.");
                 }
             });
         }
