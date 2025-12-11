@@ -1,21 +1,24 @@
 {
   "name": "G-ZONE ESPORTS",
   "short_name": "G-ZONE",
-  "start_url": "index.html",
+  "description": "G-ZONE — Fast and secure esports platform as a PWA.",
+  "start_url": "/",
+  "scope": "/",
   "display": "standalone",
-  "background_color": "#0f172a",
-  "theme_color": "#0f172a",
-  "orientation": "portrait",
+  "background_color": "#061122",
+  "theme_color": "#2dd4bf",
   "icons": [
     {
-      "src": "https://cdn-icons-png.flaticon.com/512/3233/3233483.png",
+      "src": "/icons/icon-192.png",
       "sizes": "192x192",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any"
     },
     {
-      "src": "https://cdn-icons-png.flaticon.com/512/3233/3233483.png",
+      "src": "/icons/icon-512.png",
       "sizes": "512x512",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any"
     }
   ]
 }
