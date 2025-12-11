@@ -1,85 +1,511 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="bn">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Download G-ZONE</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>G-ZONE ESPORTS</title>
+    
+    <!-- PWA Requirements -->
     <link rel="manifest" href="manifest.json">
-    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@600;700&display=swap" rel="stylesheet">
+    <meta name="theme-color" content="#0f172a">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+    <!-- Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
     <style>
-        body { margin: 0; background: #0f172a; color: white; font-family: 'Rajdhani', sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; text-align: center; }
-        .logo { width: 120px; height: 120px; border-radius: 25px; margin-bottom: 20px; box-shadow: 0 0 40px rgba(6, 182, 212, 0.4); border: 2px solid rgba(255,255,255,0.1); }
-        h1 { margin: 0; font-size: 3rem; color: #fff; text-shadow: 0 0 20px #06b6d4; }
-        p { color: #94a3b8; max-width: 300px; margin-top: 10px; line-height: 1.5; }
-        
-        /* The Install Button - Hidden by default */
-        #installBtn {
-            display: none; /* Only shows if browser allows it */
-            margin-top: 30px;
-            padding: 15px 40px;
-            background: linear-gradient(135deg, #06b6d4, #3b82f6);
-            border: none; border-radius: 50px;
-            color: white; font-size: 1.2rem; font-weight: bold;
-            cursor: pointer;
-            box-shadow: 0 0 20px rgba(6, 182, 212, 0.5);
-            animation: pulse 2s infinite;
+        /* --- 🎨 GLASSMORPHISM THEME --- */
+        :root { 
+            --bg-dark: #0f172a; 
+            --glass: rgba(30, 41, 59, 0.85); 
+            --primary: #06b6d4; 
+            --glow: 0 0 15px rgba(6, 182, 212, 0.5);
+            --secondary: #3b82f6; 
+            --success: #10b981; 
+            --warning: #f59e0b; 
+            --danger: #ef4444; 
+            --border: rgba(255, 255, 255, 0.1); 
+            --text: #f8fafc; 
+            --font-main: 'Hind Siliguri', sans-serif;
+            --font-game: 'Rajdhani', sans-serif;
         }
-        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
+
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; user-select: none; }
+        body { margin: 0; background: var(--bg-dark); color: var(--text); font-family: var(--font-main); min-height: 100vh; overflow-x: hidden; }
         
-        .footer { position: absolute; bottom: 30px; color: #64748b; font-size: 0.8rem; }
+        /* UTILS */
+        .hidden { display: none !important; }
+        .flex { display: flex; align-items: center; justify-content: center; }
+        .flex-col { flex-direction: column; }
+        
+        /* BACKGROUND */
+        .bg-anim { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; background-image: radial-gradient(circle at 10% 20%, rgba(6,182,212,0.15) 0%, transparent 40%), radial-gradient(circle at 90% 80%, rgba(99,102,241,0.15) 0%, transparent 40%); }
+
+        /* BUTTONS & INPUTS */
+        .btn { width: 100%; padding: 14px; border: none; border-radius: 12px; font-weight: 700; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 10px; transition: 0.2s; backdrop-filter: blur(5px); font-family: var(--font-main); font-size: 1rem; }
+        .btn:active { transform: scale(0.96); }
+        .btn-primary { background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; box-shadow: var(--glow); border: 1px solid rgba(255,255,255,0.1); }
+        .btn-secondary { background: rgba(255,255,255,0.05); border: 1px solid var(--border); color: white; }
+        
+        input, select { width: 100%; padding: 14px; background: rgba(0,0,0,0.3); border: 1px solid var(--border); border-radius: 12px; color: white; margin-bottom: 12px; font-family: inherit; font-size: 1rem; }
+        input:focus { border-color: var(--primary); box-shadow: 0 0 10px rgba(6,182,212,0.2); }
+
+        /* --- 1. INSTALL SCREEN STYLES --- */
+        #install-view { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 5000; background: var(--bg-dark); text-align: center; padding: 30px; }
+        .app-logo { width: 120px; height: 120px; border-radius: 25px; box-shadow: var(--glow); margin-bottom: 20px; border: 2px solid var(--border); }
+        .install-title { font-family: var(--font-game); font-size: 3rem; font-weight: 800; text-shadow: var(--glow); margin: 0; }
+        .install-desc { color: #94a3b8; margin: 10px 0 40px; font-size: 1.1rem; }
+        #btn-install { display: none; /* Hidden until browser allows */ animation: pulse 2s infinite; }
+        @keyframes pulse { 0%{transform:scale(1);} 50%{transform:scale(1.05);} 100%{transform:scale(1);} }
+
+        /* --- 2. APP UI STYLES --- */
+        #app-container { padding-bottom: 80px; }
+        
+        /* Header */
+        header { padding: 15px 20px; background: rgba(15,23,42,0.9); backdrop-filter: blur(15px); display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; border-bottom: 1px solid var(--border); }
+        .nav-bal { background: rgba(6,182,212,0.15); padding: 5px 15px; border-radius: 20px; border: 1px solid var(--primary); color: var(--primary); font-weight: bold; font-family: var(--font-game); }
+
+        /* Sections */
+        .page-section { display: none; padding-top: 15px; animation: fadeIn 0.3s; } 
+        .page-section.active { display: block; }
+        @keyframes fadeIn { from {opacity:0; transform:translateY(10px);} to {opacity:1; transform:translateY(0);} }
+
+        /* Cards */
+        .card { background: var(--glass); border: 1px solid var(--border); border-radius: 16px; margin: 0 16px 20px; padding: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
+        .match-card { padding: 0; overflow: hidden; position: relative; }
+        .match-img { width: 100%; height: 160px; object-fit: cover; }
+        .match-badge { position: absolute; top: 10px; right: 10px; background: rgba(0,0,0,0.8); color: white; padding: 4px 10px; border-radius: 6px; font-size: 0.8rem; border: 1px solid var(--primary); }
+        
+        /* Drawer */
+        .drawer-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 998; display: none; }
+        .drawer { position: fixed; top: 0; left: 0; width: 280px; height: 100%; background: #0f172a; z-index: 999; transform: translateX(-100%); transition: 0.3s; border-right: 1px solid var(--border); }
+        .drawer.open { transform: translateX(0); }
+        .drawer-item { padding: 15px; border-bottom: 1px solid rgba(255,255,255,0.05); color: #ccc; cursor: pointer; display: flex; gap: 15px; align-items: center; }
+        .drawer-item i { width: 25px; color: var(--primary); text-align: center; }
+
+        /* Spin Wheel */
+        .wheel-wrap { position: relative; width: 280px; height: 280px; margin: 0 auto; }
+        .wheel { width: 100%; height: 100%; border-radius: 50%; background: conic-gradient(#ef4444 0deg 90deg, #10b981 90deg 180deg, #3b82f6 180deg 270deg, #f59e0b 270deg 360deg); transition: transform 4s ease-out; border: 5px solid #1e293b; }
+        .arrow { position: absolute; top: -15px; left: 50%; transform: translateX(-50%); width: 0; height: 0; border-left: 15px solid transparent; border-right: 15px solid transparent; border-top: 35px solid white; z-index: 2; }
+
+        /* Loading */
+        #loader { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-dark); z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center; }
+        .spinner { width: 50px; height: 50px; border: 4px solid rgba(255,255,255,0.1); border-top-color: var(--primary); border-radius: 50%; animation: spin 1s linear infinite; }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+
+        /* Modals & Toasts */
+        .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 2000; display: flex; align-items: center; justify-content: center; }
+        .modal-box { background: #1e293b; width: 90%; max-width: 350px; padding: 25px; border-radius: 20px; border: 1px solid var(--primary); }
+        #toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: #1e293b; border: 1px solid var(--primary); padding: 10px 25px; border-radius: 50px; z-index: 6000; display: none; white-space: nowrap; font-weight: bold; }
     </style>
 </head>
 <body>
 
-    <img src="https://cdn-icons-png.flaticon.com/512/3233/3233483.png" class="logo">
-    <h1>G-ZONE</h1>
-    <p>The Ultimate Esports Platform. Install the app to play & earn.</p>
+    <div class="bg-anim"></div>
+    <div id="toast"></div>
 
-    <!-- NATIVE INSTALL BUTTON -->
-    <button id="installBtn">INSTALL APP</button>
+    <!-- 🟢 1. LOADING SCREEN -->
+    <div id="loader"><div class="spinner"></div><p style="margin-top:15px; color:#666;">LOADING...</p></div>
 
-    <div class="footer">Secure & Verified v2.1</div>
+    <!-- 🟢 2. BROWSER DOWNLOAD PAGE -->
+    <div id="install-view" class="hidden flex flex-col">
+        <img src="https://cdn-icons-png.flaticon.com/512/3233/3233483.png" class="app-logo">
+        <h1 class="install-title">G-ZONE</h1>
+        <p class="install-desc">Official Esports Tournament App.<br>Play matches, win real money.</p>
+        
+        <!-- The Native Install Button (Hidden until ready) -->
+        <button id="btn-install" class="btn btn-primary" style="width: auto; padding: 15px 40px; font-size: 1.2rem;">
+            <i class="fas fa-download"></i> INSTALL APP
+        </button>
 
-    <script>
-        // 1. Redirect if already in App Mode
-        if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true) {
-            window.location.href = 'app.html';
-        }
+        <p id="install-guide" class="hidden" style="margin-top:20px; font-size:0.9rem; color:#666;">
+            Tap <i class="fas fa-ellipsis-v"></i> > <b>Add to Home Screen</b>
+        </p>
+        <div style="position:absolute; bottom:30px; color:#555; font-size:0.8rem;">Secure & Verified v2.5</div>
+    </div>
 
-        // 2. Register Service Worker (Required for PWA Install)
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('service-worker.js');
-        }
+    <!-- 🟢 3. AUTHENTICATION (Login/Register) -->
+    <div id="auth-container" class="hidden flex flex-col" style="height:100vh; padding:30px; text-align:center;">
+        <h1 class="install-title" style="margin-bottom:10px;">G-ZONE</h1>
+        <p style="color:#94a3b8; margin-bottom:40px;">Login to start earning</p>
+        
+        <!-- Login Form -->
+        <div id="login-form">
+            <input type="email" id="l-email" placeholder="Email Address">
+            <input type="password" id="l-pass" placeholder="Password">
+            <button class="btn btn-primary" onclick="window.appLogin()">LOGIN</button>
+            <p style="margin-top:20px; color:#94a3b8; cursor:pointer;" onclick="window.toggleAuth()">Create New Account</p>
+        </div>
+        
+        <!-- Register Form -->
+        <div id="reg-form" class="hidden">
+            <input type="text" id="r-name" placeholder="Full Name">
+            <input type="email" id="r-email" placeholder="Email Address">
+            <input type="password" id="r-pass" placeholder="Password">
+            <input type="text" id="r-ref" placeholder="Refer Code (Optional)">
+            <button class="btn btn-primary" onclick="window.appRegister()">REGISTER</button>
+            <p style="margin-top:20px; color:#94a3b8; cursor:pointer;" onclick="window.toggleAuth()">Back to Login</p>
+        </div>
+    </div>
 
-        // 3. Handle Native Install Prompt
+    <!-- 🟢 4. MAIN APP DASHBOARD -->
+    <div id="app-container" class="hidden">
+        <header>
+            <i class="fas fa-bars" style="font-size:1.4rem; color:white; cursor:pointer;" onclick="window.toggleDrawer()"></i>
+            <div style="font-family:'Rajdhani'; font-weight:800; font-size:1.5rem;">G-ZONE</div>
+            <div class="nav-bal" onclick="window.nav('page-withdraw')">৳ <span id="u-bal">0</span></div>
+        </header>
+
+        <!-- Pages -->
+        <div id="page-home" class="page-section active">
+            <!-- Slider -->
+            <div id="slider" style="margin: 20px 16px; height:160px; border-radius:16px; overflow:hidden; border:1px solid var(--border); background:#1e293b;"></div>
+            
+            <h3 style="margin:0 16px 10px; color:var(--primary);">Upcoming Matches</h3>
+            <div id="matches-list"></div>
+        </div>
+
+        <div id="page-matches" class="page-section hidden">
+            <h3 style="margin:20px; color:var(--primary);">My Joined Matches</h3>
+            <div id="my-matches"></div>
+        </div>
+
+        <div id="page-spin" class="page-section hidden">
+            <div class="card" style="text-align:center; margin-top:30px;">
+                <div class="wheel-wrap"><div class="arrow"></div><div id="the-wheel" class="wheel"></div></div>
+                <div style="margin-top:20px; background:rgba(239,68,68,0.1); padding:10px; border-radius:10px; color:#fca5a5; font-size:0.85rem;">Cost: 10 TK per Spin</div>
+                <input type="number" id="spin-amt" placeholder="Confirm Amount (10)" style="margin-top:15px; text-align:center;">
+                <button class="btn btn-primary" onclick="window.spin()">SPIN NOW</button>
+            </div>
+        </div>
+
+        <div id="page-withdraw" class="page-section hidden">
+            <div class="card">
+                <h3 style="margin-bottom:15px;">My Wallet</h3>
+                <select id="w-method"><option>Bkash</option><option>Nagad</option></select>
+                <input type="number" id="w-amt" placeholder="Amount">
+                <input type="text" id="w-num" placeholder="Wallet Number">
+                <button class="btn btn-primary" onclick="window.withdraw()">WITHDRAW REQUEST</button>
+            </div>
+            <div id="w-history" style="padding:0 16px;"></div>
+        </div>
+
+        <div id="page-profile" class="page-section hidden">
+            <div class="card" style="text-align:center; padding:30px;">
+                <img id="p-img" src="" style="width:90px; height:90px; border-radius:50%; border:3px solid var(--primary); box-shadow:var(--glow);">
+                <h2 id="p-name" style="margin:10px 0 5px;">User</h2>
+                <div style="background:rgba(255,255,255,0.1); padding:5px 15px; border-radius:20px; display:inline-block; font-family:monospace;" id="p-uid">ID: ...</div>
+                
+                <div style="margin-top:30px; text-align:left;">
+                    <small style="color:#94a3b8;">Referral Code</small>
+                    <div style="background:rgba(0,0,0,0.3); padding:12px; border-radius:10px; display:flex; justify-content:space-between; margin-top:5px; border:1px solid var(--border);">
+                        <span id="p-ref" style="font-weight:bold; color:var(--success); font-family:monospace; font-size:1.2rem;">...</span>
+                        <i class="fas fa-copy" style="cursor:pointer;" onclick="window.copyRef()"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- DRAWER -->
+    <div class="drawer-overlay" onclick="window.toggleDrawer()"></div>
+    <div class="drawer">
+        <div style="padding:30px; background:linear-gradient(to bottom, #1e293b, #0f172a); border-bottom:1px solid var(--border);">
+            <h2 style="margin:0; color:white;" id="d-name">User</h2>
+            <small style="color:var(--primary);" id="d-uid">ID: ...</small>
+        </div>
+        <div style="padding:10px;">
+            <div class="drawer-item" onclick="window.nav('page-home')"><i class="fas fa-home"></i> Home</div>
+            <div class="drawer-item" onclick="window.nav('page-matches')"><i class="fas fa-gamepad"></i> My Matches</div>
+            <div class="drawer-item" onclick="window.nav('page-spin')"><i class="fas fa-dharmachakra"></i> Spin Wheel</div>
+            <div class="drawer-item" onclick="window.nav('page-withdraw')"><i class="fas fa-wallet"></i> Wallet</div>
+            <div class="drawer-item" onclick="window.nav('page-profile')"><i class="fas fa-user"></i> Profile</div>
+            <div class="drawer-item" onclick="window.appLogout()" style="color:var(--danger);"><i class="fas fa-sign-out-alt"></i> Logout</div>
+        </div>
+    </div>
+
+    <!-- MODAL -->
+    <div id="match-modal" class="hidden modal">
+        <div class="modal-box">
+            <h3>Join Match</h3>
+            <p id="m-fee" style="color:var(--warning); margin-bottom:15px; font-weight:bold;">Fee: 0</p>
+            <input id="m-uid" placeholder="Enter Game UID">
+            <button class="btn btn-primary" onclick="window.confirmJoin()">CONFIRM</button>
+            <button class="btn btn-secondary" style="margin-top:10px;" onclick="window.closeModal()">CANCEL</button>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { getFirestore, doc, setDoc, getDoc, updateDoc, collection, query, where, orderBy, addDoc, increment, onSnapshot, arrayUnion, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        // CONFIG
+        const firebaseConfig = { apiKey: "AIzaSyAafXkJwyZ5F7Xuax0VktZ9cpqWD4oCvxU", authDomain: "tournament-97743.firebaseapp.com", projectId: "tournament-97743", messagingSenderId: "584797187828", appId: "1:584797187828:web:4c643f83dfd9b700adb8a1" };
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        // STATE
+        let currentUser = null;
+        let selectedMatch = null;
         let deferredPrompt;
-        const btn = document.getElementById('installBtn');
 
+        // --- PWA INSTALL LOGIC (NATIVE) ---
         window.addEventListener('beforeinstallprompt', (e) => {
-            // Prevent Chrome 67 and earlier from automatically showing the prompt
-            e.preventDefault();
-            // Stash the event so it can be triggered later.
-            deferredPrompt = e;
-            // Update UI to notify the user they can add to home screen
-            btn.style.display = 'block';
-        });
-
-        btn.addEventListener('click', (e) => {
-            // Show the prompt
-            if (deferredPrompt) {
-                deferredPrompt.prompt();
-                // Wait for the user to respond to the prompt
-                deferredPrompt.userChoice.then((choiceResult) => {
-                    if (choiceResult.outcome === 'accepted') {
-                        console.log('User accepted the A2HS prompt');
-                        btn.style.display = 'none';
-                    } else {
-                        console.log('User dismissed the A2HS prompt');
-                    }
-                    deferredPrompt = null;
-                });
+            e.preventDefault(); // Prevent Chrome's auto banner
+            deferredPrompt = e; // Save event
+            
+            // Only show button if NOT in app mode
+            if (!window.matchMedia('(display-mode: standalone)').matches) {
+                const btn = document.getElementById('btn-install');
+                if(btn) {
+                    btn.style.display = 'flex'; // Show custom button
+                    btn.addEventListener('click', () => {
+                        deferredPrompt.prompt(); // Fire native prompt
+                        deferredPrompt.userChoice.then((choice) => {
+                            if(choice.outcome === 'accepted') {
+                                btn.style.display = 'none';
+                            }
+                            deferredPrompt = null;
+                        });
+                    });
+                }
             }
         });
+
+        // --- AUTH MONITOR ---
+        onAuthStateChanged(auth, user => {
+            const isPwa = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+            
+            // IF BROWSER -> SHOW INSTALL PAGE
+            if (!isPwa) {
+                document.getElementById('loader').style.display = 'none';
+                document.getElementById('install-view').classList.remove('hidden');
+                // Fallback guide if button didn't appear (e.g. Incognito)
+                setTimeout(() => {
+                    if(document.getElementById('btn-install').style.display === 'none') {
+                        document.getElementById('install-guide').classList.remove('hidden');
+                    }
+                }, 1000);
+                return;
+            }
+
+            // IF APP -> SHOW APP
+            document.getElementById('install-view').classList.add('hidden');
+            document.getElementById('loader').style.display = 'none'; // Clear loader
+
+            if (user) {
+                document.getElementById('app-container').classList.remove('hidden');
+                document.getElementById('auth-container').classList.add('hidden');
+                
+                // Load User Data
+                onSnapshot(doc(db, "users", user.uid), d => {
+                    if (d.exists()) {
+                        currentUser = d.data();
+                        updateUI(currentUser);
+                    }
+                });
+                loadMatches();
+                loadMyMatches(user.uid);
+            } else {
+                document.getElementById('app-container').classList.add('hidden');
+                document.getElementById('auth-container').classList.remove('hidden');
+            }
+        });
+
+        // --- UI FUNCTIONS (Attached to Window) ---
+        function updateUI(user) {
+            document.getElementById('u-bal').innerText = user.balance;
+            document.getElementById('p-name').innerText = user.fullName;
+            document.getElementById('d-name').innerText = user.fullName;
+            document.getElementById('p-uid').innerText = "ID: " + user.customId;
+            document.getElementById('d-uid').innerText = "ID: " + user.customId;
+            document.getElementById('p-ref').innerText = user.referralCode;
+            document.getElementById('p-img').src = user.photoURL || "https://cdn-icons-png.flaticon.com/512/3233/3233483.png";
+            document.getElementById('d-pic').src = user.photoURL || "https://cdn-icons-png.flaticon.com/512/3233/3233483.png";
+        }
+
+        window.showToast = (msg) => {
+            const t = document.getElementById('toast');
+            t.innerText = msg; t.style.display = 'block'; t.style.animation = 'fadeIn 0.3s';
+            setTimeout(() => t.style.display = 'none', 3000);
+        };
+
+        window.toggleAuth = () => {
+            document.getElementById('login-form').classList.toggle('hidden');
+            document.getElementById('reg-form').classList.toggle('hidden');
+        };
+
+        window.appLogin = async () => {
+            try { await signInWithEmailAndPassword(auth, document.getElementById('l-email').value, document.getElementById('l-pass').value); }
+            catch(e) { window.showToast(e.message); }
+        };
+
+        window.appRegister = async () => {
+            const name = document.getElementById('r-name').value;
+            const email = document.getElementById('r-email').value;
+            const pass = document.getElementById('r-pass').value;
+            const ref = document.getElementById('r-ref').value;
+            
+            try {
+                const cred = await createUserWithEmailAndPassword(auth, email, pass);
+                const uid = cred.user.uid;
+                const randId = Math.floor(100000 + Math.random() * 900000).toString();
+                
+                let refData = {};
+                if(ref) {
+                    const q = query(collection(db,"users"), where("referralCode","==",ref));
+                    const s = await getDocs(q);
+                    if(!s.empty) refData = { referredBy: s.docs[0].id, referBonusPending: true };
+                }
+
+                await setDoc(doc(db, "users", uid), {
+                    fullName: name, email: email, balance: 0, 
+                    customId: randId, referralCode: "REF"+randId.substring(0,4),
+                    photoURL: "https://cdn-icons-png.flaticon.com/512/3233/3233483.png",
+                    totalRefers: 0, referEarn: 0, createdAt: serverTimestamp(),
+                    ...refData
+                });
+                window.showToast("Account Created!");
+            } catch(e) { window.showToast(e.message); }
+        };
+
+        window.appLogout = () => signOut(auth);
+
+        window.nav = (pageId) => {
+            document.querySelectorAll('.page-section').forEach(el => el.classList.add('hidden'));
+            document.getElementById(pageId).classList.remove('hidden');
+            window.toggleDrawer();
+        };
+
+        window.toggleDrawer = () => {
+            const d = document.querySelector('.drawer');
+            const o = document.querySelector('.drawer-overlay');
+            if(d.style.transform === 'translateX(0px)') {
+                d.style.transform = 'translateX(-100%)'; o.style.display = 'none';
+            } else {
+                d.style.transform = 'translateX(0px)'; o.style.display = 'block';
+            }
+        };
+
+        // --- GAME LOGIC ---
+        function loadMatches() {
+            onSnapshot(collection(db, "tournaments"), s => {
+                const list = document.getElementById('matches-list');
+                list.innerHTML = '';
+                s.forEach(docSnap => {
+                    const t = docSnap.data();
+                    const btn = t.joined >= t.total ? 
+                        `<button class="btn btn-secondary" disabled>FULL</button>` : 
+                        `<button class="btn btn-primary" onclick="window.openJoin('${docSnap.id}', ${t.fee})">JOIN</button>`;
+                    
+                    list.innerHTML += `
+                        <div class="card match-card">
+                            <img src="${t.image || 'https://via.placeholder.com/300x150'}" class="match-img">
+                            <div class="match-badge">${t.type}</div>
+                            <div style="padding:15px;">
+                                <h3 style="margin:0 0 10px 0; color:white;">${t.title}</h3>
+                                <div style="display:flex; justify-content:space-between; margin-bottom:15px; font-size:0.9rem; color:#aaa;">
+                                    <span>Fee: ৳${t.fee}</span>
+                                    <span>Slots: ${t.joined}/${t.total}</span>
+                                </div>
+                                ${btn}
+                            </div>
+                        </div>
+                    `;
+                });
+            });
+        }
+
+        window.openJoin = (id, fee) => {
+            selectedMatch = {id, fee};
+            document.getElementById('m-fee').innerText = "Fee: ৳" + fee;
+            document.getElementById('match-modal').classList.remove('hidden');
+        };
+        window.closeModal = () => document.getElementById('match-modal').classList.add('hidden');
+
+        window.confirmJoin = async () => {
+            const uid = document.getElementById('m-uid').value;
+            if(!uid) return window.showToast("Enter Game UID");
+            if(currentUser.balance < selectedMatch.fee) return window.showToast("Insufficient Balance");
+            
+            try {
+                await updateDoc(doc(db, "users", auth.currentUser.uid), { balance: increment(-selectedMatch.fee) });
+                await updateDoc(doc(db, "tournaments", selectedMatch.id), { joined: increment(1) });
+                await addDoc(collection(db, `users/${auth.currentUser.uid}/matches`), {
+                    tourneyId: selectedMatch.id, gameUid: uid, joinedAt: serverTimestamp()
+                });
+                window.showToast("Joined Successfully!");
+                window.closeModal();
+            } catch(e) { window.showToast("Error joining match"); }
+        };
+
+        function loadMyMatches(uid) {
+            onSnapshot(collection(db, `users/${uid}/matches`), s => {
+                const list = document.getElementById('my-matches');
+                list.innerHTML = s.empty ? '<p style="text-align:center; color:#666;">No matches joined.</p>' : '';
+                s.forEach(async matchSnap => {
+                    const m = matchSnap.data();
+                    const tSnap = await getDoc(doc(db, "tournaments", m.tourneyId));
+                    if(tSnap.exists()) {
+                        const t = tSnap.data();
+                        let creds = t.roomId ? `<div style="margin-top:10px; padding:10px; background:rgba(16,185,129,0.1); border:1px dashed var(--success); color:var(--success); border-radius:8px;">ID: ${t.roomId} <br> PASS: ${t.password}</div>` : `<div style="margin-top:10px; color:#666; font-size:0.8rem;">Room ID & Pass coming soon...</div>`;
+                        list.innerHTML += `
+                            <div class="card">
+                                <h3>${t.title}</h3>
+                                <p style="color:#aaa; font-size:0.9rem;">${t.type} • ${new Date(t.date).toLocaleTimeString()}</p>
+                                ${creds}
+                            </div>
+                        `;
+                    }
+                });
+            });
+        }
+
+        window.spin = async () => {
+            const amt = parseInt(document.getElementById('spin-amt').value);
+            if(!amt || amt < 10) return window.showToast("Min 10 TK");
+            if(currentUser.balance < amt) return window.showToast("Low Balance");
+
+            await updateDoc(doc(db, "users", auth.currentUser.uid), { balance: increment(-amt) });
+            
+            const wheel = document.getElementById('the-wheel');
+            const deg = Math.floor(3000 + Math.random() * 3000);
+            wheel.style.transform = `rotate(${deg}deg)`;
+            
+            setTimeout(() => {
+                window.showToast("Better luck next time!");
+            }, 4000);
+        };
+
+        window.withdraw = async () => {
+            const amt = parseInt(document.getElementById('w-amt').value);
+            const num = document.getElementById('w-num').value;
+            const method = document.getElementById('w-method').value;
+            
+            if(currentUser.balance < amt) return window.showToast("Low Balance");
+            if(amt < 50) return window.showToast("Min 50 TK");
+
+            await addDoc(collection(db, "withdrawals"), {
+                userId: auth.currentUser.uid, amount: amt, number: num, method: method,
+                status: "pending", date: serverTimestamp()
+            });
+            await updateDoc(doc(db, "users", auth.currentUser.uid), { balance: increment(-amt) });
+            window.showToast("Withdraw Request Sent");
+        };
+
+        window.copyRef = () => {
+            navigator.clipboard.writeText(currentUser.referralCode);
+            window.showToast("Code Copied!");
+        };
+
+        // Service Worker Registration
+        if('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('service-worker.js');
+        }
     </script>
 </body>
 </html>
