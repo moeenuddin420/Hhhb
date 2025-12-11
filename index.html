@@ -16,11 +16,41 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
-        /* --- PROFESSIONAL THEME VARIABLES --- */
+        /* --- ORIGINAL THEME VARIABLES --- */
         :root { --bg-dark: #0f172a; --bg-card: #1e293b; --primary: #06b6d4; --primary-glow: rgba(6, 182, 212, 0.4); --secondary: #6366f1; --accent: #ec4899; --success: #10b981; --warning: #f59e0b; --danger: #ef4444; --glass-bg: rgba(30, 41, 59, 0.7); --glass-border: rgba(255, 255, 255, 0.08); --text-main: #f8fafc; --text-muted: #94a3b8; --font-main: 'Outfit', sans-serif; --font-bn: 'Hind Siliguri', sans-serif; --font-gaming: 'Rajdhani', sans-serif; }
+        
         * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; outline: none; user-select: none; }
         body { background-color: var(--bg-dark); background-image: radial-gradient(circle at 10% 20%, rgba(6, 182, 212, 0.08) 0%, transparent 40%), radial-gradient(circle at 90% 80%, rgba(99, 102, 241, 0.08) 0%, transparent 40%); background-attachment: fixed; color: var(--text-main); font-family: var(--font-bn); min-height: 100vh; overflow-x: hidden; padding-bottom: 30px; }
         .hidden { display: none !important; }
+
+        /* --- 🎨 SUPER STYLISH LOADING SCREEN CSS --- */
+        #loading-overlay { position: fixed; inset: 0; background: linear-gradient(135deg, #0f0f1a, #1a1a2e); display: flex; justify-content: center; align-items: center; z-index: 999999; overflow: hidden; transition: opacity 0.5s ease; }
+        #loading-overlay::before { content: ""; position: absolute; width: 200%; height: 200%; background: radial-gradient(circle, rgba(255,255,255,0.08) 0%, transparent 70%); animation: floatParticles 20s infinite linear; }
+        @keyframes floatParticles { 0% { transform: translate(-20%, -20%) rotate(0deg); } 100% { transform: translate(20%, 20%) rotate(360deg); } }
+        .loading-card { position: relative; width: 75%; max-width: 330px; padding: 40px; border-radius: 32px; backdrop-filter: blur(20px); background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); text-align: center; overflow: hidden; }
+        .blob { position: absolute; top: -40%; left: -40%; width: 180%; height: 180%; background: linear-gradient(120deg, #a855f7, #3b82f6, #ec4899); filter: blur(60px); animation: blobMove 8s ease-in-out infinite; z-index: -1; }
+        @keyframes blobMove { 0% { transform: scale(1) translate(0,0); } 33% { transform: scale(1.2) translate(10%, -5%); } 66% { transform: scale(0.9) translate(-10%, 10%); } 100% { transform: scale(1) translate(0,0); } }
+        .ring { position: absolute; inset: -40px; border-radius: 50%; border: 4px solid rgba(110, 231, 183, 0.4); animation: spinRing 6s linear infinite; z-index: -1; }
+        @keyframes spinRing { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        .loading-text { font-size: 20px; font-weight: 600; color: #fff; margin-top: 20px; animation: fadeText 1.5s infinite; font-family: var(--font-main); }
+        @keyframes fadeText { 0% { opacity: 0.3; } 50% { opacity: 1; } 100% { opacity: 0.3; } }
+
+        /* --- 🎨 DETAILED BENGALI DOWNLOAD PAGE CSS --- */
+        #install-view { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #0f172a; z-index: 10001; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 20px; text-align: center; background-image: radial-gradient(circle at 50% 50%, rgba(6, 182, 212, 0.15) 0%, transparent 60%); overflow-y: auto; }
+        .install-logo { width: 110px; height: 110px; border-radius: 22px; margin-bottom: 20px; box-shadow: 0 10px 40px rgba(6, 182, 212, 0.4); border: 2px solid rgba(255,255,255,0.1); }
+        .install-title { font-family: var(--font-gaming); font-size: 2.8rem; font-weight: 800; color: #fff; margin-bottom: 5px; letter-spacing: 2px; text-shadow: 0 0 20px rgba(6, 182, 212, 0.5); }
+        .install-subtitle { color: var(--primary); font-size: 1.1rem; margin-bottom: 20px; font-weight: 600; letter-spacing: 1px; }
+        .install-desc { color: #cbd5e1; font-size: 1rem; margin-bottom: 30px; max-width: 340px; line-height: 1.6; font-family: var(--font-bn); }
+        .feature-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; width: 100%; max-width: 360px; margin-bottom: 30px; }
+        .feature-box { background: rgba(255,255,255,0.05); padding: 12px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1); text-align: center; backdrop-filter: blur(5px); }
+        .feature-box i { font-size: 1.4rem; color: var(--primary); margin-bottom: 6px; }
+        .feature-box span { display: block; font-size: 0.85rem; color: #fff; font-family: var(--font-bn); font-weight: 500; }
+        
+        .btn-install { background: linear-gradient(135deg, var(--primary), var(--secondary)); color: #fff; font-weight: 800; padding: 16px 40px; border-radius: 50px; font-size: 1.1rem; box-shadow: 0 0 25px rgba(6, 182, 212, 0.5); animation: pulseBtn 2s infinite; border: none; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; font-family: var(--font-bn); display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+        @keyframes pulseBtn { 0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(6, 182, 212, 0.7); } 70% { transform: scale(1.05); box-shadow: 0 0 0 20px rgba(6, 182, 212, 0); } 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(6, 182, 212, 0); } }
+        .install-footer { position: absolute; bottom: 20px; color: #64748b; font-size: 0.75rem; width: 100%; text-align: center; }
+
+        /* --- EXISTING STYLES --- */
         ::-webkit-scrollbar { width: 4px; } ::-webkit-scrollbar-track { background: transparent; } ::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 4px; }
         .btn { width: 100%; padding: 14px; border: none; border-radius: 10px; cursor: pointer; font-weight: 600; font-size: 0.95rem; letter-spacing: 0.5px; display: flex; align-items: center; justify-content: center; gap: 8px; transition: transform 0.1s, opacity 0.2s; font-family: var(--font-bn); } .btn:active { transform: scale(0.98); }
         .btn-primary { background: linear-gradient(135deg, var(--primary), var(--secondary)); color: #fff; box-shadow: 0 4px 15px var(--primary-glow); }
@@ -54,18 +84,6 @@
         .wheel-container { position: relative; width: 280px; height: 280px; margin: 0 auto; max-width: 100%; }
         #auth-container { background: #0f172a; } .profile-img-container { width: 100px; height: 100px; margin: 0 auto 15px; position: relative; } .profile-pic { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; border: 2px solid var(--primary); padding: 2px; background: #1e293b; }
         
-        /* ✅ SUPER STYLISH LOADING SCREEN STYLE */
-        #loadingScreen { position: fixed; inset: 0; background: linear-gradient(135deg, #0f0f1a, #1a1a2e); display: flex; justify-content: center; align-items: center; z-index: 999999; overflow: hidden; }
-        #loadingScreen::before { content: ""; position: absolute; width: 200%; height: 200%; background: radial-gradient(circle, rgba(255,255,255,0.08) 0%, transparent 70%); animation: floatParticles 20s infinite linear; }
-        @keyframes floatParticles { 0% { transform: translate(-20%, -20%) rotate(0deg); } 100% { transform: translate(20%, 20%) rotate(360deg); } }
-        .loading-card { position: relative; width: 75%; max-width: 330px; padding: 40px; border-radius: 32px; backdrop-filter: blur(20px); background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); text-align: center; overflow: hidden; }
-        .blob { position: absolute; top: -40%; left: -40%; width: 180%; height: 180%; background: linear-gradient(120deg, #a855f7, #3b82f6, #ec4899); filter: blur(60px); animation: blobMove 8s ease-in-out infinite; z-index: -1; }
-        @keyframes blobMove { 0% { transform: scale(1) translate(0,0); } 33% { transform: scale(1.2) translate(10%, -5%); } 66% { transform: scale(0.9) translate(-10%, 10%); } 100% { transform: scale(1) translate(0,0); } }
-        .ring { position: absolute; inset: -40px; border-radius: 50%; border: 4px solid rgba(110, 231, 183, 0.4); animation: spinRing 6s linear infinite; z-index: -1; }
-        @keyframes spinRing { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-        .loading-text { font-size: 20px; font-weight: 600; color: #fff; margin-top: 20px; animation: fadeText 1.5s infinite; }
-        @keyframes fadeText { 0% { opacity: 0.3; } 50% { opacity: 1; } 100% { opacity: 0.3; } }
-
         /* ✅ PWA NOTIFICATION BANNER */
         #notification-banner {
             display: none; position: fixed; bottom: 0; left: 0; width: 100%;
@@ -76,40 +94,12 @@
         }
         @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
         .notif-text { color: #fff; margin-bottom: 10px; font-size: 0.9rem; font-weight: bold; }
-
-        /* ✅ DOWNLOAD SITE STYLES (BROWSER MODE - BENGALI DETAILED) */
-        #install-view { 
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
-            background: #0f172a; z-index: 10001; 
-            display: flex; flex-direction: column; justify-content: center; align-items: center; 
-            padding: 30px; text-align: center;
-            background-image: radial-gradient(circle at 50% 50%, rgba(6, 182, 212, 0.15) 0%, transparent 60%);
-        }
-        .install-logo { width: 100px; height: 100px; border-radius: 20px; margin-bottom: 25px; box-shadow: 0 10px 40px rgba(6, 182, 212, 0.4); border: 2px solid rgba(255,255,255,0.1); }
-        .install-title { font-family: var(--font-gaming); font-size: 3rem; font-weight: 800; color: #fff; margin-bottom: 10px; letter-spacing: 2px; text-shadow: 0 0 20px rgba(6, 182, 212, 0.5); }
-        .install-desc { color: #cbd5e1; font-size: 1.1rem; margin-bottom: 30px; max-width: 350px; line-height: 1.6; font-family: var(--font-bn); }
-        
-        .feature-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 40px; width: 100%; max-width: 350px; }
-        .feature-box { background: rgba(255,255,255,0.05); padding: 15px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1); text-align: center; }
-        .feature-box i { font-size: 1.5rem; color: var(--primary); margin-bottom: 8px; }
-        .feature-box span { display: block; font-size: 0.85rem; color: #e2e8f0; font-family: var(--font-bn); }
-
-        .btn-install { 
-            background: linear-gradient(135deg, var(--primary), var(--secondary)); color: #fff; font-weight: 800; 
-            padding: 16px 45px; border-radius: 50px; font-size: 1.1rem; 
-            box-shadow: 0 0 30px rgba(6, 182, 212, 0.4);
-            animation: pulseBtn 2s infinite; border: none; cursor: pointer; text-transform: uppercase; letter-spacing: 1px;
-            font-family: var(--font-main);
-            display: none; /* Hidden until JS activates it */
-        }
-        @keyframes pulseBtn { 0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(6, 182, 212, 0.7); } 70% { transform: scale(1.05); box-shadow: 0 0 0 20px rgba(6, 182, 212, 0); } 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(6, 182, 212, 0); } }
-        .install-footer { position: absolute; bottom: 25px; color: #64748b; font-size: 0.8rem; opacity: 0.7; }
     </style>
 </head>
 <body>
     
     <!-- ✅ SUPER STYLISH LOADING SCREEN -->
-    <div id="loadingScreen">
+    <div id="loading-overlay">
       <div class="loading-card">
         <div class="blob"></div>
         <div class="ring"></div>
@@ -121,6 +111,7 @@
     <div id="install-view" class="hidden">
         <img src="https://cdn-icons-png.flaticon.com/512/3233/3233483.png" class="install-logo">
         <div class="install-title">G-ZONE</div>
+        <div class="install-subtitle">OFFICIAL ESPORTS APP</div>
         <p class="install-desc">বাংলাদেশের সেরা ইস্পোর্টস প্ল্যাটফর্ম। এখনই অ্যাপটি ইন্সটল করুন এবং ফ্রি ফায়ার ম্যাচ খেলে ইনকাম শুরু করুন।</p>
         
         <div class="feature-grid">
@@ -132,10 +123,6 @@
 
         <button id="btn-install-app" class="btn-install"><i class="fas fa-download"></i> অ্যাপ ইন্সটল করুন</button>
         
-        <p id="install-instruction" style="color: #64748b; font-size: 0.8rem; margin-top: 15px; font-family: var(--font-bn); display:none;">
-            যদি ইন্সটল বাটন না আসে, তবে ব্রাউজার মেনু ( <i class="fas fa-ellipsis-v"></i> ) থেকে <b>'Add to Home Screen'</b> সিলেক্ট করুন।
-        </p>
-
         <div class="install-footer">Secure & Verified • Version 3.0</div>
     </div>
 
@@ -599,7 +586,8 @@
                 document.getElementById('install-view').classList.remove('hidden');
                 document.getElementById('auth-container').classList.add('hidden');
                 document.getElementById('app-container').classList.add('hidden');
-                document.getElementById('loading-overlay').style.display = 'none';
+                // HIDE LOADER WHEN INSTALL PAGE IS READY
+                document.getElementById('loadingScreen').style.display = 'none';
             }
             history.pushState({page: 'home'}, '', ''); 
         });
@@ -614,6 +602,10 @@
             if (!isPwa) {
                 document.getElementById('install-view').classList.remove('hidden');
                 document.getElementById('auth-container').classList.add('hidden');
+                // Show manual instruction if needed
+                setTimeout(() => {
+                   document.getElementById('install-instruction').style.display = 'block';
+                }, 2000);
             }
         });
 
@@ -626,8 +618,7 @@
                     console.log(`User response to install prompt: ${outcome}`);
                     deferredPrompt = null;
                 } else {
-                    // Fallback for when prompt isn't available (e.g., iOS or already installed)
-                    alert("To install: Tap the Share button (Safari) or Menu (Chrome) and select 'Add to Home Screen'.");
+                    alert("ইনস্টল করার জন্য ব্রাউজারের মেনু ব্যবহার করুন (Add to Home Screen)");
                 }
             });
         }
@@ -641,7 +632,7 @@
         let swRegistration = null;
 
         if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('firebase-messaging-sw.js')
+            navigator.serviceWorker.register('service-worker.js')
                 .then((reg) => {
                     console.log('✅ Service Worker Registered:', reg);
                     swRegistration = reg;
@@ -778,13 +769,17 @@
                         document.getElementById('total-refers').innerText = currentUserData.totalRefers || 0;
                         document.getElementById('total-refer-earn').innerText = `৳${currentUserData.referEarn || 0}`;
                         const imgEl = document.getElementById('p-pic'); if(imgEl) { imgEl.src = currentUserData.photoURL || "https://via.placeholder.com/100"; imgEl.onerror = function() { this.src = "https://via.placeholder.com/100"; }; }
-                        document.getElementById('auth-container').classList.add('hidden'); document.getElementById('app-container').classList.remove('hidden'); document.getElementById('loading-overlay').classList.add('hidden');
+                        document.getElementById('auth-container').classList.add('hidden'); document.getElementById('app-container').classList.remove('hidden'); 
+                        
+                        // 🛑 HIDE LOADER HERE
+                        hideLoading();
+                        
                     } else { await signOut(auth); window.location.reload(); }
                 });
                 loadHomeData(); 
                 // loadNotifications called above
                 window.loadPublicCoupons(); loadWithdrawHistory(user.uid); loadConfig(); loadBroadcasts(); loadBalanceLeaderboard(); loadReferralLeaderboard();
-            } else { document.getElementById('app-container').classList.add('hidden'); document.getElementById('auth-container').classList.remove('hidden'); document.getElementById('loading-overlay').classList.add('hidden'); joinedMatchIds.clear(); }
+            } else { document.getElementById('app-container').classList.add('hidden'); document.getElementById('auth-container').classList.remove('hidden'); hideLoading(); joinedMatchIds.clear(); }
         });
         
         window.login=async()=>{try{await signInWithEmailAndPassword(auth, document.getElementById('l-email').value, document.getElementById('l-pass').value);}catch(e){showToast("Invalid Credentials")}};
