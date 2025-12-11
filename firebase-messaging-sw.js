@@ -1,22 +1,42 @@
-importScripts('https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js');
-importScripts('https://www.gstatic.com/firebasejs/10.7.1/firebase-messaging-compat.js');
+// A simple cache name
+const CACHE_NAME = "pwa-cache-v1";
 
-const firebaseConfig = {
-    apiKey: "AIzaSyAafXkJwyZ5F7Xuax0VktZ9cpqWD4oCvxU",
-    authDomain: "tournament-97743.firebaseapp.com",
-    projectId: "tournament-97743",
-    messagingSenderId: "584797187828",
-    appId: "1:584797187828:web:4c643f83dfd9b700adb8a1"
-};
+// Files to pre-cache
+const FILES_TO_CACHE = [
+  "/",
+  "/index.html",
+  "/manifest.json"
+];
 
-firebase.initializeApp(firebaseConfig);
-const messaging = firebase.messaging();
+// Install event
+self.addEventListener("install", event => {
+  event.waitUntil(
+    caches.open(CACHE_NAME).then(cache => {
+      return cache.addAll(FILES_TO_CACHE);
+    })
+  );
+  self.skipWaiting();
+});
 
-messaging.onBackgroundMessage((payload) => {
-  const notificationTitle = payload.data.title;
-  const notificationOptions = {
-    body: payload.data.body,
-    icon: 'https://cdn-icons-png.flaticon.com/512/3233/3233483.png'
-  };
-  self.registration.showNotification(notificationTitle, notificationOptions);
+// Activate event
+self.addEventListener("activate", event => {
+  event.waitUntil(
+    caches.keys().then(keys =>
+      Promise.all(
+        keys.map(key => {
+          if (key !== CACHE_NAME) return caches.delete(key);
+        })
+      )
+    )
+  );
+  self.clients.claim();
+});
+
+// Fetch event
+self.addEventListener("fetch", event => {
+  event.respondWith(
+    caches.match(event.request).then(response => {
+      return response || fetch(event.request);
+    })
+  );
 });
