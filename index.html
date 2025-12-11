@@ -54,32 +54,14 @@
         .wheel-container { position: relative; width: 280px; height: 280px; margin: 0 auto; max-width: 100%; }
         #auth-container { background: #0f172a; } .profile-img-container { width: 100px; height: 100px; margin: 0 auto 15px; position: relative; } .profile-pic { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; border: 2px solid var(--primary); padding: 2px; background: #1e293b; }
         
-        /* ✅ SUPER STYLISH LOADING SCREEN */
-        #loadingScreen {
-            position: fixed; inset: 0; background: linear-gradient(135deg, #0f0f1a, #1a1a2e);
-            display: flex; justify-content: center; align-items: center; z-index: 999999; overflow: hidden;
-        }
-        #loadingScreen::before {
-            content: ""; position: absolute; width: 200%; height: 200%;
-            background: radial-gradient(circle, rgba(255,255,255,0.08) 0%, transparent 70%);
-            animation: floatParticles 20s infinite linear;
-        }
+        /* ✅ SUPER STYLISH LOADING SCREEN STYLE */
+        #loadingScreen { position: fixed; inset: 0; background: linear-gradient(135deg, #0f0f1a, #1a1a2e); display: flex; justify-content: center; align-items: center; z-index: 999999; overflow: hidden; }
+        #loadingScreen::before { content: ""; position: absolute; width: 200%; height: 200%; background: radial-gradient(circle, rgba(255,255,255,0.08) 0%, transparent 70%); animation: floatParticles 20s infinite linear; }
         @keyframes floatParticles { 0% { transform: translate(-20%, -20%) rotate(0deg); } 100% { transform: translate(20%, 20%) rotate(360deg); } }
-        .loading-card {
-            position: relative; width: 75%; max-width: 330px; padding: 40px; border-radius: 32px;
-            backdrop-filter: blur(20px); background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15);
-            text-align: center; overflow: hidden;
-        }
-        .blob {
-            position: absolute; top: -40%; left: -40%; width: 180%; height: 180%;
-            background: linear-gradient(120deg, #a855f7, #3b82f6, #ec4899); filter: blur(60px);
-            animation: blobMove 8s ease-in-out infinite; z-index: -1;
-        }
+        .loading-card { position: relative; width: 75%; max-width: 330px; padding: 40px; border-radius: 32px; backdrop-filter: blur(20px); background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); text-align: center; overflow: hidden; }
+        .blob { position: absolute; top: -40%; left: -40%; width: 180%; height: 180%; background: linear-gradient(120deg, #a855f7, #3b82f6, #ec4899); filter: blur(60px); animation: blobMove 8s ease-in-out infinite; z-index: -1; }
         @keyframes blobMove { 0% { transform: scale(1) translate(0,0); } 33% { transform: scale(1.2) translate(10%, -5%); } 66% { transform: scale(0.9) translate(-10%, 10%); } 100% { transform: scale(1) translate(0,0); } }
-        .ring {
-            position: absolute; inset: -40px; border-radius: 50%;
-            border: 4px solid rgba(110, 231, 183, 0.4); animation: spinRing 6s linear infinite; z-index: -1;
-        }
+        .ring { position: absolute; inset: -40px; border-radius: 50%; border: 4px solid rgba(110, 231, 183, 0.4); animation: spinRing 6s linear infinite; z-index: -1; }
         @keyframes spinRing { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
         .loading-text { font-size: 20px; font-weight: 600; color: #fff; margin-top: 20px; animation: fadeText 1.5s infinite; }
         @keyframes fadeText { 0% { opacity: 0.3; } 50% { opacity: 1; } 100% { opacity: 0.3; } }
@@ -103,7 +85,7 @@
             padding: 30px; text-align: center;
             background-image: radial-gradient(circle at 50% 50%, rgba(6, 182, 212, 0.15) 0%, transparent 60%);
         }
-        .install-logo { width: 120px; height: 120px; border-radius: 24px; margin-bottom: 25px; box-shadow: 0 10px 40px rgba(6, 182, 212, 0.4); border: 2px solid rgba(255,255,255,0.1); }
+        .install-logo { width: 100px; height: 100px; border-radius: 20px; margin-bottom: 25px; box-shadow: 0 10px 40px rgba(6, 182, 212, 0.4); border: 2px solid rgba(255,255,255,0.1); }
         .install-title { font-family: var(--font-gaming); font-size: 3rem; font-weight: 800; color: #fff; margin-bottom: 10px; letter-spacing: 2px; text-shadow: 0 0 20px rgba(6, 182, 212, 0.5); }
         .install-desc { color: #cbd5e1; font-size: 1.1rem; margin-bottom: 30px; max-width: 350px; line-height: 1.6; font-family: var(--font-bn); }
         
@@ -121,7 +103,7 @@
             display: none; /* Hidden until JS activates it */
         }
         @keyframes pulseBtn { 0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(6, 182, 212, 0.7); } 70% { transform: scale(1.05); box-shadow: 0 0 0 20px rgba(6, 182, 212, 0); } 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(6, 182, 212, 0); } }
-        .install-footer { position: absolute; bottom: 25px; color: #64748b; font-size: 0.8rem; }
+        .install-footer { position: absolute; bottom: 25px; color: #64748b; font-size: 0.8rem; opacity: 0.7; }
     </style>
 </head>
 <body>
@@ -1146,136 +1128,3 @@
     </script>
 </body>
 </html>
-
-
-In it change the loading screen to this code loading screen 
-Loading code
-<!-- SUPER STYLISH LOADING SCREEN -->
-<style>
-/* Page background */
-#loadingScreen {
-  position: fixed;
-  inset: 0;
-  background: linear-gradient(135deg, #0f0f1a, #1a1a2e);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 999999;
-  overflow: hidden;
-}
-
-/* Floating particles */
-#loadingScreen::before {
-  content: "";
-  position: absolute;
-  width: 200%;
-  height: 200%;
-  background: radial-gradient(circle, rgba(255,255,255,0.08) 0%, transparent 70%);
-  animation: floatParticles 20s infinite linear;
-}
-@keyframes floatParticles {
-  0% { transform: translate(-20%, -20%) rotate(0deg); }
-  100% { transform: translate(20%, 20%) rotate(360deg); }
-}
-
-/* Glass card */
-.loading-card {
-  position: relative;
-  width: 75%;
-  max-width: 330px;
-  padding: 40px;
-  border-radius: 32px;
-  backdrop-filter: blur(20px);
-  background: rgba(255,255,255,0.08);
-  border: 1px solid rgba(255,255,255,0.15);
-  text-align: center;
-  overflow: hidden;
-}
-
-/* Neon liquid blob */
-.blob {
-  position: absolute;
-  top: -40%;
-  left: -40%;
-  width: 180%;
-  height: 180%;
-  background: linear-gradient(120deg, #a855f7, #3b82f6, #ec4899);
-  filter: blur(60px);
-  animation: blobMove 8s ease-in-out infinite;
-  z-index: -1;
-}
-@keyframes blobMove {
-  0% { transform: scale(1) translate(0,0); }
-  33% { transform: scale(1.2) translate(10%, -5%); }
-  66% { transform: scale(0.9) translate(-10%, 10%); }
-  100% { transform: scale(1) translate(0,0); }
-}
-
-/* Rotating neon ring */
-.ring {
-  position: absolute;
-  inset: -40px;
-  border-radius: 50%;
-  border: 4px solid rgba(110, 231, 183, 0.4);
-  animation: spinRing 6s linear infinite;
-  z-index: -1;
-}
-@keyframes spinRing {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
-}
-
-/* Loading text */
-.loading-text {
-  font-size: 20px;
-  font-weight: 600;
-  color: #fff;
-  margin-top: 20px;
-  animation: fadeText 1.5s infinite;
-}
-@keyframes fadeText {
-  0% { opacity: 0.3; }
-  50% { opacity: 1; }
-  100% { opacity: 0.3; }
-}
-
-/* Text changes */
-.hidden {
-  display: none;
-}
-</style>
-
-<div id="loadingScreen">
-  <div class="loading-card">
-    <div class="blob"></div>
-    <div class="ring"></div>
-
-    <div id="loadingText" class="loading-text">Loading your experience…</div>
-  </div>
-</div>
-
-<script>
-/* Loading text cycle */
-const loadingTexts = [
-  "Loading your experience…",
-  "Preparing magic…",
-  "Almost there…"
-];
-
-let index = 0;
-setInterval(() => {
-  index = (index + 1) % loadingTexts.length;
-  document.getElementById("loadingText").textContent = loadingTexts[index];
-}, 1500);
-
-/* REMOVE LOADING SCREEN WHEN APP IS READY */
-function hideLoading() {
-  document.getElementById("loadingScreen").style.opacity = "0";
-  setTimeout(() => {
-    document.getElementById("loadingScreen").style.display = "none";
-  }, 400);
-}
-</script>
-
-
-And make sure the web based download page should be in Bengali language and make the download page more detailed and don't even think to touch other things and logic keep everything as it is just edit little bit only
