@@ -16,7 +16,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
-        /* --- YOUR ORIGINAL STYLES (KEPT INTACT) --- */
+        /* --- PROFESSIONAL THEME VARIABLES --- */
         :root { --bg-dark: #0f172a; --bg-card: #1e293b; --primary: #06b6d4; --primary-glow: rgba(6, 182, 212, 0.4); --secondary: #6366f1; --accent: #ec4899; --success: #10b981; --warning: #f59e0b; --danger: #ef4444; --glass-bg: rgba(30, 41, 59, 0.7); --glass-border: rgba(255, 255, 255, 0.08); --text-main: #f8fafc; --text-muted: #94a3b8; --font-main: 'Outfit', sans-serif; --font-bn: 'Hind Siliguri', sans-serif; --font-gaming: 'Rajdhani', sans-serif; }
         * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; outline: none; user-select: none; }
         body { background-color: var(--bg-dark); background-image: radial-gradient(circle at 10% 20%, rgba(6, 182, 212, 0.08) 0%, transparent 40%), radial-gradient(circle at 90% 80%, rgba(99, 102, 241, 0.08) 0%, transparent 40%); background-attachment: fixed; color: var(--text-main); font-family: var(--font-bn); min-height: 100vh; overflow-x: hidden; padding-bottom: 30px; }
@@ -54,19 +54,35 @@
         .wheel-container { position: relative; width: 280px; height: 280px; margin: 0 auto; max-width: 100%; }
         #auth-container { background: #0f172a; } .profile-img-container { width: 100px; height: 100px; margin: 0 auto 15px; position: relative; } .profile-pic { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; border: 2px solid var(--primary); padding: 2px; background: #1e293b; }
         
-        /* ✅ PROFESSIONAL LOADING SCREEN (UPDATED) */
-        #loading-overlay { 
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
-            background: #0f172a; z-index: 9999; 
-            display: flex; flex-direction: column; align-items: center; justify-content: center; 
-            transition: opacity 0.5s ease-out;
+        /* ✅ SUPER STYLISH LOADING SCREEN */
+        #loadingScreen {
+            position: fixed; inset: 0; background: linear-gradient(135deg, #0f0f1a, #1a1a2e);
+            display: flex; justify-content: center; align-items: center; z-index: 999999; overflow: hidden;
         }
-        .loader-logo-wrap { position: relative; width: 80px; height: 80px; margin-bottom: 20px; }
-        .loader-logo-img { width: 100%; height: 100%; object-fit: contain; animation: logoPulse 2s infinite ease-in-out; }
-        .loader-bar-bg { width: 160px; height: 4px; background: rgba(255,255,255,0.1); border-radius: 2px; overflow: hidden; }
-        .loader-bar-fill { height: 100%; background: var(--primary); width: 0%; animation: loadProgress 2s ease-in-out infinite; }
-        @keyframes logoPulse { 0% { transform: scale(1); filter: drop-shadow(0 0 5px rgba(6, 182, 212, 0.3)); } 50% { transform: scale(1.1); filter: drop-shadow(0 0 15px rgba(6, 182, 212, 0.6)); } 100% { transform: scale(1); filter: drop-shadow(0 0 5px rgba(6, 182, 212, 0.3)); } }
-        @keyframes loadProgress { 0% { width: 0%; transform: translateX(-100%); } 50% { width: 100%; transform: translateX(0); } 100% { width: 0%; transform: translateX(100%); } }
+        #loadingScreen::before {
+            content: ""; position: absolute; width: 200%; height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.08) 0%, transparent 70%);
+            animation: floatParticles 20s infinite linear;
+        }
+        @keyframes floatParticles { 0% { transform: translate(-20%, -20%) rotate(0deg); } 100% { transform: translate(20%, 20%) rotate(360deg); } }
+        .loading-card {
+            position: relative; width: 75%; max-width: 330px; padding: 40px; border-radius: 32px;
+            backdrop-filter: blur(20px); background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15);
+            text-align: center; overflow: hidden;
+        }
+        .blob {
+            position: absolute; top: -40%; left: -40%; width: 180%; height: 180%;
+            background: linear-gradient(120deg, #a855f7, #3b82f6, #ec4899); filter: blur(60px);
+            animation: blobMove 8s ease-in-out infinite; z-index: -1;
+        }
+        @keyframes blobMove { 0% { transform: scale(1) translate(0,0); } 33% { transform: scale(1.2) translate(10%, -5%); } 66% { transform: scale(0.9) translate(-10%, 10%); } 100% { transform: scale(1) translate(0,0); } }
+        .ring {
+            position: absolute; inset: -40px; border-radius: 50%;
+            border: 4px solid rgba(110, 231, 183, 0.4); animation: spinRing 6s linear infinite; z-index: -1;
+        }
+        @keyframes spinRing { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        .loading-text { font-size: 20px; font-weight: 600; color: #fff; margin-top: 20px; animation: fadeText 1.5s infinite; }
+        @keyframes fadeText { 0% { opacity: 0.3; } 50% { opacity: 1; } 100% { opacity: 0.3; } }
 
         /* ✅ PWA NOTIFICATION BANNER */
         #notification-banner {
@@ -79,51 +95,66 @@
         @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
         .notif-text { color: #fff; margin-bottom: 10px; font-size: 0.9rem; font-weight: bold; }
 
-        /* ✅ DOWNLOAD SITE STYLES (BROWSER MODE) */
+        /* ✅ DOWNLOAD SITE STYLES (BROWSER MODE - BENGALI DETAILED) */
         #install-view { 
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
             background: #0f172a; z-index: 10001; 
             display: flex; flex-direction: column; justify-content: center; align-items: center; 
-            padding: 20px; text-align: center;
+            padding: 30px; text-align: center;
             background-image: radial-gradient(circle at 50% 50%, rgba(6, 182, 212, 0.15) 0%, transparent 60%);
         }
-        .install-logo { width: 100px; height: 100px; border-radius: 20px; margin-bottom: 20px; box-shadow: 0 10px 30px rgba(6, 182, 212, 0.3); }
-        .install-title { font-family: var(--font-gaming); font-size: 2.5rem; font-weight: 800; color: #fff; margin-bottom: 10px; letter-spacing: 2px; }
-        .install-desc { color: var(--text-muted); font-size: 1rem; margin-bottom: 30px; max-width: 320px; line-height: 1.6; font-family: var(--font-bn); }
+        .install-logo { width: 120px; height: 120px; border-radius: 24px; margin-bottom: 25px; box-shadow: 0 10px 40px rgba(6, 182, 212, 0.4); border: 2px solid rgba(255,255,255,0.1); }
+        .install-title { font-family: var(--font-gaming); font-size: 3rem; font-weight: 800; color: #fff; margin-bottom: 10px; letter-spacing: 2px; text-shadow: 0 0 20px rgba(6, 182, 212, 0.5); }
+        .install-desc { color: #cbd5e1; font-size: 1.1rem; margin-bottom: 30px; max-width: 350px; line-height: 1.6; font-family: var(--font-bn); }
+        
+        .feature-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 40px; width: 100%; max-width: 350px; }
+        .feature-box { background: rgba(255,255,255,0.05); padding: 15px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1); text-align: center; }
+        .feature-box i { font-size: 1.5rem; color: var(--primary); margin-bottom: 8px; }
+        .feature-box span { display: block; font-size: 0.85rem; color: #e2e8f0; font-family: var(--font-bn); }
+
         .btn-install { 
             background: linear-gradient(135deg, var(--primary), var(--secondary)); color: #fff; font-weight: 800; 
-            padding: 16px 40px; border-radius: 50px; font-size: 1.1rem; 
-            box-shadow: 0 0 25px rgba(6, 182, 212, 0.4);
+            padding: 16px 45px; border-radius: 50px; font-size: 1.1rem; 
+            box-shadow: 0 0 30px rgba(6, 182, 212, 0.4);
             animation: pulseBtn 2s infinite; border: none; cursor: pointer; text-transform: uppercase; letter-spacing: 1px;
             font-family: var(--font-main);
-            display: none; /* Hidden initially, shown via JS */
+            display: none; /* Hidden until JS activates it */
         }
         @keyframes pulseBtn { 0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(6, 182, 212, 0.7); } 70% { transform: scale(1.05); box-shadow: 0 0 0 20px rgba(6, 182, 212, 0); } 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(6, 182, 212, 0); } }
-        .install-footer { position: absolute; bottom: 30px; color: var(--text-muted); font-size: 0.8rem; opacity: 0.7; }
+        .install-footer { position: absolute; bottom: 25px; color: #64748b; font-size: 0.8rem; }
     </style>
 </head>
 <body>
     
-    <!-- ✅ DOWNLOAD APP / LANDING PAGE VIEW (TRANSLATED) -->
+    <!-- ✅ SUPER STYLISH LOADING SCREEN -->
+    <div id="loadingScreen">
+      <div class="loading-card">
+        <div class="blob"></div>
+        <div class="ring"></div>
+        <div id="loadingText" class="loading-text">Loading your experience…</div>
+      </div>
+    </div>
+
+    <!-- ✅ BENGALI DETAILED DOWNLOAD PAGE -->
     <div id="install-view" class="hidden">
         <img src="https://cdn-icons-png.flaticon.com/512/3233/3233483.png" class="install-logo">
         <div class="install-title">G-ZONE</div>
-        <p class="install-desc">G-ZONE ইস্পোর্টস এ আপনাকে স্বাগতম! ফ্রি ফায়ার টুর্নামেন্ট খেলে টাকা ইনকাম করতে আমাদের অ্যাপটি ইন্সটল করুন।</p>
+        <p class="install-desc">বাংলাদেশের সেরা ইস্পোর্টস প্ল্যাটফর্ম। এখনই অ্যাপটি ইন্সটল করুন এবং ফ্রি ফায়ার ম্যাচ খেলে ইনকাম শুরু করুন।</p>
         
-        <!-- NATIVE INSTALL BUTTON (Controlled by JS) -->
-        <button id="btn-install-app" class="btn-install"><i class="fas fa-download"></i> INSTALL APP</button>
-        
-        <div class="install-footer">Secure & Verified • Version 2.1</div>
-    </div>
+        <div class="feature-grid">
+            <div class="feature-box"><i class="fas fa-shield-alt"></i><span>সুরক্ষিত পেমেন্ট</span></div>
+            <div class="feature-box"><i class="fas fa-headset"></i><span>২৪/৭ সাপোর্ট</span></div>
+            <div class="feature-box"><i class="fas fa-gamepad"></i><span>প্রতিদিন ম্যাচ</span></div>
+            <div class="feature-box"><i class="fas fa-trophy"></i><span>বড় পুরস্কার</span></div>
+        </div>
 
-    <!-- ✅ PROFESSIONAL LOADING SCREEN -->
-    <div id="loading-overlay">
-        <div class="loader-logo-wrap">
-            <img src="https://cdn-icons-png.flaticon.com/512/3233/3233483.png" class="loader-logo-img">
-        </div>
-        <div class="loader-bar-bg">
-            <div class="loader-bar-fill"></div>
-        </div>
+        <button id="btn-install-app" class="btn-install"><i class="fas fa-download"></i> অ্যাপ ইন্সটল করুন</button>
+        
+        <p id="install-instruction" style="color: #64748b; font-size: 0.8rem; margin-top: 15px; font-family: var(--font-bn); display:none;">
+            যদি ইন্সটল বাটন না আসে, তবে ব্রাউজার মেনু ( <i class="fas fa-ellipsis-v"></i> ) থেকে <b>'Add to Home Screen'</b> সিলেক্ট করুন।
+        </p>
+
+        <div class="install-footer">Secure & Verified • Version 3.0</div>
     </div>
 
     <div id="toast-box"><i class="fas fa-info-circle" style="color:var(--primary)"></i> <span id="toast-msg"></span></div>
@@ -601,27 +632,34 @@
             if (!isPwa) {
                 document.getElementById('install-view').classList.remove('hidden');
                 document.getElementById('auth-container').classList.add('hidden');
-                const btn = document.getElementById('btn-install-app');
-                if(btn) {
-                    btn.style.display = 'flex'; // Enable button
-                    btn.addEventListener('click', () => {
-                         if(deferredPrompt) {
-                             deferredPrompt.prompt();
-                             deferredPrompt.userChoice.then(choice => {
-                                 if(choice.outcome === 'accepted') {
-                                     btn.style.display = 'none';
-                                 }
-                                 deferredPrompt = null;
-                             });
-                         }
-                    });
-                }
             }
         });
 
-        // --- SERVICE WORKER REGISTRATION (REQUIRED FOR PWA) ---
+        const installBtn = document.getElementById('btn-install-app');
+        if(installBtn) {
+            installBtn.addEventListener('click', async () => {
+                if (deferredPrompt) {
+                    deferredPrompt.prompt();
+                    const { outcome } = await deferredPrompt.userChoice;
+                    console.log(`User response to install prompt: ${outcome}`);
+                    deferredPrompt = null;
+                } else {
+                    // Fallback for when prompt isn't available (e.g., iOS or already installed)
+                    alert("To install: Tap the Share button (Safari) or Menu (Chrome) and select 'Add to Home Screen'.");
+                }
+            });
+        }
+
+
+        // ==========================================
+        // 🟢 PWA & SYSTEM NOTIFICATION LOGIC (NEW)
+        // ==========================================
+
+        // 1. Register Service Worker for PWA
+        let swRegistration = null;
+
         if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('service-worker.js') // MUST BE service-worker.js
+            navigator.serviceWorker.register('firebase-messaging-sw.js')
                 .then((reg) => {
                     console.log('✅ Service Worker Registered:', reg);
                     swRegistration = reg;
@@ -630,8 +668,6 @@
                     console.log('❌ Service Worker Failed', err);
                 });
         }
-        
-        let swRegistration = null;
 
         // 2. CHECK & SHOW BANNER (Modified: No Token Alert, Sticky Logic)
         function checkNotificationPermission(uid) {
@@ -1110,3 +1146,136 @@
     </script>
 </body>
 </html>
+
+
+In it change the loading screen to this code loading screen 
+Loading code
+<!-- SUPER STYLISH LOADING SCREEN -->
+<style>
+/* Page background */
+#loadingScreen {
+  position: fixed;
+  inset: 0;
+  background: linear-gradient(135deg, #0f0f1a, #1a1a2e);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999999;
+  overflow: hidden;
+}
+
+/* Floating particles */
+#loadingScreen::before {
+  content: "";
+  position: absolute;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(255,255,255,0.08) 0%, transparent 70%);
+  animation: floatParticles 20s infinite linear;
+}
+@keyframes floatParticles {
+  0% { transform: translate(-20%, -20%) rotate(0deg); }
+  100% { transform: translate(20%, 20%) rotate(360deg); }
+}
+
+/* Glass card */
+.loading-card {
+  position: relative;
+  width: 75%;
+  max-width: 330px;
+  padding: 40px;
+  border-radius: 32px;
+  backdrop-filter: blur(20px);
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.15);
+  text-align: center;
+  overflow: hidden;
+}
+
+/* Neon liquid blob */
+.blob {
+  position: absolute;
+  top: -40%;
+  left: -40%;
+  width: 180%;
+  height: 180%;
+  background: linear-gradient(120deg, #a855f7, #3b82f6, #ec4899);
+  filter: blur(60px);
+  animation: blobMove 8s ease-in-out infinite;
+  z-index: -1;
+}
+@keyframes blobMove {
+  0% { transform: scale(1) translate(0,0); }
+  33% { transform: scale(1.2) translate(10%, -5%); }
+  66% { transform: scale(0.9) translate(-10%, 10%); }
+  100% { transform: scale(1) translate(0,0); }
+}
+
+/* Rotating neon ring */
+.ring {
+  position: absolute;
+  inset: -40px;
+  border-radius: 50%;
+  border: 4px solid rgba(110, 231, 183, 0.4);
+  animation: spinRing 6s linear infinite;
+  z-index: -1;
+}
+@keyframes spinRing {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* Loading text */
+.loading-text {
+  font-size: 20px;
+  font-weight: 600;
+  color: #fff;
+  margin-top: 20px;
+  animation: fadeText 1.5s infinite;
+}
+@keyframes fadeText {
+  0% { opacity: 0.3; }
+  50% { opacity: 1; }
+  100% { opacity: 0.3; }
+}
+
+/* Text changes */
+.hidden {
+  display: none;
+}
+</style>
+
+<div id="loadingScreen">
+  <div class="loading-card">
+    <div class="blob"></div>
+    <div class="ring"></div>
+
+    <div id="loadingText" class="loading-text">Loading your experience…</div>
+  </div>
+</div>
+
+<script>
+/* Loading text cycle */
+const loadingTexts = [
+  "Loading your experience…",
+  "Preparing magic…",
+  "Almost there…"
+];
+
+let index = 0;
+setInterval(() => {
+  index = (index + 1) % loadingTexts.length;
+  document.getElementById("loadingText").textContent = loadingTexts[index];
+}, 1500);
+
+/* REMOVE LOADING SCREEN WHEN APP IS READY */
+function hideLoading() {
+  document.getElementById("loadingScreen").style.opacity = "0";
+  setTimeout(() => {
+    document.getElementById("loadingScreen").style.display = "none";
+  }, 400);
+}
+</script>
+
+
+And make sure the web based download page should be in Bengali language and make the download page more detailed and don't even think to touch other things and logic keep everything as it is just edit little bit only
