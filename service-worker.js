@@ -1,84 +1,63 @@
-// Version for cache busting
-const VERSION = "gzone-v1";
-const PRECACHE = `precache-${VERSION}`;
-const RUNTIME = `runtime-${VERSION}`;
+/* COMBINED SERVICE WORKER: Cache + Firebase */
+importScripts('https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js');
+importScripts('https://www.gstatic.com/firebasejs/10.7.1/firebase-messaging-compat.js');
 
-// Files to cache during install
-const PRECACHE_URLS = [
-  "/",
-  "/index.html",
-  "/manifest.json",
-  "/offline.html",
-  "/icons/icon-192.png",
-  "/icons/icon-512.png"
-];
+// 1. CONFIG
+const CACHE_NAME = 'gzone-v2-cache';
+const firebaseConfig = {
+    apiKey: "AIzaSyAafXkJwyZ5F7Xuax0VktZ9cpqWD4oCvxU",
+    authDomain: "tournament-97743.firebaseapp.com",
+    projectId: "tournament-97743",
+    messagingSenderId: "584797187828",
+    appId: "1:584797187828:web:4c643f83dfd9b700adb8a1"
+};
 
-// INSTALL
-self.addEventListener("install", event => {
-  self.skipWaiting();
-  event.waitUntil(
-    caches.open(PRECACHE).then(cache => {
-      return cache.addAll(PRECACHE_URLS);
-    })
-  );
+// 2. INIT FIREBASE
+firebase.initializeApp(firebaseConfig);
+const messaging = firebase.messaging();
+
+messaging.onBackgroundMessage((payload) => {
+  const notificationTitle = payload.data.title;
+  const notificationOptions = {
+    body: payload.data.body,
+    icon: 'icons/icon-192.png',
+    badge: 'icons/icon-192.png'
+  };
+  self.registration.showNotification(notificationTitle, notificationOptions);
 });
 
-// ACTIVATE
-self.addEventListener("activate", event => {
-  event.waitUntil(
-    caches.keys().then(keys =>
-      Promise.all(
-        keys.map(key => {
-          if (key !== PRECACHE && key !== RUNTIME) {
-            return caches.delete(key);
-          }
-        })
-      )
-    ).then(() => self.clients.claim())
-  );
-});
-
-// FETCH
-self.addEventListener("fetch", event => {
-  const request = event.request;
-
-  // Navigation requests (HTML pages)
-  if (request.mode === "navigate") {
-    event.respondWith(
-      fetch(request)
-        .then(response => {
-          const copy = response.clone();
-          caches.open(RUNTIME).then(cache => cache.put(request, copy));
-          return response;
-        })
-        .catch(() => caches.match(request).then(cached => cached || caches.match("/offline.html")))
-    );
-    return;
-  }
-
-  // Cache-first for static assets
-  event.respondWith(
-    caches.match(request).then(cached => {
-      return (
-        cached ||
-        fetch(request)
-          .then(response => {
-            // Cache same-origin GET requests
-            if (request.method === "GET" && response.status === 200) {
-              const copy = response.clone();
-              caches.open(RUNTIME).then(cache => cache.put(request, copy));
-            }
-            return response;
-          })
-          .catch(() => cached)
-      );
-    })
-  );
-});
-
-// Allow page to tell SW to skip waiting
-self.addEventListener("message", event => {
-  if (event.data && event.data.type === "SKIP_WAITING") {
+// 3. INSTALL (Cache Assets)
+self.addEventListener('install', (event) => {
     self.skipWaiting();
-  }
+    event.waitUntil(
+        caches.open(CACHE_NAME).then((cache) => {
+            // Cache core files for offline use
+            return cache.addAll(['index.html', 'app.html', 'manifest.json']);
+        })
+    );
+});
+
+// 4. ACTIVATE
+self.addEventListener('activate', (event) => {
+    event.waitUntil(
+        caches.keys().then((keyList) => {
+            return Promise.all(keyList.map((key) => {
+                if (key !== CACHE_NAME) return caches.delete(key);
+            }));
+        })
+    );
+    self.clients.claim();
+});
+
+// 5. FETCH (Network First, Fallback to Cache)
+self.addEventListener('fetch', (event) => {
+    // Skip Firebase requests (let them go to network)
+    if (event.request.url.includes('firebase') || event.request.url.includes('googleapis')) return;
+
+    event.respondWith(
+        fetch(event.request)
+            .catch(() => {
+                return caches.match(event.request);
+            })
+    );
 });
