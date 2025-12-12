@@ -50,23 +50,30 @@
         .cred-panel { background: rgba(16, 185, 129, 0.05); border: 1px solid rgba(16, 185, 129, 0.2); border-radius: 12px; padding: 15px; margin-top: 15px; } .cred-box { display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.2); padding: 10px 12px; border-radius: 8px; margin-bottom: 8px; } .cred-value { font-family: monospace; font-size: 1.1rem; letter-spacing: 1px; color: #fff; }
         .method-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 20px; } .method-card { background: rgba(255,255,255,0.03); border: 1px solid var(--glass-border); border-radius: 12px; padding: 15px; text-align: center; cursor: pointer; transition: 0.2s; display: flex; flex-direction: column; align-items: center; gap: 8px; } .method-card:active { transform: scale(0.98); } .method-card.active { border-color: var(--primary); background: rgba(6, 182, 212, 0.05); } .method-card img { width: 40px; height: 40px; object-fit: contain; } .m-name { font-size: 0.85rem; font-weight: 600; color: var(--text-muted); } .method-card.active .m-name { color: #fff; } .method-card input { display: none; }
         .rank-item { display: flex; justify-content: space-between; align-items: center; padding: 12px 15px; background: rgba(255,255,255,0.02); border-radius: 10px; margin-bottom: 8px; border: 1px solid var(--glass-border); } .rank-pos { font-family: var(--font-gaming); font-weight: 700; font-size: 1.1rem; width: 30px; color: var(--text-muted); } .rank-item.top-1 { border-color: rgba(255, 215, 0, 0.3); background: rgba(255, 215, 0, 0.05); } .rank-item.top-2 { border-color: rgba(192, 192, 192, 0.3); background: rgba(192, 192, 192, 0.05); } .rank-item.top-3 { border-color: rgba(205, 127, 50, 0.3); background: rgba(205, 127, 50, 0.05); }
-        #loading-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #0f172a; z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; } .loader-box { width: 50px; height: 50px; border: 3px solid rgba(6, 182, 212, 0.2); border-top-color: var(--primary); border-radius: 50%; animation: spin 0.8s linear infinite; }
-        @keyframes spin { to { transform: rotate(360deg); } }
         #toast-box { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: #1e293b; border: 1px solid var(--glass-border); color: #fff; padding: 12px 20px; border-radius: 30px; z-index: 10000; display: none; align-items: center; gap: 10px; box-shadow: 0 10px 30px rgba(0,0,0,0.4); font-size: 0.9rem; white-space: nowrap; } #toast-box.show { display: flex; animation: fadeUp 0.3s ease; }
-        .wheel-container { position: relative; width: 280px; height: 280px; margin: 0 auto; max-width: 100%; }
         #auth-container { background: #0f172a; } .profile-img-container { width: 100px; height: 100px; margin: 0 auto 15px; position: relative; } .profile-pic { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; border: 2px solid var(--primary); padding: 2px; background: #1e293b; }
         
-        /* ✅ PWA NOTIFICATION BANNER (STICKY BOTTOM) */
+        /* ✅ PROFESSIONAL LOADING SCREEN */
+        #loading-overlay { 
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            background: #0f172a; z-index: 9999; 
+            display: flex; flex-direction: column; align-items: center; justify-content: center; 
+            transition: opacity 0.5s ease-out;
+        }
+        .loader-logo-wrap { position: relative; width: 80px; height: 80px; margin-bottom: 20px; }
+        /* ✅ UPDATED IMAGE LINK */
+        .loader-logo-img { width: 100%; height: 100%; object-fit: contain; animation: logoPulse 2s infinite ease-in-out; }
+        .loader-bar-bg { width: 160px; height: 4px; background: rgba(255,255,255,0.1); border-radius: 2px; overflow: hidden; }
+        .loader-bar-fill { height: 100%; background: var(--primary); width: 0%; animation: loadProgress 2s ease-in-out infinite; }
+        @keyframes logoPulse { 0% { transform: scale(1); filter: drop-shadow(0 0 5px rgba(6, 182, 212, 0.3)); } 50% { transform: scale(1.1); filter: drop-shadow(0 0 15px rgba(6, 182, 212, 0.6)); } 100% { transform: scale(1); filter: drop-shadow(0 0 5px rgba(6, 182, 212, 0.3)); } }
+        @keyframes loadProgress { 0% { width: 0%; transform: translateX(-100%); } 50% { width: 100%; transform: translateX(0); } 100% { width: 0%; transform: translateX(100%); } }
+
+        /* ✅ PWA NOTIFICATION BANNER */
         #notification-banner {
-            display: none; /* Hidden by default */
-            position: fixed; bottom: 0; left: 0; width: 100%;
-            background: rgba(30, 41, 59, 0.95);
-            border-top: 1px solid var(--primary);
-            padding: 15px;
-            z-index: 9999;
-            text-align: center;
-            backdrop-filter: blur(10px);
-            box-shadow: 0 -5px 20px rgba(0,0,0,0.5);
+            display: none; position: fixed; bottom: 0; left: 0; width: 100%;
+            background: rgba(30, 41, 59, 0.95); border-top: 1px solid var(--primary);
+            padding: 15px; z-index: 9999; text-align: center;
+            backdrop-filter: blur(10px); box-shadow: 0 -5px 20px rgba(0,0,0,0.5);
             animation: slideUp 0.5s ease-out;
         }
         @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
@@ -92,21 +99,66 @@
         }
         @keyframes pulseBtn { 0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(6, 182, 212, 0.7); } 70% { transform: scale(1.05); box-shadow: 0 0 0 15px rgba(6, 182, 212, 0); } 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(6, 182, 212, 0); } }
         .install-footer { position: absolute; bottom: 30px; color: var(--text-muted); font-size: 0.8rem; }
+        
+        /* ✅ DIGITAL SPIN WHEEL CSS (IMPROVED) */
+        .wheel-container { position: relative; width: 300px; height: 300px; margin: 0 auto; max-width: 100%; border-radius: 50%; box-shadow: 0 0 30px rgba(6, 182, 212, 0.2); }
+        .digital-marker {
+            position: absolute; top: -15px; left: 50%; transform: translateX(-50%);
+            width: 30px; height: 40px; background: var(--warning);
+            clip-path: polygon(50% 100%, 0 0, 100% 0);
+            z-index: 20; filter: drop-shadow(0 2px 5px rgba(0,0,0,0.5));
+        }
+        .digital-wheel {
+            width: 100%; height: 100%; border-radius: 50%;
+            border: 8px solid #1e293b;
+            background: conic-gradient(
+                #ef4444 0deg 90deg, 
+                #3b82f6 90deg 180deg, 
+                #10b981 180deg 270deg, 
+                #a855f7 270deg 360deg
+            );
+            position: relative;
+            transition: transform 5s cubic-bezier(0.1, 0.7, 0.1, 1);
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.5);
+        }
+        .segment-text {
+            position: absolute; top: 50%; left: 50%;
+            transform-origin: 0 0;
+            color: #fff; font-weight: 800; font-family: var(--font-bn); text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+            font-size: 1.1rem;
+        }
+        .s1 { transform: rotate(45deg) translate(60px) rotate(-45deg); }
+        .s2 { transform: rotate(135deg) translate(60px) rotate(-135deg); }
+        .s3 { transform: rotate(225deg) translate(60px) rotate(-225deg); }
+        .s4 { transform: rotate(315deg) translate(60px) rotate(-315deg); }
+        
+        .wheel-center-knob {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            width: 50px; height: 50px; background: #1e293b; border: 4px solid var(--primary);
+            border-radius: 50%; z-index: 10;
+            display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 0 15px var(--primary-glow);
+        }
+        .wheel-center-knob i { color: var(--primary); font-size: 1.2rem; }
     </style>
 </head>
 <body>
 
-<!-- ✅ DOWNLOAD APP / LANDING PAGE VIEW (TRANSLATED) -->
+<!-- ✅ DOWNLOAD APP / LANDING PAGE VIEW -->
 <div id="install-view" class="hidden">
-    <img src="https://cdn-icons-png.flaticon.com/512/3233/3233483.png" class="install-logo">
+    <img src="https://cdn-icons-png.flaticon.com/512/11482/11482650.png" class="install-logo">
     <div class="install-title">G-ZONE</div>
     <p class="install-desc">G-ZONE ইস্পোর্টস এ আপনাকে স্বাগতম! ফ্রি ফায়ার টুর্নামেন্ট খেলে টাকা ইনকাম করতে আমাদের অ্যাপটি ইন্সটল করুন।</p>
     <button id="btn-install-app" class="btn-install"><i class="fas fa-download"></i> অ্যাপ ইন্সটল করুন</button>
-    <div class="install-footer">সুরক্ষিত এবং ভেরিফাইড • Version 2.0</div>
+    <div class="install-footer">সুরক্ষিত এবং ভেরিফাইড • Version 2.4</div>
 </div>
 
 <!-- SYSTEM LOADERS -->
-<div id="loading-overlay"><div class="loader-box"></div><p style="margin-top:15px;color:var(--text-muted);font-size:0.8rem;letter-spacing:1px;">SYSTEM LOADING...</p></div>
+<div id="loading-overlay">
+    <div class="loader-logo-wrap"><img src="https://cdn-icons-png.flaticon.com/512/11482/11482650.png" class="loader-logo-img"></div>
+    <div class="loader-bar-bg"><div class="loader-bar-fill"></div></div>
+    <p style="margin-top:15px;color:var(--text-muted);font-size:0.8rem;letter-spacing:1px;">SYSTEM LOADING...</p>
+</div>
 <div id="toast-box"><i class="fas fa-info-circle" style="color:var(--primary)"></i> <span id="toast-msg"></span></div>
 
 <!-- NOTIFICATION PERMISSION BANNER -->
@@ -217,22 +269,18 @@
         <div class="t-card">
             <div class="t-body" style="text-align:center; padding: 30px 10px;">
                 <div class="wheel-container">
-                    <div class="wheel-pointer"></div>
-                    <div class="wheel-rim">
-                        <div class="rim-lights"></div>
-                        <div id="spin-wheel" class="wheel">
-                            <span class="wheel-text wt-lose">লস</span>
-                            <span class="wheel-text wt-one">১ গুণ</span>
-                            <span class="wheel-text wt-triple">৩ গুণ</span>
-                            <span class="wheel-text wt-double">২ গুণ</span>
-                        </div>
+                    <div class="digital-marker"></div> <!-- Arrow pointer -->
+                    <div id="spin-wheel" class="digital-wheel">
+                        <span class="segment-text s1">লস</span>
+                        <span class="segment-text s2">২ গুণ</span>
+                        <span class="segment-text s3">৩ গুণ</span>
+                        <span class="segment-text s4">৫ গুণ</span>
                     </div>
-                    <div class="wheel-center"><i class="fas fa-star" style="color:#000;"></i></div>
+                    <div class="wheel-center-knob"><i class="fas fa-gem"></i></div>
                 </div>
                 
-                <div class="caution-box">
-                    <i class="fas fa-exclamation-circle"></i> <b>সতর্কবার্তা</b><br>
-                    স্পিনে টাকা হারানো গেলে কর্তৃপক্ষ দায়ী থাকবে না। নিজ দায়িত্বে খেলুন।
+                <div class="caution-box" style="margin-top:20px; color:#aaa; font-size:0.9rem;">
+                    <i class="fas fa-exclamation-circle"></i> <b>সতর্কবার্তা:</b> স্পিনে টাকা হারানো গেলে কর্তৃপক্ষ দায়ী থাকবে না।
                 </div>
                 <div class="input-group" style="margin-top:20px;">
                     <i class="fas fa-coins"></i>
@@ -496,13 +544,12 @@
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
     import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
     import { getFirestore, doc, setDoc, getDoc, updateDoc, collection, query, where, orderBy, addDoc, increment, arrayUnion, serverTimestamp, writeBatch, onSnapshot, getDocs, limit } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+    import { getMessaging, getToken, onMessage } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-messaging.js";
 
     const firebaseConfig = { apiKey: "AIzaSyAafXkJwyZ5F7Xuax0VktZ9cpqWD4oCvxU", authDomain: "tournament-97743.firebaseapp.com", projectId: "tournament-97743", messagingSenderId: "584797187828", appId: "1:584797187828:web:4c643f83dfd9b700adb8a1" };
-    const app = initializeApp(firebaseConfig); const auth = getAuth(app); const db = getFirestore(app);
-    
-    // PWA Push Imports
-    import { getMessaging, getToken, onMessage } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-messaging.js";
-    // Initialize Messaging
+    const app = initializeApp(firebaseConfig); 
+    const auth = getAuth(app); 
+    const db = getFirestore(app);
     const messaging = getMessaging(app);
 
     // --- DEFAULT AVATAR LIST ---
@@ -534,11 +581,10 @@
 
     window.showToast = (msg) => { const t = document.getElementById('toast-box'); if(t) { t.innerHTML = `<i class="fas fa-info-circle"></i> ${msg}`; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 3000); } else { alert(msg); } };
     
-    // OPTIMIZED NAV: Clears Interval on page change to prevent lag
+    // OPTIMIZED NAV
     window.nav = (pid) => { 
         if(sliderInterval && pid !== 'page-home') { clearInterval(sliderInterval); sliderInterval = null; }
         if(pid === 'page-home' && !sliderInterval) loadHomeData(); 
-
         document.querySelectorAll('.page-section').forEach(e => e.classList.remove('active')); 
         const target = document.getElementById(pid); 
         if(target) target.classList.add('active'); 
@@ -557,23 +603,38 @@
     window.copyReferCode = () => { if(currentUserData && currentUserData.referralCode) { window.copyToClipboard(currentUserData.referralCode); } }
     window.closeTeamCodeModal = () => { document.getElementById('team-code-modal').classList.add('hidden'); nav('page-matches'); }
 
-    window.addEventListener('load', () => { 
-        // Initial Check: Are we in a browser or PWA?
-        if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true) {
-            // We are in PWA/App Mode -> Do nothing, let auth listener handle login/dashboard
-        } else {
-            // We are in Browser Mode -> Show Install Page
+    // --- INSTANT APP DISPLAY LOGIC ---
+    const initAppDisplay = () => {
+        const isPwa = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+        if (!isPwa) {
+            const loader = document.getElementById('loading-overlay');
+            if(loader) loader.style.display = 'none';
             document.getElementById('install-view').classList.remove('hidden');
             document.getElementById('auth-container').classList.add('hidden');
             document.getElementById('app-container').classList.add('hidden');
-            document.getElementById('loading-overlay').style.display = 'none';
+        } else {
+            document.getElementById('install-view').classList.add('hidden');
         }
-        history.pushState({page: 'home'}, '', ''); 
+    };
+    initAppDisplay();
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const installBtn = document.getElementById('btn-install-app');
+        if (installBtn) {
+            installBtn.addEventListener('click', async () => {
+                if (deferredPrompt) {
+                    deferredPrompt.prompt();
+                    const { outcome } = await deferredPrompt.userChoice;
+                    deferredPrompt = null;
+                } else {
+                    alert("To install: Tap Share -> Add to Home Screen");
+                }
+            });
+        }
     });
 
     window.addEventListener('popstate', (event) => { const activeSection = document.querySelector('.page-section.active'); if (activeSection && activeSection.id !== 'page-home') { nav('page-home'); } else { const now = new Date().getTime(); if (now - lastBackPress < 2000) { if(confirm("আপনি কি অ্যাপটি বন্ধ করতে চান?")) { history.back(); } else { history.pushState({page: 'home'}, '', '#home'); } } else { lastBackPress = now; showToast("বাহির হতে আবার ব্যাক চাপুন"); history.pushState({page: 'home'}, '', '#home'); } } });
 
-    // --- PWA INSTALL LOGIC ---
     window.addEventListener('beforeinstallprompt', (e) => {
         e.preventDefault();
         deferredPrompt = e;
@@ -584,58 +645,21 @@
         }
     });
 
-    const installBtn = document.getElementById('btn-install-app');
-    if(installBtn) {
-        installBtn.addEventListener('click', async () => {
-            if (deferredPrompt) {
-                deferredPrompt.prompt();
-                const { outcome } = await deferredPrompt.userChoice;
-                console.log(`User response to install prompt: ${outcome}`);
-                deferredPrompt = null;
-            } else {
-                // Fallback for when prompt isn't available (e.g., iOS or already installed)
-                alert("To install: Tap the Share button (Safari) or Menu (Chrome) and select 'Add to Home Screen'.");
-            }
-        });
-    }
-
-
-    // ==========================================
-    // 🟢 PWA & SYSTEM NOTIFICATION LOGIC (NEW)
-    // ==========================================
-
-    // 1. Register Service Worker for PWA
-    let swRegistration = null;
-
     if ('serviceWorker' in navigator) {
-        // ✅ CRITICAL FIX: Ensure we register 'service-worker.js', NOT 'firebase-messaging-sw.js'
-        // This must match the file you created in the previous step.
-        navigator.serviceWorker.register('service-worker.js')
-            .then((reg) => {
-                console.log('✅ Service Worker Registered:', reg);
-                swRegistration = reg;
-            })
-            .catch((err) => {
-                console.log('❌ Service Worker Failed', err);
-            });
+        navigator.serviceWorker.register('firebase-messaging-sw.js').catch(err => console.log('SW Fail', err));
     }
 
-    // 2. CHECK & SHOW BANNER (Modified: No Token Alert, Sticky Logic)
     function checkNotificationPermission(uid) {
         if ("Notification" in window) {
             if (Notification.permission === "granted") {
-                // Already granted, hide banner
                 document.getElementById('notification-banner').style.display = 'none';
-                // Generate token silently in background - WAIT for SW first
                 generateToken(uid);
             } else {
-                // Denied or Default -> SHOW BANNER ALWAYS inside Dashboard
                 document.getElementById('notification-banner').style.display = 'block';
             }
         }
     }
 
-    // 3. ENABLE BUTTON CLICK HANDLER
     window.enableNotifications = async () => {
         const permission = await Notification.requestPermission();
         if (permission === 'granted') {
@@ -645,44 +669,35 @@
                 generateToken(auth.currentUser.uid);
             }
         } else {
-            // If denied, they need to change settings manually
-            alert("Permission Denied. Please enable notifications in your browser settings.");
+            alert("Permission Denied.");
         }
     };
 
-    // 4. GENERATE & SAVE TOKEN (SILENT)
     async function generateToken(uid) {
         try {
-            // ✅ KEY FIX: Wait for Service Worker to be ready
-            const registration = await navigator.serviceWorker.ready;
-
-            const currentToken = await getToken(messaging, { 
-                vapidKey: 'BKVqRDof4xyE2oZWEvMO3CSEsCQ9QPkbiT59bnJHQLWJ0ngm5I1pirwwTsNQ94AVR3fuWNeV6WPwhi5f5hsUFyQ',
-                serviceWorkerRegistration: registration
-            });
-
-            if (currentToken) {
-                console.log('✅ FCM Token Generated (Silent Save)');
-                // Only save to DB, NO ALERT
-                await setDoc(doc(db, "users", uid), { fcmToken: currentToken }, { merge: true });
+            if ('serviceWorker' in navigator) {
+                const registration = await navigator.serviceWorker.ready;
+                const currentToken = await getToken(messaging, { 
+                    vapidKey: 'BKVqRDof4xyE2oZWEvMO3CSEsCQ9QPkbiT59bnJHQLWJ0ngm5I1pirwwTsNQ94AVR3fuWNeV6WPwhi5f5hsUFyQ',
+                    serviceWorkerRegistration: registration
+                });
+                if (currentToken) {
+                    await setDoc(doc(db, "users", uid), { fcmToken: currentToken }, { merge: true });
+                }
             }
         } catch (err) {
-            console.log('Token generation failed: ', err);
-            // Retry if registration failed initially
             if(err.message && err.message.includes('registration')) {
                setTimeout(() => generateToken(uid), 2000);
             }
         }
     }
 
-    // 5. LOCAL SYSTEM NOTIFICATION (MIRROR EFFECT)
-    // This triggers a local notification if the app is open/backgrounded when DB updates
     function sendSystemNotification(title, body) {
-        if (Notification.permission === "granted") {
+        if (Notification.permission === "granted" && 'serviceWorker' in navigator) {
             navigator.serviceWorker.ready.then(registration => {
                 registration.showNotification(title, {
                     body: body,
-                    icon: 'https://cdn-icons-png.flaticon.com/512/3233/3233483.png',
+                    icon: 'https://cdn-icons-png.flaticon.com/512/11482/11482650.png',
                     vibrate: [200, 100, 200],
                     tag: 'gzone-notification'
                 });
@@ -692,27 +707,13 @@
     
     const sessionStartTime = Date.now();
 
-
-    // --- MAIN APP LOGIC START ---
-
     onAuthStateChanged(auth, async (user) => {
-        // Check Mode: PWA vs Browser
         const isPwa = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
-
-        // If user is in browser, do NOT run auth logic (Landing page handles them)
-        // Exception: If they clicked "Install", the browser might reload.
-        // Strict check: Only run app logic if in PWA mode OR if user somehow bypassed landing page (safety)
-        // Actually, keep it simple: If landing page is visible, don't run app.
         if (!document.getElementById('install-view').classList.contains('hidden')) return;
-
 
         if(user) {
             if (window.AppInventor) { window.AppInventor.setWebViewString(user.uid); }
-            
-            // ✅ CHECK PERMISSION ON DASHBOARD LOAD
             checkNotificationPermission(user.uid);
-            
-            // ✅ LISTEN FOR IN-APP NOTIFICATIONS & MIRROR TO SYSTEM
             loadNotifications(user.uid);
 
             onSnapshot(doc(db,"users",user.uid), async d => {
@@ -720,13 +721,11 @@
                     currentUserData = d.data();
                     if(currentUserData.isBlocked) { alert("Blocked by Admin"); signOut(auth); return; }
                     
-                    // --- RANDOM AVATAR ---
                     if(!currentUserData.photoURL) {
                         const rand = defaultAvatars[Math.floor(Math.random() * defaultAvatars.length)];
                         await setDoc(doc(db, "users", user.uid), { photoURL: rand }, { merge: true });
                         currentUserData.photoURL = rand; 
                     }
-                    
                     if(!currentUserData.referralCode) {
                          const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
                          const code = Array(4).fill(0).map(()=>chars[Math.floor(Math.random()*chars.length)]).join('') + Math.floor(100 + Math.random() * 900);
@@ -737,27 +736,40 @@
                          await setDoc(doc(db, "users", user.uid), { customId: newId }, { merge: true }); return; 
                     }
                     
-                    // -- HEADER UPDATES --
                     const balEl = document.getElementById('header-bal'); if(balEl) balEl.innerText = currentUserData.balance || 0;
-                    const nameEl = document.getElementById('p-name'); if(nameEl) nameEl.innerText = currentUserData.fullName || currentUserData.username || "Gamer";
+                    const nameEl = document.getElementById('p-name'); if(nameEl) nameEl.innerText = currentUserData.fullName || "Gamer";
                     const idEl = document.getElementById('p-custom-id'); if(idEl) idEl.innerText = currentUserData.customId;
-                    
-                    // -- DRAWER HEADER UPDATES --
                     const dName = document.getElementById('d-name'); if(dName) dName.innerText = currentUserData.fullName || "Gamer";
                     const dUid = document.getElementById('d-uid'); if(dUid) dUid.innerText = "ID: " + currentUserData.customId;
-                    const dPic = document.getElementById('d-pic'); if(dPic) dPic.src = currentUserData.photoURL || "https://via.placeholder.com/100";
+                    const dPic = document.getElementById('d-pic'); if(dPic) dPic.src = currentUserData.photoURL;
+                    const imgEl = document.getElementById('p-pic'); if(imgEl) imgEl.src = currentUserData.photoURL;
 
                     document.getElementById('my-refer-code').innerText = currentUserData.referralCode || "...";
                     document.getElementById('total-refers').innerText = currentUserData.totalRefers || 0;
                     document.getElementById('total-refer-earn').innerText = `৳${currentUserData.referEarn || 0}`;
-                    const imgEl = document.getElementById('p-pic'); if(imgEl) { imgEl.src = currentUserData.photoURL || "https://via.placeholder.com/100"; imgEl.onerror = function() { this.src = "https://via.placeholder.com/100"; }; }
-                    document.getElementById('auth-container').classList.add('hidden'); document.getElementById('app-container').classList.remove('hidden'); document.getElementById('loading-overlay').classList.add('hidden');
+
+                    document.getElementById('auth-container').classList.add('hidden'); 
+                    document.getElementById('app-container').classList.remove('hidden'); 
+                    document.getElementById('loading-overlay').classList.add('hidden');
+                    
+                    // Call loadMyMatches here so joinedMatchIds is populated
+                    loadMyMatches(user.uid);
                 } else { await signOut(auth); window.location.reload(); }
             });
+            
             loadHomeData(); 
-            // loadNotifications called above
-            window.loadPublicCoupons(); loadWithdrawHistory(user.uid); loadConfig(); loadBroadcasts(); loadBalanceLeaderboard(); loadReferralLeaderboard();
-        } else { document.getElementById('app-container').classList.add('hidden'); document.getElementById('auth-container').classList.remove('hidden'); document.getElementById('loading-overlay').classList.add('hidden'); joinedMatchIds.clear(); }
+            window.loadPublicCoupons(); 
+            loadWithdrawHistory(user.uid); 
+            loadConfig(); 
+            loadBroadcasts(); 
+            loadBalanceLeaderboard(); 
+            loadReferralLeaderboard();
+        } else { 
+            document.getElementById('app-container').classList.add('hidden'); 
+            document.getElementById('auth-container').classList.remove('hidden'); 
+            document.getElementById('loading-overlay').classList.add('hidden'); 
+            joinedMatchIds.clear(); 
+        }
     });
     
     window.login=async()=>{try{await signInWithEmailAndPassword(auth, document.getElementById('l-email').value, document.getElementById('l-pass').value);}catch(e){showToast("Invalid Credentials")}};
@@ -767,32 +779,16 @@
             const fullName = document.getElementById('r-user').value; const email = document.getElementById('r-email').value; const pass = document.getElementById('r-pass').value; const referByCode = document.getElementById('r-refer').value.trim();
             if(!fullName || !email || !pass) return showToast("Fill all fields");
             
-            const generatedId = Math.floor(10000000000 + Math.random() * 90000000000).toString();
+            const c = await createUserWithEmailAndPassword(auth, email, pass);
+            const uid = Math.floor(10000000000 + Math.random() * 90000000000).toString();
             const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
             const myReferCode = Array(4).fill(0).map(()=>chars[Math.floor(Math.random()*chars.length)]).join('') + Math.floor(100 + Math.random() * 900);
-            
-            // --- RANDOM AVATAR SELECTION ---
             const randomPic = defaultAvatars[Math.floor(Math.random() * defaultAvatars.length)];
 
             let referrerUid = null;
             if (referByCode) { const q = query(collection(db, "users"), where("referralCode", "==", referByCode)); const snap = await getDocs(q); if (!snap.empty) { referrerUid = snap.docs[0].id; } }
             
-            const c = await createUserWithEmailAndPassword(auth, email, pass);
-            
-            const userData = { 
-                fullName: fullName, 
-                username: fullName, 
-                email: email, 
-                balance: 0, 
-                uid: c.user.uid, 
-                customId: generatedId, 
-                referralCode: myReferCode, 
-                totalRefers: 0, 
-                referEarn: 0, 
-                photoURL: randomPic, // Assign random pic here
-                createdAt: serverTimestamp() 
-            };
-            
+            const userData = { fullName, username: fullName, email, balance: 0, uid: c.user.uid, customId: uid, referralCode: myReferCode, totalRefers: 0, referEarn: 0, photoURL: randomPic, createdAt: serverTimestamp() };
             if(referrerUid) { userData.referredBy = referrerUid; userData.referBonusPending = true; }
             await setDoc(doc(db, "users", c.user.uid), userData); showToast("Success!");
         } catch(e){ showToast(e.message); }
@@ -804,27 +800,18 @@
         onSnapshot(doc(db,"config","settings"), s=>{ 
             if(s.exists()){ 
                 const d=s.data(); 
-                nivaRate=d.nivaCoinPrice||10; 
-                payeerRate = d.payeerRate || 115; 
-                proofBotUrl = d.telegramProof || d.telegramSupport; 
-                
+                nivaRate=d.nivaCoinPrice||10; payeerRate = d.payeerRate || 115; proofBotUrl = d.telegramProof || d.telegramSupport; 
                 minW = d.minWithdraw || 50; maxW = d.maxWithdraw || 10000;
                 if(document.getElementById('w-limit-text')) document.getElementById('w-limit-text').innerText = `সর্বনিম্ন ৳${minW} - সর্বোচ্চ ৳${maxW}`;
                 if(document.getElementById('niva-rate-disp')) document.getElementById('niva-rate-disp').innerText=`1000=${nivaRate}TK`;
                 if(document.getElementById('payeer-rate-disp')) document.getElementById('payeer-rate-disp').innerText = payeerRate; 
-
                 if(document.getElementById('method-bkash')) document.getElementById('method-bkash').style.display = d.methodBkash !== false ? 'flex' : 'none';
                 if(document.getElementById('method-nagad')) document.getElementById('method-nagad').style.display = d.methodNagad !== false ? 'flex' : 'none';
                 if(document.getElementById('method-niva')) document.getElementById('method-niva').style.display = d.methodNiva !== false ? 'flex' : 'none';
                 if(document.getElementById('method-payeer')) document.getElementById('method-payeer').style.display = d.methodPayeer !== false ? 'flex' : 'none';
-
-                const spinItem = document.getElementById('nav-spin-item'); if(spinItem) { if(d.methodSpinWheel === false) { spinItem.style.display = 'none'; if(document.getElementById('page-spin').classList.contains('active')) nav('page-home'); } else { spinItem.style.display = 'flex'; } }
-                
-                const adminBtn = document.getElementById('btn-admin-support');
-                if(adminBtn && d.telegramSupport) { adminBtn.href = d.telegramSupport; adminBtn.classList.remove('hidden'); }
-                
-                const proofBtn = document.getElementById('btn-proof-link');
-                if(proofBtn && proofBotUrl) proofBtn.href = proofBotUrl;
+                const spinItem = document.getElementById('nav-spin-item'); if(spinItem) { if(d.methodSpinWheel === false) { spinItem.style.display = 'none'; } else { spinItem.style.display = 'flex'; } }
+                const adminBtn = document.getElementById('btn-admin-support'); if(adminBtn && d.telegramSupport) { adminBtn.href = d.telegramSupport; adminBtn.classList.remove('hidden'); }
+                const proofBtn = document.getElementById('btn-proof-link'); if(proofBtn && proofBotUrl) proofBtn.href = proofBotUrl;
             } 
         });
     }
@@ -834,7 +821,7 @@
         if(!targetId || !amount || amount <= 0) return showToast("সঠিক তথ্য দিন"); if(amount > currentUserData.balance) return showToast("ব্যালেন্স নেই"); if(targetId === currentUserData.customId) return showToast("নিজেকে পাঠানো যাবে না");
         const btn = document.getElementById('btn-transfer'); btn.disabled = true; btn.innerText = "Processing...";
         try {
-            const q = query(collection(db, "users"), where("customId", "==", targetId)); const querySnapshot = await getDocs(q); if(querySnapshot.empty) { throw new Error("User Not Found (ভুল আইডি)"); }
+            const q = query(collection(db, "users"), where("customId", "==", targetId)); const querySnapshot = await getDocs(q); if(querySnapshot.empty) { throw new Error("User Not Found"); }
             const receiverDoc = querySnapshot.docs[0]; const receiverData = receiverDoc.data();
             const batch = writeBatch(db);
             batch.update(doc(db, "users", auth.currentUser.uid), { balance: increment(-amount) });
@@ -853,61 +840,45 @@
     }
 
     function renderHomeTournaments() {
-        const l = document.getElementById('tournament-list'); 
-        l.innerHTML='';
+        const l = document.getElementById('tournament-list'); l.innerHTML='';
         const filtered = allTournaments.filter(d => { const t = d.data(); const cat = t.category || 'BR'; return cat === currentHomeTab; });
         if(filtered.length === 0) { l.innerHTML = "<p style='text-align:center; color:#aaa; margin-top:20px; font-size:0.9rem;'>কোন ম্যাচ নেই</p>"; return; }
         filtered.forEach(d=>{
             const t=d.data();
             const isJoined = joinedMatchIds.has(d.id);
-            let showFee = t.fee;
-            if(currentUserData && currentUserData.referBonusPending && t.type !== 'Squad') { showFee += 5; }
             let btn;
-            if(isJoined) { btn = `<button class="btn btn-success" onclick="nav('page-matches')">আইডি পাস</button>`; } else if(t.joined >= t.total) { btn = `<button class="btn btn-secondary" disabled>FULL</button>`; } else { btn = `<button class="btn btn-primary" onclick="openJoin('${d.id}','${t.type}',${t.fee})">জয়েন (${t.type})</button>`; }
-            const percent = Math.min((t.joined/t.total)*100, 100);
-            let dateDisplay = t.date;
+            if(isJoined) { btn = `<button class="btn btn-success" onclick="nav('page-matches')">JOINED</button>`; } 
+            else if(t.joined >= t.total) { btn = `<button class="btn btn-secondary" disabled>FULL</button>`; } 
+            else { btn = `<button class="btn btn-primary" onclick="openJoin('${d.id}','${t.type}',${t.fee})">JOIN</button>`; }
             
-            // --- UX FIX: Replaced Icon with "View Details" button ---
             l.innerHTML += `
             <div class="t-card">
                 <div class="t-img-wrap"><img src="${t.image}" class="t-img" loading="lazy"><div class="t-type-badge">${t.type}</div><div class="t-overlay"><div class="t-title">${t.title}</div></div></div>
                 <div class="t-body">
                     <div class="t-stats-grid">
-                        <div class="t-stat"><small>এন্ট্রি ফি</small><b>৳${showFee}</b></div>
+                        <div class="t-stat"><small>এন্ট্রি ফি</small><b>৳${t.fee}</b></div>
                         <div class="t-stat"><small>বাকি আছে</small><b>${t.total-t.joined}</b></div>
-                        <div class="t-stat"><small>সময়</small><b>${dateDisplay}</b></div>
+                        <div class="t-stat"><small>সময়</small><b>${t.date}</b></div>
                     </div>
-                    <div class="progress-bar"><div class="progress-fill" style="width:${percent}%;"></div></div>
+                    <div class="progress-bar"><div class="progress-fill" style="width:${Math.min((t.joined/t.total)*100, 100)}%;"></div></div>
                     <div class="t-actions">${btn}<button class="btn btn-secondary" onclick="showInfo('${(t.extraDetails||'').replace(/'/g,"\\'").replace(/\n/g,'<br>')}')">View Details</button></div>
                 </div>
             </div>`;
         });
     }
 
-    // OPTIMIZED SLIDER: Smooth scroll fix
     function loadHomeData() {
         onSnapshot(collection(db,"sliders"), s=>{ 
-            const c=document.getElementById('banner-slider'); 
-            c.innerHTML=''; 
+            const c=document.getElementById('banner-slider'); c.innerHTML=''; 
             s.forEach(d=>{c.innerHTML+=`<img src="${d.data().url}" class="slide" loading="lazy">`}); 
-            
             if(sliderInterval) clearInterval(sliderInterval); 
-            if(s.size > 1) {
-                sliderInterval=setInterval(()=>{
-                    // Fix for glitchy scrolling: Calculate precise scroll amount including gap
-                    if(c.scrollLeft + c.offsetWidth >= c.scrollWidth - 10) { 
-                        c.scrollTo({left: 0, behavior: 'smooth'}); 
-                    } else { 
-                        c.scrollBy({left: c.offsetWidth + 12, behavior: 'smooth'}); // +12 accounts for gap
-                    }
-                }, 4000); 
-            }
+            if(s.size > 1) { sliderInterval=setInterval(()=>{ if(c.scrollLeft + c.offsetWidth >= c.scrollWidth - 10) { c.scrollTo({left: 0, behavior: 'smooth'}); } else { c.scrollBy({left: c.offsetWidth + 12, behavior: 'smooth'}); } }, 4000); }
         });
         onSnapshot(query(collection(db,"tournaments"), orderBy("date","asc")), s=>{ allTournaments = s.docs; renderHomeTournaments(); });
     }
 
-    function loadBalanceLeaderboard() { const q = query(collection(db, "users"), orderBy("balance", "desc"), limit(10)); onSnapshot(q, (s) => { const l = document.getElementById('balance-leaderboard'); if (s.empty) { l.innerHTML = "<p style='text-align:center;color:#aaa'>Empty</p>"; return; } l.innerHTML = s.docs.map((d, i) => { const u = d.data(); const rank = i + 1; let rankClass = rank <= 3 ? `top-${rank}` : ''; return `<div class="rank-item ${rankClass}"><div class="rank-left"><span class="rank-pos">#${rank}</span><div style="font-weight:bold; color:#fff;">${u.fullName || u.username}</div></div><div style="color:var(--success); font-weight:bold;">৳${u.balance}</div></div>`; }).join(''); }); }
-    function loadReferralLeaderboard() { const q = query(collection(db, "users"), orderBy("totalRefers", "desc"), limit(5)); onSnapshot(q, (s) => { const l = document.getElementById('referral-leaderboard'); if (s.empty) { l.innerHTML = "<p style='text-align:center;color:#aaa'>Empty</p>"; return; } l.innerHTML = s.docs.map((d, i) => `<div class="rank-item"><div class="rank-left"><span class="rank-pos">#${i+1}</span><div style="color:#fff;">${d.data().fullName || d.data().username}</div></div><div style="color:var(--warning); font-weight:bold;">${d.data().totalRefers} Refers</div></div>`).join(''); }); }
+    function loadBalanceLeaderboard() { const q = query(collection(db, "users"), orderBy("balance", "desc"), limit(10)); onSnapshot(q, (s) => { const l = document.getElementById('balance-leaderboard'); if (s.empty) { l.innerHTML = "<p style='text-align:center;color:#aaa'>Empty</p>"; return; } l.innerHTML = s.docs.map((d, i) => `<div class="rank-item"><div class="rank-left"><span class="rank-pos">#${i+1}</span><div style="font-weight:bold; color:#fff;">${d.data().fullName}</div></div><div style="color:var(--success); font-weight:bold;">৳${d.data().balance}</div></div>`).join(''); }); }
+    function loadReferralLeaderboard() { const q = query(collection(db, "users"), orderBy("totalRefers", "desc"), limit(5)); onSnapshot(q, (s) => { const l = document.getElementById('referral-leaderboard'); if (s.empty) { l.innerHTML = "<p style='text-align:center;color:#aaa'>Empty</p>"; return; } l.innerHTML = s.docs.map((d, i) => `<div class="rank-item"><div class="rank-left"><span class="rank-pos">#${i+1}</span><div style="color:#fff;">${d.data().fullName}</div></div><div style="color:var(--warning); font-weight:bold;">${d.data().totalRefers} Refers</div></div>`).join(''); }); }
 
     window.spinWheel = async () => {
         if(spinProcessing) return;
@@ -915,83 +886,75 @@
         if(!amt || amt < 1) return showToast("সঠিক পরিমাণ লিখুন"); if(amt > currentUserData.balance) return showToast("ব্যালেন্স নেই");
         spinProcessing = true; document.getElementById('spin-btn').disabled = true;
         try { await updateDoc(doc(db, "users", auth.currentUser.uid), { balance: increment(-amt) }); } catch(e) { showToast("Server Error"); spinProcessing = false; document.getElementById('spin-btn').disabled = false; return; }
-        const durationSec = 5 + Math.random() * 5; const durationMs = durationSec * 1000;
-        wheel.style.transition = `transform ${durationSec}s cubic-bezier(0.25, 0.1, 0.25, 1)`;
-        const spins = 8; const degreesPerSpin = 360;
-        let targetAngleFromTop = 10 + Math.random() * 70; const finalAngleRelToCircle = 360 - targetAngleFromTop;
-        let currentMod = currentRotation % 360; if(currentMod < 0) currentMod += 360; 
-        let addedRotation = (spins * degreesPerSpin) + (finalAngleRelToCircle - currentMod);
-        if (addedRotation < degreesPerSpin) addedRotation += degreesPerSpin;
-        currentRotation += addedRotation;
+        
+        const targetBase = 315; const variance = (Math.random() * 40) - 20; const finalDegreeForThisSpin = targetBase + variance;
+        const spins = 5; const extraSpins = 360 * spins;
+        const currentMod = currentRotation % 360;
+        let distance = finalDegreeForThisSpin - currentMod; if (distance < 0) distance += 360;
+        currentRotation += extraSpins + distance;
         wheel.style.transform = `rotate(${currentRotation}deg)`;
-        setTimeout(async () => { showToast(`দুঃখিত! আপনি ${amt} টাকা হেরেছেন।`); spinProcessing = false; document.getElementById('spin-btn').disabled = false; }, durationMs + 100); 
+        
+        setTimeout(async () => { showToast(`দুঃখিত! আপনি ${amt} টাকা হেরেছেন।`); spinProcessing = false; document.getElementById('spin-btn').disabled = false; }, 5500); 
     }
 
     window.openJoin = (id, type, fee) => {
-        selMatch = {id, type, fee};
-        document.getElementById('join-modal').classList.remove('hidden');
-        let displayFee = fee; if (type !== 'Squad' && currentUserData.referBonusPending) { displayFee += 5; }
-        document.getElementById('j-fee').innerText = `৳${displayFee}`;
+        selMatch = {id, type, fee}; document.getElementById('join-modal').classList.remove('hidden'); document.getElementById('j-fee').innerText = `৳${fee}`;
         if(type==='Squad') { document.getElementById('squad-tabs').classList.remove('hidden'); document.getElementById('squad-inputs').classList.remove('hidden'); switchTab('create'); } else { document.getElementById('squad-tabs').classList.add('hidden'); document.getElementById('squad-inputs').classList.add('hidden'); document.getElementById('view-create').classList.remove('hidden'); document.getElementById('view-join').classList.add('hidden'); }
     }
     window.switchTab = (t) => { document.querySelectorAll('.sq-tab').forEach(e=>e.classList.remove('active')); document.getElementById('tab-'+t).classList.add('active'); if(t==='create'){document.getElementById('view-create').classList.remove('hidden'); document.getElementById('view-join').classList.add('hidden');} else{document.getElementById('view-create').classList.add('hidden'); document.getElementById('view-join').classList.remove('hidden');} }
 
     window.confirmJoin = async() => {
         const uid=document.getElementById('j-uid').value; if(!uid)return showToast("Enter UID");
-        const btn = document.getElementById('btn-conf'); btn.disabled = true; btn.innerText = "Processing...";
+        const btn = document.getElementById('btn-conf'); btn.disabled = true;
         try {
-            const checkJoin = await getDoc(doc(db, `users/${auth.currentUser.uid}/matches/${selMatch.id}`)); if(checkJoin.exists()) throw new Error("Already Joined!");
-            let totalFee = selMatch.fee; let isReferralPay = false;
-            if(selMatch.type !== 'Squad' && currentUserData.referBonusPending) { totalFee += 5; isReferralPay = true; }
-            const uRef=doc(db,"users",auth.currentUser.uid), tRef=doc(db,"tournaments",selMatch.id);
-            const uSnap=await getDoc(uRef); if(uSnap.data().balance < totalFee) throw new Error("Insufficient Balance");
-            const b=writeBatch(db); b.update(uRef,{balance:increment(-totalFee)}); b.update(tRef,{joined:increment(1)});
-            if(isReferralPay && currentUserData.referredBy) { b.update(uRef, { referBonusPending: false }); b.update(doc(db, "users", currentUserData.referredBy), { balance: increment(5), totalRefers: increment(1), referEarn: increment(5) }); b.set(doc(collection(db, "notifications")), { targetUid: currentUserData.referredBy, title: "Referral Bonus", body: `You earned ৳5 from referring ${currentUserData.fullName}`, createdAt: serverTimestamp(), read: false }); }
+            if(currentUserData.balance < selMatch.fee) throw new Error("Insufficient Balance");
+            const b=writeBatch(db);
+            b.update(doc(db,"users",auth.currentUser.uid),{balance:increment(-selMatch.fee)});
+            b.update(doc(db,"tournaments",selMatch.id),{joined:increment(1)});
             if(selMatch.type==='Squad'){
                 const teamName = document.getElementById('j-team').value; if(!teamName) throw new Error("Enter Team Name");
-                const randomCode = Math.floor(10000 + Math.random() * 90000); const joinCode = teamName.replace(/\s+/g, '') + randomCode;
+                const joinCode = teamName.replace(/\s+/g, '') + Math.floor(10000 + Math.random() * 90000);
                 const tm=doc(collection(db,`tournaments/${selMatch.id}/teams`));
-                b.set(tm,{teamName, joinCode, leaderUid:auth.currentUser.uid, leaderName:uSnap.data().username, members:[{uid:auth.currentUser.uid, name:uSnap.data().username, role:'leader', gameUid:uid}]});
+                b.set(tm,{teamName, joinCode, leaderUid:auth.currentUser.uid, leaderName:currentUserData.fullName, members:[{uid:auth.currentUser.uid, name:currentUserData.fullName, role:'leader', gameUid:uid}]});
                 b.set(doc(db,`users/${auth.currentUser.uid}/matches/${selMatch.id}`),{tourneyId:selMatch.id, type:'squad', role:'leader', teamId:tm.id});
-                b.set(doc(db,`tournaments/${selMatch.id}/participants/${auth.currentUser.uid}`),{uid:auth.currentUser.uid, username:uSnap.data().username, ffUid:uid});
+                b.set(doc(db,`tournaments/${selMatch.id}/participants/${auth.currentUser.uid}`),{uid:auth.currentUser.uid, username:currentUserData.fullName, ffUid:uid});
                 await b.commit(); closeJoin(); document.getElementById('gen-team-code').innerText = joinCode; document.getElementById('team-code-modal').classList.remove('hidden');
             } else {
                 b.set(doc(db,`users/${auth.currentUser.uid}/matches/${selMatch.id}`),{tourneyId:selMatch.id, type:'solo'});
-                b.set(doc(db,`tournaments/${selMatch.id}/participants/${auth.currentUser.uid}`),{uid:auth.currentUser.uid, username:uSnap.data().username, ffUid:uid});
+                b.set(doc(db,`tournaments/${selMatch.id}/participants/${auth.currentUser.uid}`),{uid:auth.currentUser.uid, username:currentUserData.fullName, ffUid:uid});
                 await b.commit(); showToast("Joined Successfully!"); closeJoin(); nav('page-matches');
             }
-        } catch(e){showToast(e.message); btn.disabled = false; btn.innerText = "Confirm";}
+        } catch(e){showToast(e.message); } finally { btn.disabled = false; }
     }
 
     window.joinTeamMember = async() => {
         const code=document.getElementById('m-code').value, uid=document.getElementById('m-uid').value; if(!code || !uid) return showToast("Fill all");
-        const checkJoin = await getDoc(doc(db, `users/${auth.currentUser.uid}/matches/${selMatch.id}`)); if(checkJoin.exists()) return showToast("Already Joined!");
         const q=query(collection(db,`tournaments/${selMatch.id}/teams`), where("joinCode","==",code)); const s=await getDocs(q); if(s.empty) return showToast("Invalid Team Code");
         const tm=s.docs[0]; if(tm.data().members.length>=4) return showToast("Team Full");
-        const b=writeBatch(db); const name = (await getDoc(doc(db,"users",auth.currentUser.uid))).data().username;
-        b.update(tm.ref,{members:arrayUnion({uid:auth.currentUser.uid, name:name, role:'member', gameUid:uid})});
+        const b=writeBatch(db); 
+        b.update(tm.ref,{members:arrayUnion({uid:auth.currentUser.uid, name:currentUserData.fullName, role:'member', gameUid:uid})});
         b.set(doc(db,`users/${auth.currentUser.uid}/matches/${selMatch.id}`),{tourneyId:selMatch.id, type:'squad', role:'member', teamId:tm.id});
-        b.set(doc(db,`tournaments/${selMatch.id}/participants/${auth.currentUser.uid}`),{uid:auth.currentUser.uid, username:name, ffUid:uid});
+        b.set(doc(db,`tournaments/${selMatch.id}/participants/${auth.currentUser.uid}`),{uid:auth.currentUser.uid, username:currentUserData.fullName, ffUid:uid});
         await b.commit(); showToast("Joined!"); closeJoin(); nav('page-matches');
     }
-    window.leave = async(tid, tmid) => { if(!confirm("Leave?")) return; const tmRef=doc(db,`tournaments/${tid}/teams`, tmid); const s=await getDoc(tmRef); const mems=s.data().members.filter(m=>m.uid!==auth.currentUser.uid); const b=writeBatch(db); b.update(tmRef,{members:mems}); b.delete(doc(db,`users/${auth.currentUser.uid}/matches/${tid}`)); b.delete(doc(db,`tournaments/${tid}/participants/${auth.currentUser.uid}`)); await b.commit(); }
+    window.leave = async(tid, tmid) => { if(!confirm("Leave?")) return; const tmRef=doc(db,`tournaments/${tid}/teams`, tmid); const s=await getDoc(tmRef); const mems=s.data().members.filter(m=>m.uid!==auth.currentUser.uid); const b=writeBatch(db); b.update(tmRef,{members:mems}); b.delete(doc(db,`users/${auth.currentUser.uid}/matches/${tid}`)); b.delete(doc(db,`tournaments/${tid}/participants/${auth.currentUser.uid}`)); await b.commit(); nav('page-home'); }
     
     function loadMyMatches(uid) {
         onSnapshot(collection(db, `users/${uid}/matches`), async (s) => {
             joinedMatchIds.clear(); s.forEach(d => joinedMatchIds.add(d.data().tourneyId)); renderHomeTournaments();
             const l = document.getElementById('my-matches-list'); if(s.empty) { l.innerHTML="<p style='text-align:center;color:#aaa;padding:20px;'>No matches joined</p>"; return; }
             const htmls = await Promise.all(s.docs.map(async d=>{
-                const m=d.data(); return new Promise(async resolve => {
+                const m=d.data(); 
+                return new Promise(async resolve => {
                     const tSnap = await getDoc(doc(db,"tournaments",m.tourneyId));
-                    if(!tSnap.exists()) { resolve(`<div class="t-card" style="border-color:red;padding:15px;text-align:center;">Match Removed</div>`); return; }
+                    if(!tSnap.exists()) { resolve(``); return; }
                     const t = tSnap.data(); let extra = ""; let myGameUid = "N/A";
 
-                    if(m.type==='squad'){ 
+                    if(m.type==='squad' && m.teamId){ 
                         const tmSnap = await getDoc(doc(db,`tournaments/${m.tourneyId}/teams`, m.teamId)); 
                         if(tmSnap.exists()){ 
                             const tm = tmSnap.data(); 
-                            const myMem = tm.members.find(mem => mem.uid === uid);
-                            if(myMem) myGameUid = myMem.gameUid;
+                            const myMem = tm.members.find(mem => mem.uid === uid); if(myMem) myGameUid = myMem.gameUid;
                             extra = `<div style="background:rgba(255,255,255,0.05);padding:10px;border-radius:8px;margin-top:10px;font-size:0.9rem;">${m.role==='leader'?`<div style="background:rgba(245, 158, 11, 0.1);color:#fbbf24;padding:5px;text-align:center;border:1px dashed #fbbf24;margin-bottom:5px;border-radius:6px;">CODE: ${tm.joinCode}</div>`:''}<div>${tm.members.map(x=>`<div>${x.name} ${x.role==='leader'?'(L)':''}</div>`).join('')}</div>${m.role!=='leader'?`<button class="btn btn-danger" style="margin-top:5px;padding:5px;font-size:0.8rem" onclick="leave('${m.tourneyId}','${m.teamId}')">Leave</button>`:''}</div>`; 
                         } 
                     } else {
@@ -1021,21 +984,12 @@
     window.calcConversion = () => { 
         const amtEl = document.getElementById('w-amt'); 
         const methodEl = document.querySelector('input[name="w_method"]:checked'); 
-        
-        document.getElementById('niva-calc').style.display='none';
-        document.getElementById('payeer-calc').style.display='none';
-
+        document.getElementById('niva-calc').style.display='none'; document.getElementById('payeer-calc').style.display='none';
         if(methodEl && amtEl && amtEl.value) {
-            if(methodEl.value === 'Niva Coin') {
-                document.getElementById('niva-calc').style.display='block';
-                document.getElementById('niva-amount').innerText = Math.floor((amtEl.value / nivaRate)*1000);
-            } else if(methodEl.value === 'Payeer Dollar') {
-                document.getElementById('payeer-calc').style.display='block';
-                document.getElementById('payeer-amount').innerText = (amtEl.value / payeerRate).toFixed(2);
-            }
+            if(methodEl.value === 'Niva Coin') { document.getElementById('niva-calc').style.display='block'; document.getElementById('niva-amount').innerText = Math.floor((amtEl.value / nivaRate)*1000); } 
+            else if(methodEl.value === 'Payeer Dollar') { document.getElementById('payeer-calc').style.display='block'; document.getElementById('payeer-amount').innerText = (amtEl.value / payeerRate).toFixed(2); }
         } 
     }
-    
     document.addEventListener('change', (e) => { if(e.target.name === 'w_method') window.calcConversion(); });
     
     window.doWithdraw = async () => {
@@ -1048,46 +1002,15 @@
     }
     function loadWithdrawHistory(uid){ onSnapshot(query(collection(db,"withdrawals"),where("userId","==",uid)),s=>{ const l = s.docs.sort((a,b)=>(b.data().time?.seconds||0)-(a.data().time?.seconds||0)); document.getElementById('withdraw-history').innerHTML = s.empty ? "<p style='text-align:center;color:#aaa'>No history</p>" : l.map(d=>{ const w=d.data(), c=w.status==='pending'?'var(--warning)':(w.status==='paid'?'var(--success)':'var(--danger)'); return `<div class="t-card" style="padding:15px;display:flex;justify-content:space-between;"><b>৳${w.amount} (${w.method})</b><span style="color:${c};font-weight:bold;">${w.status}</span></div>`; }).join(''); }); }
     
-    // --- 🟢 NEW NOTIFICATION TRIGGER LOGIC ---
     function loadNotifications(uid) {
         const q = query(collection(db, "notifications"), where("targetUid", "==", uid));
-        
         onSnapshot(q, (s) => {
-            // --- EXISTING UI LOGIC (DO NOT TOUCH) ---
             const list = s.docs.map(d=>({id:d.id, ...d.data()})).sort((a,b)=>(b.createdAt?.seconds||0)-(a.createdAt?.seconds||0));
             const unread = list.filter(n=>!n.read).length;
-            
-            const badge = document.getElementById('header-badge');
-            if(badge) badge.style.display = unread ? 'block' : 'none';
-            
+            const badge = document.getElementById('header-badge'); if(badge) badge.style.display = unread ? 'block' : 'none';
             const nList = document.getElementById('n-list');
-            if(nList) {
-                nList.innerHTML = list.length ? list.map(n => {
-                    const bg = n.read ? 'var(--glass-bg)' : 'rgba(6, 182, 212, 0.1)';
-                    return `<div class="t-card" style="padding:15px;background:${bg};border-color:${n.read?'var(--glass-border)':'var(--primary)'}"><b style="color:var(--primary)">${n.title}</b><p style="font-size:0.9rem;color:#ddd;margin-top:5px;">${n.body}</p></div>`;
-                }).join('') : "<p style='text-align:center;color:#aaa'>Empty</p>";
-            }
-            // ----------------------------------------
-
-            // --- 🟢 NEW NOTIFICATION TRIGGER LOGIC ---
-            // This loop checks specifically for NEWLY ADDED documents in this snapshot event
-            s.docChanges().forEach(change => {
-                if (change.type === "added") {
-                    const data = change.doc.data();
-                    
-                    // Convert Firestore timestamp to milliseconds
-                    const createdTime = data.createdAt ? (data.createdAt.seconds * 1000) : 0;
-
-                    // TRIGGER RULE: 
-                    // 1. Must be unread
-                    // 2. Must be created AFTER the user opened the app (sessionStartTime)
-                    // This prevents spamming 50 notifications when you refresh the page.
-                    if (!data.read && createdTime > sessionStartTime) {
-                        sendSystemNotification(data.title, data.body);
-                    }
-                }
-            });
-            // ----------------------------------------
+            if(nList) { nList.innerHTML = list.length ? list.map(n => { const bg = n.read ? 'var(--glass-bg)' : 'rgba(6, 182, 212, 0.1)'; return `<div class="t-card" style="padding:15px;background:${bg};border-color:${n.read?'var(--glass-border)':'var(--primary)'}"><b style="color:var(--primary)">${n.title}</b><p style="font-size:0.9rem;color:#ddd;margin-top:5px;">${n.body}</p></div>`; }).join('') : "<p style='text-align:center;color:#aaa'>Empty</p>"; }
+            s.docChanges().forEach(change => { if (change.type === "added") { const data = change.doc.data(); const createdTime = data.createdAt ? (data.createdAt.seconds * 1000) : 0; if (!data.read && createdTime > sessionStartTime) { sendSystemNotification(data.title, data.body); } } });
         });
     }
 
